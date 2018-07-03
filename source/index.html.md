@@ -4,12 +4,9 @@ title: API Reference
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
   - ruby
-  - python
-  - javascript
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/lord/slate'>Documentation Powered by Slate</a>
+  - <a href='https://www.mydatascope.com/webhooks'>Sign Up for a Developer Key</a>
 
 includes:
   - errors
@@ -19,11 +16,10 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the DataScope API! You can use our API to access DataScope API endpoints, which can get information collected from the DataScope platform and App.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+We have language bindings in Shell, Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
 
 # Authentication
 
@@ -32,13 +28,7 @@ This example API documentation page was created with [Slate](https://github.com/
 ```ruby
 require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
+api = DataScope::APIClient.authorize!('meowmeowmeow')
 ```
 
 ```shell
@@ -47,17 +37,11 @@ curl "api_endpoint_here"
   -H "Authorization: meowmeowmeow"
 ```
 
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
 > Make sure to replace `meowmeowmeow` with your API key.
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](http://example.com/developers).
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+DataScope expects for the API key to be included in all API requests to the server in a header that looks like the following:
 
 `Authorization: meowmeowmeow`
 
@@ -72,27 +56,13 @@ You must replace <code>meowmeowmeow</code> with your personal API key.
 ```ruby
 require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+api = DataScope::APIClient.authorize!('meowmeowmeow')
 api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
 ```
 
 ```shell
 curl "http://example.com/api/kittens"
   -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
 ```
 
 > The above command returns JSON structured like this:
@@ -138,27 +108,13 @@ Remember — a happy kitten is an authenticated kitten!
 ```ruby
 require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
+api = DataScope::APIClient.authorize!('meowmeowmeow')
 api.kittens.get(2)
 ```
 
 ```shell
 curl "http://example.com/api/kittens/2"
   -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
 ```
 
 > The above command returns JSON structured like this:
@@ -192,14 +148,7 @@ ID | The ID of the kitten to retrieve
 ```ruby
 require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
+api = DataScope::APIClient.authorize!('meowmeowmeow')
 api.kittens.delete(2)
 ```
 
@@ -207,13 +156,6 @@ api.kittens.delete(2)
 curl "http://example.com/api/kittens/2"
   -X DELETE
   -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
 ```
 
 > The above command returns JSON structured like this:
