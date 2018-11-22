@@ -18,164 +18,120 @@ search: true
 
 Welcome to the DataScope API! You can use our API to access DataScope API endpoints, which can get information collected from the DataScope platform and App.
 
-We have language bindings in Shell, Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+We have language bindings in Shell and Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+
+
 
 
 # Authentication
 
-> To authorize, use this code:
 
-```ruby
-require 'kittn'
 
-api = DataScope::APIClient.authorize!('meowmeowmeow')
-```
+DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](https://www.mydatascope.com/webhooks).
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](http://example.com/developers).
+![alt text](https://i.imgur.com/M4awUbe.jpg "Logo Title Text 1")
 
 DataScope expects for the API key to be included in all API requests to the server in a header that looks like the following:
 
-`Authorization: meowmeowmeow`
+`Authorization: b1cd93mfls9fdmfkadn23`
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 </aside>
 
-# Kittens
+# Answers
 
-## Get All Kittens
+## Get All Answers
 
 ```ruby
-require 'kittn'
+require 'rest-client'
+require 'json'
 
-api = DataScope::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
+url = 'https://www.mydatascope.com/api/external/answers'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
 ```
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+curl "https://www.mydatascope.com/api/external/answers"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
 ```
 
-> The above command returns JSON structured like this:
+> The above command returns JSON structured like this, you can check the description of each parameter below:
 
 ```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
+[  
+   {  
+      "answers":[  
+         {  
+            "question_name":"Client Name", 
+            "name":"Client", 
+            "question_value":"Company 1",
+            "question_type":"select_metadata",
+            "subform_index":0,
+            "question_id":1, 
+            "form_code":"2342", 
+            "form_state": "Accepted",
+            "form_id":34543,
+            "form_answer_id":432432
+         }
+      ],
+      "form_name":"Example Form",
+      "form_state":"Accepted",
+      "user_name":"Example User",
+      "code":"2342",
+      "form_id":432,
+      "created_at":"2018-04-16T16:52:05.000Z",
+      "form_answer_id":257189,
+      "latitude":-33.398803,
+      "longitude":-70.559834
+   }
 ]
+
 ```
 
-This endpoint retrieves all kittens.
+This endpoint retrieves last answers
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`GET https://www.mydatascope.com/api/external/answers`
 
 ### Query Parameters
 
 Parameter | Default | Description
 --------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+form_id | blank | If set, only get values of one form
+  user_id | blank | If set, get values of only one user
+  start | last 7 days | set the start date range
+  end | today | set the end date range
+  location_id | blank | set the answers of onlye one location
+
+
+### Output Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+answers | Array | array with all the question of the specific form answer.
+  question_name | String | The name of the grouped question.
+  name | String | Name of the specific Question.
+  question_type | String | Type of the question.
+  subform_index | Integer | If use a subform indicate the iteration inside the subform.
+  question_id | Integer | Internal identifier of the question.
+  form_code | String | Public identifier of the form answer.
+  form_state | String | Last status of the form answer.
+  form_id | integer | Internal code of the form, fixed to all answers of that form.
+  form_answer_id | Integer | Internal code of the form answer.
+  form_name | String | Name of the form.
+  user_name | String | Name of the user.
+  created_at | Date | When the form was received.
+  latitude | Float | Latitude where the form was answered.
+  longitude | Floar | Longitude where the form was answered.
 
 <aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+Remember — user your own header Authorization
 </aside>
 
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = DataScope::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = DataScope::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
 
