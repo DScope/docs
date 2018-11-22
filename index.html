@@ -226,16 +226,10 @@
             <a href="#authentication" class="toc-h1 toc-link" data-title="authentication">Authentication</a>
           </li>
           <li>
-            <a href="#kittens" class="toc-h1 toc-link" data-title="kittens">Kittens</a>
+            <a href="#answers" class="toc-h1 toc-link" data-title="answers">Answers</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#get-all-kittens" class="toc-h2 toc-link" data-title="get-all-kittens">Get All Kittens</a>
-                  </li>
-                  <li>
-                    <a href="#get-a-specific-kitten" class="toc-h2 toc-link" data-title="get-a-specific-kitten">Get a Specific Kitten</a>
-                  </li>
-                  <li>
-                    <a href="#delete-a-specific-kitten" class="toc-h2 toc-link" data-title="delete-a-specific-kitten">Delete a Specific Kitten</a>
+                    <a href="#get-all-answers" class="toc-h2 toc-link" data-title="get-all-answers">Get All Answers</a>
                   </li>
               </ul>
           </li>
@@ -253,61 +247,66 @@
         <h1 id='introduction'>Introduction</h1>
 <p>Welcome to the DataScope API! You can use our API to access DataScope API endpoints, which can get information collected from the DataScope platform and App.</p>
 
-<p>We have language bindings in Shell, Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
+<p>We have language bindings in Shell and Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
 <h1 id='authentication'>Authentication</h1>
-<blockquote>
-<p>To authorize, use this code:</p>
-</blockquote>
-<pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+<p>DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our <a href="https://www.mydatascope.com/webhooks">developer portal</a>.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">DataScope</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre><pre class="highlight shell tab-shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"api_endpoint_here"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre>
-<blockquote>
-<p>Make sure to replace <code>meowmeowmeow</code> with your API key.</p>
-</blockquote>
-
-<p>DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our <a href="http://example.com/developers">developer portal</a>.</p>
+<p><img src="https://i.imgur.com/M4awUbe.jpg" title="Logo Title Text 1" alt="alt text" /></p>
 
 <p>DataScope expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
 
-<p><code>Authorization: meowmeowmeow</code></p>
+<p><code>Authorization: b1cd93mfls9fdmfkadn23</code></p>
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 </aside>
-<h1 id='kittens'>Kittens</h1><h2 id='get-all-kittens'>Get All Kittens</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+<h1 id='answers'>Answers</h1><h2 id='get-all-answers'>Get All Answers</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">DataScope</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://example.com/api/kittens"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/answers'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/answers"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
 </code></pre>
 <blockquote>
-<p>The above command returns JSON structured like this:</p>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:</p>
 </blockquote>
-<pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fluffums"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calico"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-  </span><span class="p">}</span><span class="w">
+<pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">  
+   </span><span class="p">{</span><span class="w">  
+      </span><span class="s2">"answers"</span><span class="p">:[</span><span class="w">  
+         </span><span class="p">{</span><span class="w">  
+            </span><span class="s2">"question_name"</span><span class="p">:</span><span class="s2">"Client Name"</span><span class="p">,</span><span class="w"> 
+            </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Client"</span><span class="p">,</span><span class="w"> 
+            </span><span class="s2">"question_value"</span><span class="p">:</span><span class="s2">"Company 1"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"question_type"</span><span class="p">:</span><span class="s2">"select_metadata"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"subform_index"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"question_id"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w"> 
+            </span><span class="s2">"form_code"</span><span class="p">:</span><span class="s2">"2342"</span><span class="p">,</span><span class="w"> 
+            </span><span class="s2">"form_state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Accepted"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"form_id"</span><span class="p">:</span><span class="mi">34543</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"form_answer_id"</span><span class="p">:</span><span class="mi">432432</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"form_name"</span><span class="p">:</span><span class="s2">"Example Form"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_state"</span><span class="p">:</span><span class="s2">"Accepted"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"user_name"</span><span class="p">:</span><span class="s2">"Example User"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"code"</span><span class="p">:</span><span class="s2">"2342"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_id"</span><span class="p">:</span><span class="mi">432</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"created_at"</span><span class="p">:</span><span class="s2">"2018-04-16T16:52:05.000Z"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_answer_id"</span><span class="p">:</span><span class="mi">257189</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"latitude"</span><span class="p">:</span><span class="mf">-33.398803</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"longitude"</span><span class="p">:</span><span class="mf">-70.559834</span><span class="w">
+   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
+
 </span></code></pre>
-<p>This endpoint retrieves all kittens.</p>
+<p>This endpoint retrieves last answers</p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code>GET http://example.com/api/kittens</code></p>
+<p><code>GET https://www.mydatascope.com/api/external/answers</code></p>
 <h3 id='query-parameters'>Query Parameters</h3>
 <table><thead>
 <tr>
@@ -317,92 +316,121 @@ You must replace <code>meowmeowmeow</code> with your personal API key.
 </tr>
 </thead><tbody>
 <tr>
-<td>include_cats</td>
-<td>false</td>
-<td>If set to true, the result will also include cats.</td>
+<td>form_id</td>
+<td>blank</td>
+<td>If set, only get values of one form</td>
 </tr>
 <tr>
-<td>available</td>
-<td>true</td>
-<td>If set to false, the result will include kittens that have already been adopted.</td>
+<td>user_id</td>
+<td>blank</td>
+<td>If set, get values of only one user</td>
+</tr>
+<tr>
+<td>start</td>
+<td>last 7 days</td>
+<td>set the start date range</td>
+</tr>
+<tr>
+<td>end</td>
+<td>today</td>
+<td>set the end date range</td>
+</tr>
+<tr>
+<td>location_id</td>
+<td>blank</td>
+<td>set the answers of onlye one location</td>
+</tr>
+</tbody></table>
+<h3 id='output-parameter'>Output Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>answers</td>
+<td>Array</td>
+<td>array with all the question of the specific form answer.</td>
+</tr>
+<tr>
+<td>question_name</td>
+<td>String</td>
+<td>The name of the grouped question.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Name of the specific Question.</td>
+</tr>
+<tr>
+<td>question_type</td>
+<td>String</td>
+<td>Type of the question.</td>
+</tr>
+<tr>
+<td>subform_index</td>
+<td>Integer</td>
+<td>If use a subform indicate the iteration inside the subform.</td>
+</tr>
+<tr>
+<td>question_id</td>
+<td>Integer</td>
+<td>Internal identifier of the question.</td>
+</tr>
+<tr>
+<td>form_code</td>
+<td>String</td>
+<td>Public identifier of the form answer.</td>
+</tr>
+<tr>
+<td>form_state</td>
+<td>String</td>
+<td>Last status of the form answer.</td>
+</tr>
+<tr>
+<td>form_id</td>
+<td>integer</td>
+<td>Internal code of the form, fixed to all answers of that form.</td>
+</tr>
+<tr>
+<td>form_answer_id</td>
+<td>Integer</td>
+<td>Internal code of the form answer.</td>
+</tr>
+<tr>
+<td>form_name</td>
+<td>String</td>
+<td>Name of the form.</td>
+</tr>
+<tr>
+<td>user_name</td>
+<td>String</td>
+<td>Name of the user.</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>Date</td>
+<td>When the form was received.</td>
+</tr>
+<tr>
+<td>latitude</td>
+<td>Float</td>
+<td>Latitude where the form was answered.</td>
+</tr>
+<tr>
+<td>longitude</td>
+<td>Floar</td>
+<td>Longitude where the form was answered.</td>
 </tr>
 </tbody></table>
 
 <aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+Remember — user your own header Authorization
 </aside>
-<h2 id='get-a-specific-kitten'>Get a Specific Kitten</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">DataScope</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://example.com/api/kittens/2"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre>
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>This endpoint retrieves a specific kitten.</p>
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-<h3 id='http-request-2'>HTTP Request</h3>
-<p><code>GET http://example.com/kittens/&lt;ID&gt;</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>ID</td>
-<td>The ID of the kitten to retrieve</td>
-</tr>
-</tbody></table>
-<h2 id='delete-a-specific-kitten'>Delete a Specific Kitten</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">DataScope</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://example.com/api/kittens/2"</span>
-  -X DELETE
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre>
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"deleted"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">":("</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>This endpoint deletes a specific kitten.</p>
-<h3 id='http-request-3'>HTTP Request</h3>
-<p><code>DELETE http://example.com/kittens/&lt;ID&gt;</code></p>
-<h3 id='url-parameters-2'>URL Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>ID</td>
-<td>The ID of the kitten to delete</td>
-</tr>
-</tbody></table>
 <h1 id='errors'>Errors</h1>
-<aside class="notice">
-This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
-</aside>
-
-<p>The Kittn API uses the following error codes:</p>
+<p>The DataScope API uses the following error codes:</p>
 
 <table><thead>
 <tr>
@@ -420,31 +448,23 @@ This error section is stored in a separate file in <code>includes/_errors.md</co
 </tr>
 <tr>
 <td>403</td>
-<td>Forbidden -- The kitten requested is hidden for administrators only.</td>
+<td>Forbidden -- The DataScope requested is hidden for administrators only.</td>
 </tr>
 <tr>
 <td>404</td>
-<td>Not Found -- The specified kitten could not be found.</td>
+<td>Not Found -- The specified request could not be found.</td>
 </tr>
 <tr>
 <td>405</td>
-<td>Method Not Allowed -- You tried to access a kitten with an invalid method.</td>
+<td>Method Not Allowed -- You tried to access with an invalid method.</td>
 </tr>
 <tr>
 <td>406</td>
 <td>Not Acceptable -- You requested a format that isn&#39;t json.</td>
 </tr>
 <tr>
-<td>410</td>
-<td>Gone -- The kitten requested has been removed from our servers.</td>
-</tr>
-<tr>
-<td>418</td>
-<td>I&#39;m a teapot.</td>
-</tr>
-<tr>
 <td>429</td>
-<td>Too Many Requests -- You&#39;re requesting too many kittens! Slow down!</td>
+<td>Too Many Requests -- You&#39;re requesting too much! Slow down!</td>
 </tr>
 <tr>
 <td>500</td>
