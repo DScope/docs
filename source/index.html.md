@@ -72,6 +72,8 @@ curl "https://www.mydatascope.com/api/external/answers"
             "question_value":"Company 1",
             "question_type":"select_metadata",
             "subform_index":0,
+            "metadata_type": "locations",
+            "metadata_id": 4234,
             "question_id":1, 
             "form_code":"2342", 
             "form_state": "Accepted",
@@ -119,6 +121,8 @@ answers | Array | array with all the question of the specific form answer.
   name | String | Name of the specific Question.
   question_type | String | Type of the question.
   subform_index | Integer | If use a subform indicate the iteration inside the subform.
+  metadata_id | Integer | Identifier of the metadata object of the List
+  metadata_type | String | Identifier of the list of metadata (location, products, and more)
   question_id | Integer | Internal identifier of the question.
   form_code | String | Public identifier of the form answer.
   form_state | String | Last status of the form answer.
