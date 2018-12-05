@@ -130,6 +130,75 @@ answers | Array | array with all the question of the specific form answer.
   latitude | Float | Latitude where the form was answered.
   longitude | Floar | Longitude where the form was answered.
 
+
+# Locations
+
+## Get All Locations
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/locations'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/locations"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+[  
+   {  
+    "id":432432,
+    "name":"Client ABC",
+    "description":"Company ABC description",
+    "code":"534534",
+    "address":"1600 Amphitheatre Parkway, Mountain View, CA",
+    "city":"SF",
+    "country":"US",
+    "latitude":37.395013,
+    "longitude":-122.084374,
+    "region":"CA",
+    "phone":"4324234",
+    "company_code":"432432",
+    "company_name":"Client ABC S.A" 
+   }
+]
+
+```
+
+This endpoint retrieves last answers
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/locations`
+
+### Output Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+id | Integer | Internal identifier of the location
+name | String | Name of the location
+description | String | Description of the location
+code | String | Code of the location
+address | Integer | Address of the location
+city | Integer | City
+country | String | Country
+latitude | String |  Latitude GPS Coordinates
+longitude | integer | Longitude GPS Coordinates
+region | Integer | Region
+phone | String | Phone
+company_code | String | Code of the company
+company_name | Date | Name of the Company
+
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
