@@ -95,7 +95,7 @@ curl "https://www.mydatascope.com/api/external/answers"
 
 ```
 
-This endpoint retrieves last answers
+This endpoint retrieves last answers (Limit 600)
 
 ### HTTP Request
 
@@ -179,7 +179,7 @@ curl "https://www.mydatascope.com/api/external/locations"
 
 ```
 
-This endpoint retrieves last answers
+This endpoint retrieves all locations
 
 ### HTTP Request
 
@@ -206,5 +206,145 @@ company_name | Date | Name of the Company
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
+
+# Lists
+
+## Get All List elements
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/metadata_objects'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => { metadata_type: 'products_examples'}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/metadata_objects"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+[  
+   {  
+      "id":505680,
+      "name":"Product 1",
+      "description":"Product Description",
+      "attribute1":"Atribute example 1",
+      "attribute2":"Attribute example 2",
+      "list_id":424324,
+      "account_id":4234234,
+      "code":"prod0",
+      "created_at":"2015-12-03T17:48:47.000-02:00",
+      "updated_at":"2015-12-03T17:48:47.000-02:00"
+   },
+   {  
+      "id":505689,
+      "name":"Product 2",
+      "description":"Product Description",
+      "attribute1":"Atribute example 1",
+      "attribute2":"Attribute example 2",
+      "list_id":424324,
+      "account_id":4234234,
+      "code":"prod9",
+      "created_at":"2018-12-03T17:48:47.000-02:00",
+      "updated_at":"2018-12-03T17:48:47.000-02:00"
+   }
+]
+
+
+```
+
+This endpoint retrieves all list items of a specific list
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/metadata_objects`
+
+### Query Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+metadata_type | blank | Internal code to identify the list (products, locations and more)
+
+### Output Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+name | String | Name of the element of the list
+description | String | Description of the element of the list
+attribute1 | String | Custom attribute of the element of the list
+attribute2 | String | Custom attribute of the element of the list
+created_at | Datetime | Date when the list element was created
+updated_at | Datetime | Date when the list element was updated
+
+## Get an element of the list
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/metadata_object'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => { metadata_type: 'products_examples', metadata_id: 4324324}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/metadata_object"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{  
+  "id":505680,
+  "name":"Product 1",
+  "description":"Product Description",
+  "attribute1":"Atribute example 1",
+  "attribute2":"Attribute example 2",
+  "list_id":424324,
+  "account_id":4234234,
+  "code":"prod0",
+  "created_at":"2015-12-03T17:48:47.000-02:00",
+  "updated_at":"2015-12-03T17:48:47.000-02:00"
+}
+
+
+```
+
+This endpoint retrieves a specific element of the list
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/metadata_object`
+
+### Query Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+metadata_type | blank | Internal code to identify the list (products, locations and more)
+metadata_id | blank | Internal identifier of the element of the list
+
+### Output Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+name | String | Name of the element of the list
+description | String | Description of the element of the list
+attribute1 | String | Custom attribute of the element of the list
+attribute2 | String | Custom attribute of the element of the list
+created_at | Datetime | Date when the list element was created
+updated_at | Datetime | Date when the list element was updated
+
 
 
