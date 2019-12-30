@@ -346,5 +346,69 @@ attribute2 | String | Custom attribute of the element of the list
 created_at | Datetime | Date when the list element was created
 updated_at | Datetime | Date when the list element was updated
 
+# Notifications
+
+## List Last notifications
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/notifications'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => { start: '10/12/2019', end: '30/12/2019'}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/notifications"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+[  
+   {  
+      "id":2345,
+      "type":"PDF",
+      "url":"https://www.mydatascope.com/pdf_url_example",
+      "form_name":"Form Name",
+      "form_code":"25",
+      "user":"user@email.com",
+      "created_at":"2019-12-03T17:48:47.000-02:00"
+   }]
+
+
+```
+
+This endpoint retrieves all list items of a specific list
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/notifications`
+
+### Query Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+start | last 7 days | set the start date range
+end | today | set the end date range
+
+### Output Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+id | String | Identifier of the notification
+type | String | Type of notification: PDF or Excel
+url | String | URL of the notified file
+form_name | String | Name of the form
+form_code | String | Code of the form
+user | String | Name of the user
+created_at | Datetime | Date when the list element was created
+updated_at | Datetime | Date when the list element was updated
+
 
 
