@@ -41,7 +41,86 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 
 # Answers
 
-## Get All Answers
+## Get All Answers (v2)
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/v2/answers'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/v2/answers"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+[  
+   {  
+      "form_name":"Example Form",
+      "form_state":"Accepted",
+      "user_name":"Example User",
+      "user_identifier":"user@email.com",
+      "code":"2342",
+      "form_id":432,
+      "created_at":"2018-04-16T16:52:05.000Z",
+      "form_answer_id":257189,
+      "latitude":-33.398803,
+      "longitude":-70.559834,
+      "[question_name1]": "[question_value1]",
+      "[question_name2]": "[question_value2]",
+      "[question_name3]": "[question_value3]"
+   }
+]
+
+```
+
+This endpoint retrieves last answers (Limit 200)
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/v2/answers`
+
+### Query Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+form_id | blank | If set, only get values of one form
+  user_id | blank | If set, get values of only one user
+  start | last 7 days | set the start date range
+  end | today | set the end date range (Max range is 90 days)
+  location_id | blank | set the answers of onlye one location
+  date_modified | false | Bring forms by modification date or just new ones
+  limit | 200 | Number of submission, default and max is 200 
+  offset | 0 | pagination to bring more than 200 submissions in some date range
+
+
+### Output Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+  form_code | String | Public identifier of the form answer.
+  form_state | String | Last status of the form answer.
+  form_id | integer | Internal code of the form, fixed to all answers of that form.
+  form_answer_id | Integer | Internal code of the form answer.
+  form_name | String | Name of the form.
+  user_name | String | Name of the user.
+  created_at | Date | When the form was received.
+  latitude | Float | Latitude where the form was answered.
+  longitude | Floar | Longitude where the form was answered.
+  question_name | (String, Date, Number) | String with each question name and value.
+
+
+
+## Get All Answers (Legacy)
 
 ```ruby
 require 'rest-client'
