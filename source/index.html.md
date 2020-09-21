@@ -100,7 +100,7 @@ form_id | blank | If set, only get values of one form
   location_id | blank | set the answers of onlye one location
   date_modified | false | Bring forms by modification date or just new ones
   limit | 200 | Number of submission, default and max is 200 
-  offset | 0 | pagination to bring more than 200 submissions in some date range
+  offset | 0 | pagination to bring next 200 submissions in some date range
 
 
 ### Output Parameter
