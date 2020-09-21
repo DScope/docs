@@ -41,7 +41,7 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 
 # Answers
 
-## Get All Answers (v2)
+## Get All Answers
 
 ```ruby
 require 'rest-client'
