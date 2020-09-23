@@ -93,7 +93,7 @@ This endpoint retrieves last answers (Limit 200)
 
 Parameter | Default | Description
 --------- | ------- | -----------
-form_id | blank | If set, only get values of one form
+form_id | blank | If set, only get values of one form. This ID is in the URL at the moment of modify one form. eg. https://mydatascope.com/task_forms/XXXX/edit
   user_id | blank | If set, get values of only one user
   start | last 7 days | set the start date range
   end | today | set the end date range (Max range is 90 days)
@@ -115,7 +115,7 @@ Parameter | Type | Description
   user_name | String | Name of the user.
   created_at | Date | When the form was received.
   latitude | Float | Latitude where the form was answered.
-  longitude | Floar | Longitude where the form was answered.
+  longitude | Float | Longitude where the form was answered.
   question_name | (String, Date, Number) | String with each question name and value.
 
 
@@ -489,5 +489,41 @@ user | String | Name of the user
 created_at | Datetime | Date when the list element was created
 updated_at | Datetime | Date when the list element was updated
 
+# Webhooks
 
+Sometimes people call webhooks reverse APIs, but perhaps more accurately a webhook lets you skip a step. With most APIs there’s a request followed by a response. No request is required for a webhook, it just sends the data when it’s available.
 
+To use a webhook, you register a URL with the company providing the service. That URL is a place within your application that will accept the data and do something with it. In some cases, you can tell the provider the situations when you’d like to receive data. Whenever there’s something new, the webhook will send it to your URL.
+
+DataScope Webhook notifications are sent in an HTTP POST request, and their contents (containing the response data) are in JSON format.
+
+## Configuration
+
+To configure the webhook you need to go to the Integrations section and then Webhooks and click on [New Webhook](https://mydatascope.com/webhooks/new).
+
+![New Webhook](https://data-scope.s3-us-west-2.amazonaws.com/images/other/Captura+de+pantalla+2020-09-08+a+la(s)+13.23.28.png "New Webhook")
+
+## Output
+
+> The webhook will return a JSON with this structure:
+
+```json
+[{
+  "form_name": "[Form Name] (String)",
+  "code": "[Code Form ID] (String)",
+  "latitude": "[latitude] (Float)",
+  "longitude": "[longitude] (Float)",
+  "[question_name][question_id]": {
+    "name": "[Question name] (String)",
+    "label": "[Section Name] (String)",
+    "row" "[Nº repeatable field] (Integer) Default: null",
+    "value": "[Value of the answer] (String)",
+    "type": "[Type of question]*",
+    "id": "[Internal ID of the question] (Integer)"
+  }
+}]
+```
+
+<aside class="notice">
+TIP: It will only start sending information for the new forms done after the integration. 
+</aside>
