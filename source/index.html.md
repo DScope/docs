@@ -120,7 +120,7 @@ Parameter | Type | Description
 
 
 
-## Get All Answers (Legacy)
+## Get All Answers with metadata
 
 ```ruby
 require 'rest-client'
@@ -209,9 +209,11 @@ answers | Array | array with all the question of the specific form answer.
   form_answer_id | Integer | Internal code of the form answer.
   form_name | String | Name of the form.
   user_name | String | Name of the user.
-  created_at | Date | When the form was received.
+  created_at | Datetime | When the form was received.
   latitude | Float | Latitude where the form was answered.
   longitude | Floar | Longitude where the form was answered.
+  finished | Boolean | Identify if synchronization process finished.
+  updated_at | Datetime | Last date and time When the form was updated
 
 
 # Locations
