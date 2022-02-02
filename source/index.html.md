@@ -225,6 +225,54 @@ answers | Array | array with all the question of the specific form answer.
   assign_location_description | String | Description of the location assigned
   assign_location_code" | String | Code of the location assigned
 
+## Change Answer
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/change_form_answer'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/change_form_answer"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+[  
+   {  
+      "status": "ok",
+      "form_answer": {
+        "id": "4325235",
+        "form_id": "6344234"
+      }
+   }
+]
+
+```
+
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/change_form_answer`
+
+### Query Parameters
+
+Parameter |  Description
+--------- | -----------
+form_name | name of ID of the form
+code | blank | Code of the response
+question_name | Name of the question to change
+question_value | Value of the question to change
+
 
 # Locations
 
