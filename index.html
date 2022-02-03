@@ -234,6 +234,9 @@
                   <li>
                     <a href="#get-all-answers-with-metadata" class="toc-h2 toc-link" data-title="get-all-answers-with-metadata">Get All Answers with metadata</a>
                   </li>
+                  <li>
+                    <a href="#change-answer" class="toc-h2 toc-link" data-title="change-answer">Change Answer</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -671,6 +674,57 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 <td> Code of the location assigned</td>
 </tr>
 </tbody></table>
+<h2 id='change-answer'>Change Answer</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/change_form_answer'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/change_form_answer"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">  
+   </span><span class="p">{</span><span class="w">  
+      </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_answer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4325235"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"form_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6344234"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+
+</span></code></pre><h3 id='http-request-3'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/change_form_answer</code></p>
+<h3 id='query-parameters-3'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>form_name</td>
+<td>name of ID of the form</td>
+</tr>
+<tr>
+<td>code</td>
+<td>blank</td>
+</tr>
+<tr>
+<td>question_name</td>
+<td>Name of the question to change</td>
+</tr>
+<tr>
+<td>question_value</td>
+<td>Value of the question to change</td>
+</tr>
+</tbody></table>
 <h1 id='locations'>Locations</h1><h2 id='get-all-locations'>Get All Locations</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
@@ -706,7 +760,7 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 
 </span></code></pre>
 <p>This endpoint retrieves all locations</p>
-<h3 id='http-request-3'>HTTP Request</h3>
+<h3 id='http-request-4'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='output-parameter-3'>Output Parameter</h3>
 <table><thead>
@@ -831,9 +885,9 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-4'>HTTP Request</h3>
+<h3 id='http-request-5'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_objects</code></p>
-<h3 id='query-parameters-3'>Query Parameters</h3>
+<h3 id='query-parameters-4'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -917,9 +971,9 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves a specific element of the list</p>
-<h3 id='http-request-5'>HTTP Request</h3>
+<h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_object</code></p>
-<h3 id='query-parameters-4'>Query Parameters</h3>
+<h3 id='query-parameters-5'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1003,9 +1057,9 @@ Remember — user your own header Authorization
    </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 
-</span></code></pre><h3 id='http-request-6'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-7'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/assign_task</code></p>
-<h3 id='query-parameters-5'>Query Parameters</h3>
+<h3 id='query-parameters-6'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1122,9 +1176,9 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-7'>HTTP Request</h3>
+<h3 id='http-request-8'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/notifications</code></p>
-<h3 id='query-parameters-6'>Query Parameters</h3>
+<h3 id='query-parameters-7'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
