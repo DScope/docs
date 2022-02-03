@@ -262,7 +262,7 @@ curl "https://www.mydatascope.com/api/external/change_form_answer"
 
 ### HTTP Request
 
-`GET https://www.mydatascope.com/api/external/change_form_answer`
+`POST https://www.mydatascope.com/api/external/change_form_answer`
 
 ### Query Parameters
 
