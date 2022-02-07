@@ -269,7 +269,7 @@ curl "https://www.mydatascope.com/api/external/change_form_answer"
 Parameter |  Description
 --------- | -----------
 form_name | name of ID of the form
-code | blank | Code of the response
+form_code | Code of the response
 question_name | Name of the question to change
 question_value | Value of the question to change
 
