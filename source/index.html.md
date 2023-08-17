@@ -616,6 +616,71 @@ user | String | Name of the user
 created_at | Datetime | Date when the list element was created
 updated_at | Datetime | Date when the list element was updated
 
+# Files
+
+## List Last generated files
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/files'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => { start: '10/12/2019', end: '30/12/2019'}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/files"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+[  
+   {  
+      "id":2345,
+      "type":"PDF",
+      "url":"https://www.mydatascope.com/pdf_url_example",
+      "form_name":"Form Name",
+      "form_code":"25",
+      "user":"user@email.com"
+   }]
+
+
+```
+
+This endpoint retrieves all list items of a specific list
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/files`
+
+### Query Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+start | last 7 days | set the start date range
+end | today | set the end date range
+
+### Output Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+id | String | Identifier of the notification
+type | String | Type of notification: PDF or Excel
+url | String | URL of the notified file
+form_name | String | Name of the form
+form_code | String | Code of the form
+user | String | Name of the user
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
 # Webhooks
 
 Sometimes people call webhooks reverse APIs, but perhaps more accurately a webhook lets you skip a step. With most APIs there’s a request followed by a response. No request is required for a webhook, it just sends the data when it’s available.
