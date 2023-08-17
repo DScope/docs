@@ -1250,6 +1250,66 @@ Remember — user your own header Authorization
 <td>Date when the list element was updated</td>
 </tr>
 </tbody></table>
+<h3 id='http-request-9'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/files</code></p>
+<h3 id='query-parameters-8'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>start</td>
+<td>last 7 days</td>
+<td>set the start date range</td>
+</tr>
+<tr>
+<td>end</td>
+<td>today</td>
+<td>set the end date range</td>
+</tr>
+</tbody></table>
+<h3 id='output-parameter-7'>Output Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>String</td>
+<td>Identifier of the notification</td>
+</tr>
+<tr>
+<td>type</td>
+<td>String</td>
+<td>Type of notification: PDF or Excel</td>
+</tr>
+<tr>
+<td>url</td>
+<td>String</td>
+<td>URL of the notified file</td>
+</tr>
+<tr>
+<td>form_name</td>
+<td>String</td>
+<td>Name of the form</td>
+</tr>
+<tr>
+<td>form_code</td>
+<td>String</td>
+<td>Code of the form</td>
+</tr>
+<tr>
+<td>user</td>
+<td>String</td>
+<td>Name of the user</td>
+</tr>
+</tbody></table>
 <h1 id='webhooks'>Webhooks</h1>
 <p>Sometimes people call webhooks reverse APIs, but perhaps more accurately a webhook lets you skip a step. With most APIs there’s a request followed by a response. No request is required for a webhook, it just sends the data when it’s available.</p>
 
