@@ -346,6 +346,216 @@ company_name | Date | Name of the Company
 Remember — user your own header Authorization
 </aside>
 
+## Create a Location
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/locations'
+response = RestClient.post url, {
+    name: "Test Location",
+    description: "This is a test location created by API",
+    code: "LOC_TEST01",
+    company_code: "DSCODE_1",
+    company_name: "Datascope Home",
+    address: "P. Sherman, 42 Wallaby Way",
+    city: "Sydney",
+    country: "Australia",
+    latitude: -33.673992,
+    longitude: 151.285829,
+    phone: "+18888888",
+    email: "location@test.com"
+}.to_json, {
+ :Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/locations"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -X POST
+  -d '{
+    "name": "Test Location",
+    "description": "This is a test location created by API",
+    "code": "LOC_TEST01",
+    "company_code": "DSCODE_1",
+    "company_name": "Datascope Home",
+    "address": "P. Sherman, 42 Wallaby Way",
+    "city": "Sydney",
+    "country": "Australia",
+    "latitude": -33.673992,
+    "longitude": 151.285829,
+    "phone": "+18888888",
+    "email": "location@test.com"
+  }'
+```
+
+> When successfull the above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+    "id": "123456",
+    "name": "Test Location",
+    "description": "This is a test location created by API",
+    "code": "LOC_TEST01",
+    "company_code": "DSCODE_1",
+    "company_name": "Datascope Home",
+    "address": "P. Sherman, 42 Wallaby Way",
+    "city": "Sydney",
+    "country": "Australia",
+    "latitude": -33.673992,
+    "longitude": 151.285829,
+    "phone": "+18888888",
+    "email": "location@test.com"
+}
+
+```
+
+This endpoint create a location
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/locations`
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+name | String | Name of the location
+description | String | Description of the location
+code | String | Code of the location
+address | Integer | Address of the location
+city | Integer | City
+country | String | Country
+latitude | String |  Latitude GPS Coordinates
+longitude | integer | Longitude GPS Coordinates
+phone | String | Phone
+company_code | String | Code of the company
+company_name | Date | Name of the Company
+email | String | Email of the Company
+
+### Return Codes:
+
+```
+201: Successfull
+403: Forbidden
+422: Wrong parameters, check documentation
+```
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+
+## Create a Location
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/locations/123456'
+response = RestClient.post url, {
+    name: "Test Location",
+    description: "This is a test location created by API",
+    code: "LOC_TEST01",
+    company_code: "DSCODE_1",
+    company_name: "Datascope Home",
+    address: "P. Sherman, 42 Wallaby Way",
+    city: "Sydney",
+    country: "Australia",
+    latitude: -33.673992,
+    longitude: 151.285829,
+    phone: "+18888888",
+    email: "location@test.com"
+}.to_json, {
+ :Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/locations/123456"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -X POST
+  -d '{
+    "name": "Test Location",
+    "description": "This is a test location created by API",
+    "code": "LOC_TEST01",
+    "company_code": "DSCODE_1",
+    "company_name": "Datascope Home",
+    "address": "P. Sherman, 42 Wallaby Way",
+    "city": "Sydney",
+    "country": "Australia",
+    "latitude": -33.673992,
+    "longitude": 151.285829,
+    "phone": "+18888888",
+    "email": "location@test.com"
+  }'
+```
+
+> When successfull the above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+    "id": "123456",
+    "name": "Test Location",
+    "description": "This is a test location created by API",
+    "code": "LOC_TEST01",
+    "company_code": "DSCODE_1",
+    "company_name": "Datascope Home",
+    "address": "P. Sherman, 42 Wallaby Way",
+    "city": "Sydney",
+    "country": "Australia",
+    "latitude": -33.673992,
+    "longitude": 151.285829,
+    "phone": "+18888888",
+    "email": "location@test.com"
+}
+
+```
+
+This endpoint create a location
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/locations`
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+name | String | Name of the location
+description | String | Description of the location
+code | String | Code of the location
+address | Integer | Address of the location
+city | Integer | City
+country | String | Country
+latitude | String |  Latitude GPS Coordinates
+longitude | integer | Longitude GPS Coordinates
+phone | String | Phone
+company_code | String | Code of the company
+company_name | Date | Name of the Company
+email | String | Email of the Company
+
+### Return Codes:
+
+```
+200: Successfull
+403: Forbidden
+404: Not found
+422: Wrong parameters, check documentation
+```
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+
+
 # Lists
 
 ## Get All List elements
