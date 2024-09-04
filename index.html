@@ -245,6 +245,12 @@
                   <li>
                     <a href="#get-all-locations" class="toc-h2 toc-link" data-title="get-all-locations">Get All Locations</a>
                   </li>
+                  <li>
+                    <a href="#create-a-location" class="toc-h2 toc-link" data-title="create-a-location">Create a Location</a>
+                  </li>
+                  <li>
+                    <a href="#create-a-location-2" class="toc-h2 toc-link" data-title="create-a-location">Create a Location</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -852,6 +858,285 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
+<h2 id='create-a-location'>Create a Location</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/locations'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+    <span class="ss">name: </span><span class="s2">"Test Location"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span>
+    <span class="ss">code: </span><span class="s2">"LOC_TEST01"</span><span class="p">,</span>
+    <span class="ss">company_code: </span><span class="s2">"DSCODE_1"</span><span class="p">,</span>
+    <span class="ss">company_name: </span><span class="s2">"Datascope Home"</span><span class="p">,</span>
+    <span class="ss">address: </span><span class="s2">"P. Sherman, 42 Wallaby Way"</span><span class="p">,</span>
+    <span class="ss">city: </span><span class="s2">"Sydney"</span><span class="p">,</span>
+    <span class="ss">country: </span><span class="s2">"Australia"</span><span class="p">,</span>
+    <span class="ss">latitude: </span><span class="o">-</span><span class="mi">33</span><span class="o">.</span><span class="mi">673992</span><span class="p">,</span>
+    <span class="ss">longitude: </span><span class="mi">151</span><span class="o">.</span><span class="mi">285829</span><span class="p">,</span>
+    <span class="ss">phone: </span><span class="s2">"+18888888"</span><span class="p">,</span>
+    <span class="ss">email: </span><span class="s2">"location@test.com"</span>
+<span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
+ <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/locations"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+  -X POST
+  -d <span class="s1">'{
+    "name": "Test Location",
+    "description": "This is a test location created by API",
+    "code": "LOC_TEST01",
+    "company_code": "DSCODE_1",
+    "company_name": "Datascope Home",
+    "address": "P. Sherman, 42 Wallaby Way",
+    "city": "Sydney",
+    "country": "Australia",
+    "latitude": -33.673992,
+    "longitude": 151.285829,
+    "phone": "+18888888",
+    "email": "location@test.com"
+  }'</span>
+</code></pre>
+<blockquote>
+<p>When successfull the above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test Location"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LOC_TEST01"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"company_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DSCODE_1"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"company_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Datascope Home"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"P. Sherman, 42 Wallaby Way"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sydney"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"country"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Australia"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-33.673992</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">151.285829</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"+18888888"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location@test.com"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre>
+<p>This endpoint create a location</p>
+<h3 id='http-request-5'>HTTP Request</h3>
+<p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
+<h3 id='input-parameter'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Name of the location</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Description of the location</td>
+</tr>
+<tr>
+<td>code</td>
+<td>String</td>
+<td>Code of the location</td>
+</tr>
+<tr>
+<td>address</td>
+<td>Integer</td>
+<td>Address of the location</td>
+</tr>
+<tr>
+<td>city</td>
+<td>Integer</td>
+<td>City</td>
+</tr>
+<tr>
+<td>country</td>
+<td>String</td>
+<td>Country</td>
+</tr>
+<tr>
+<td>latitude</td>
+<td>String</td>
+<td>Latitude GPS Coordinates</td>
+</tr>
+<tr>
+<td>longitude</td>
+<td>integer</td>
+<td>Longitude GPS Coordinates</td>
+</tr>
+<tr>
+<td>phone</td>
+<td>String</td>
+<td>Phone</td>
+</tr>
+<tr>
+<td>company_code</td>
+<td>String</td>
+<td>Code of the company</td>
+</tr>
+<tr>
+<td>company_name</td>
+<td>Date</td>
+<td>Name of the Company</td>
+</tr>
+<tr>
+<td>email</td>
+<td>String</td>
+<td>Email of the Company</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes'>Return Codes:</h3><pre class="highlight plaintext"><code>201: Successfull
+403: Forbidden
+422: Wrong parameters, check documentation
+</code></pre>
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+<h2 id='create-a-location-2'>Create a Location</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/locations/123456'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+    <span class="ss">name: </span><span class="s2">"Test Location"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span>
+    <span class="ss">code: </span><span class="s2">"LOC_TEST01"</span><span class="p">,</span>
+    <span class="ss">company_code: </span><span class="s2">"DSCODE_1"</span><span class="p">,</span>
+    <span class="ss">company_name: </span><span class="s2">"Datascope Home"</span><span class="p">,</span>
+    <span class="ss">address: </span><span class="s2">"P. Sherman, 42 Wallaby Way"</span><span class="p">,</span>
+    <span class="ss">city: </span><span class="s2">"Sydney"</span><span class="p">,</span>
+    <span class="ss">country: </span><span class="s2">"Australia"</span><span class="p">,</span>
+    <span class="ss">latitude: </span><span class="o">-</span><span class="mi">33</span><span class="o">.</span><span class="mi">673992</span><span class="p">,</span>
+    <span class="ss">longitude: </span><span class="mi">151</span><span class="o">.</span><span class="mi">285829</span><span class="p">,</span>
+    <span class="ss">phone: </span><span class="s2">"+18888888"</span><span class="p">,</span>
+    <span class="ss">email: </span><span class="s2">"location@test.com"</span>
+<span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
+ <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/locations/123456"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+  -X POST
+  -d <span class="s1">'{
+    "name": "Test Location",
+    "description": "This is a test location created by API",
+    "code": "LOC_TEST01",
+    "company_code": "DSCODE_1",
+    "company_name": "Datascope Home",
+    "address": "P. Sherman, 42 Wallaby Way",
+    "city": "Sydney",
+    "country": "Australia",
+    "latitude": -33.673992,
+    "longitude": 151.285829,
+    "phone": "+18888888",
+    "email": "location@test.com"
+  }'</span>
+</code></pre>
+<blockquote>
+<p>When successfull the above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test Location"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LOC_TEST01"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"company_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DSCODE_1"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"company_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Datascope Home"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"P. Sherman, 42 Wallaby Way"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sydney"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"country"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Australia"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-33.673992</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">151.285829</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"+18888888"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location@test.com"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre>
+<p>This endpoint create a location</p>
+<h3 id='http-request-6'>HTTP Request</h3>
+<p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
+<h3 id='input-parameter-2'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Name of the location</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Description of the location</td>
+</tr>
+<tr>
+<td>code</td>
+<td>String</td>
+<td>Code of the location</td>
+</tr>
+<tr>
+<td>address</td>
+<td>Integer</td>
+<td>Address of the location</td>
+</tr>
+<tr>
+<td>city</td>
+<td>Integer</td>
+<td>City</td>
+</tr>
+<tr>
+<td>country</td>
+<td>String</td>
+<td>Country</td>
+</tr>
+<tr>
+<td>latitude</td>
+<td>String</td>
+<td>Latitude GPS Coordinates</td>
+</tr>
+<tr>
+<td>longitude</td>
+<td>integer</td>
+<td>Longitude GPS Coordinates</td>
+</tr>
+<tr>
+<td>phone</td>
+<td>String</td>
+<td>Phone</td>
+</tr>
+<tr>
+<td>company_code</td>
+<td>String</td>
+<td>Code of the company</td>
+</tr>
+<tr>
+<td>company_name</td>
+<td>Date</td>
+<td>Name of the Company</td>
+</tr>
+<tr>
+<td>email</td>
+<td>String</td>
+<td>Email of the Company</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-2'>Return Codes:</h3><pre class="highlight plaintext"><code>200: Successfull
+403: Forbidden
+404: Not found
+422: Wrong parameters, check documentation
+</code></pre>
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
 <h1 id='lists'>Lists</h1><h2 id='get-all-list-elements'>Get All List elements</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
@@ -897,7 +1182,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-5'>HTTP Request</h3>
+<h3 id='http-request-7'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_objects</code></p>
 <h3 id='query-parameters-4'>Query Parameters</h3>
 <table><thead>
@@ -983,7 +1268,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves a specific element of the list</p>
-<h3 id='http-request-6'>HTTP Request</h3>
+<h3 id='http-request-8'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_object</code></p>
 <h3 id='query-parameters-5'>Query Parameters</h3>
 <table><thead>
@@ -1069,7 +1354,7 @@ Remember — user your own header Authorization
    </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 
-</span></code></pre><h3 id='http-request-7'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-9'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/assign_task</code></p>
 <h3 id='query-parameters-6'>Query Parameters</h3>
 <table><thead>
@@ -1188,7 +1473,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-8'>HTTP Request</h3>
+<h3 id='http-request-10'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/notifications</code></p>
 <h3 id='query-parameters-7'>Query Parameters</h3>
 <table><thead>
@@ -1286,7 +1571,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-9'>HTTP Request</h3>
+<h3 id='http-request-11'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/files</code></p>
 <h3 id='query-parameters-8'>Query Parameters</h3>
 <table><thead>
