@@ -249,7 +249,7 @@
                     <a href="#create-a-location" class="toc-h2 toc-link" data-title="create-a-location">Create a Location</a>
                   </li>
                   <li>
-                    <a href="#create-a-location-2" class="toc-h2 toc-link" data-title="create-a-location">Create a Location</a>
+                    <a href="#update-a-location" class="toc-h2 toc-link" data-title="update-a-location">Update a Location</a>
                   </li>
               </ul>
           </li>
@@ -261,6 +261,18 @@
                   </li>
                   <li>
                     <a href="#get-an-element-of-the-list" class="toc-h2 toc-link" data-title="get-an-element-of-the-list">Get an element of the list</a>
+                  </li>
+                  <li>
+                    <a href="#create-a-list-element" class="toc-h2 toc-link" data-title="create-a-list-element">Create a List Element</a>
+                  </li>
+                  <li>
+                    <a href="#update-a-list-element" class="toc-h2 toc-link" data-title="update-a-list-element">Update a List Element</a>
+                  </li>
+                  <li>
+                    <a href="#create-a-empty-list" class="toc-h2 toc-link" data-title="create-a-empty-list">Create a empty List</a>
+                  </li>
+                  <li>
+                    <a href="#update-a-list" class="toc-h2 toc-link" data-title="update-a-list">Update a List</a>
                   </li>
               </ul>
           </li>
@@ -863,6 +875,7 @@ Remember — user your own header Authorization
 
 <span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/locations'</span>
 <span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="ss">location: </span><span class="p">{</span>
     <span class="ss">name: </span><span class="s2">"Test Location"</span><span class="p">,</span>
     <span class="ss">description: </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span>
     <span class="ss">code: </span><span class="s2">"LOC_TEST01"</span><span class="p">,</span>
@@ -875,6 +888,7 @@ Remember — user your own header Authorization
     <span class="ss">longitude: </span><span class="mi">151</span><span class="o">.</span><span class="mi">285829</span><span class="p">,</span>
     <span class="ss">phone: </span><span class="s2">"+18888888"</span><span class="p">,</span>
     <span class="ss">email: </span><span class="s2">"location@test.com"</span>
+  <span class="p">}</span>
 <span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
  <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
  <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
@@ -884,18 +898,20 @@ Remember — user your own header Authorization
   -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
   -X POST
   -d <span class="s1">'{
-    "name": "Test Location",
-    "description": "This is a test location created by API",
-    "code": "LOC_TEST01",
-    "company_code": "DSCODE_1",
-    "company_name": "Datascope Home",
-    "address": "P. Sherman, 42 Wallaby Way",
-    "city": "Sydney",
-    "country": "Australia",
-    "latitude": -33.673992,
-    "longitude": 151.285829,
-    "phone": "+18888888",
-    "email": "location@test.com"
+    "location": {
+      "name": "Test Location",
+      "description": "This is a test location created by API",
+      "code": "LOC_TEST01",
+      "company_code": "DSCODE_1",
+      "company_name": "Datascope Home",
+      "address": "P. Sherman, 42 Wallaby Way",
+      "city": "Sydney",
+      "country": "Australia",
+      "latitude": -33.673992,
+      "longitude": 151.285829,
+      "phone": "+18888888",
+      "email": "location@test.com"
+    }
   }'</span>
 </code></pre>
 <blockquote>
@@ -990,30 +1006,49 @@ Remember — user your own header Authorization
 <td>Email of the Company</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes'>Return Codes:</h3><pre class="highlight plaintext"><code>201: Successfull
-403: Forbidden
-422: Wrong parameters, check documentation
-</code></pre>
+<h3 id='return-codes'>Return Codes:</h3>
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>201</td>
+<td>Successfull</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Wrong parameters, check documentation</td>
+</tr>
+</tbody></table>
+
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
-<h2 id='create-a-location-2'>Create a Location</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<h2 id='update-a-location'>Update a Location</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
 <span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/locations/123456'</span>
 <span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
-    <span class="ss">name: </span><span class="s2">"Test Location"</span><span class="p">,</span>
-    <span class="ss">description: </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span>
-    <span class="ss">code: </span><span class="s2">"LOC_TEST01"</span><span class="p">,</span>
-    <span class="ss">company_code: </span><span class="s2">"DSCODE_1"</span><span class="p">,</span>
-    <span class="ss">company_name: </span><span class="s2">"Datascope Home"</span><span class="p">,</span>
-    <span class="ss">address: </span><span class="s2">"P. Sherman, 42 Wallaby Way"</span><span class="p">,</span>
-    <span class="ss">city: </span><span class="s2">"Sydney"</span><span class="p">,</span>
-    <span class="ss">country: </span><span class="s2">"Australia"</span><span class="p">,</span>
-    <span class="ss">latitude: </span><span class="o">-</span><span class="mi">33</span><span class="o">.</span><span class="mi">673992</span><span class="p">,</span>
-    <span class="ss">longitude: </span><span class="mi">151</span><span class="o">.</span><span class="mi">285829</span><span class="p">,</span>
-    <span class="ss">phone: </span><span class="s2">"+18888888"</span><span class="p">,</span>
-    <span class="ss">email: </span><span class="s2">"location@test.com"</span>
+    <span class="ss">location: </span><span class="p">{</span>
+      <span class="ss">name: </span><span class="s2">"Test Location"</span><span class="p">,</span>
+      <span class="ss">description: </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span>
+      <span class="ss">code: </span><span class="s2">"LOC_TEST01"</span><span class="p">,</span>
+      <span class="ss">company_code: </span><span class="s2">"DSCODE_1"</span><span class="p">,</span>
+      <span class="ss">company_name: </span><span class="s2">"Datascope Home"</span><span class="p">,</span>
+      <span class="ss">address: </span><span class="s2">"P. Sherman, 42 Wallaby Way"</span><span class="p">,</span>
+      <span class="ss">city: </span><span class="s2">"Sydney"</span><span class="p">,</span>
+      <span class="ss">country: </span><span class="s2">"Australia"</span><span class="p">,</span>
+      <span class="ss">latitude: </span><span class="o">-</span><span class="mi">33</span><span class="o">.</span><span class="mi">673992</span><span class="p">,</span>
+      <span class="ss">longitude: </span><span class="mi">151</span><span class="o">.</span><span class="mi">285829</span><span class="p">,</span>
+      <span class="ss">phone: </span><span class="s2">"+18888888"</span><span class="p">,</span>
+      <span class="ss">email: </span><span class="s2">"location@test.com"</span>
+    <span class="p">}</span>
 <span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
  <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
  <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
@@ -1023,18 +1058,20 @@ Remember — user your own header Authorization
   -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
   -X POST
   -d <span class="s1">'{
-    "name": "Test Location",
-    "description": "This is a test location created by API",
-    "code": "LOC_TEST01",
-    "company_code": "DSCODE_1",
-    "company_name": "Datascope Home",
-    "address": "P. Sherman, 42 Wallaby Way",
-    "city": "Sydney",
-    "country": "Australia",
-    "latitude": -33.673992,
-    "longitude": 151.285829,
-    "phone": "+18888888",
-    "email": "location@test.com"
+    "location": {
+      "name": "Test Location",
+      "description": "This is a test location created by API",
+      "code": "LOC_TEST01",
+      "company_code": "DSCODE_1",
+      "company_name": "Datascope Home",
+      "address": "P. Sherman, 42 Wallaby Way",
+      "city": "Sydney",
+      "country": "Australia",
+      "latitude": -33.673992,
+      "longitude": 151.285829,
+      "phone": "+18888888",
+      "email": "location@test.com"
+    }
   }'</span>
 </code></pre>
 <blockquote>
@@ -1057,7 +1094,7 @@ Remember — user your own header Authorization
 </span><span class="p">}</span><span class="w">
 
 </span></code></pre>
-<p>This endpoint create a location</p>
+<p>This endpoint updates a location</p>
 <h3 id='http-request-6'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='input-parameter-2'>Input Parameter</h3>
@@ -1129,11 +1166,27 @@ Remember — user your own header Authorization
 <td>Email of the Company</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-2'>Return Codes:</h3><pre class="highlight plaintext"><code>200: Successfull
-403: Forbidden
-404: Not found
-422: Wrong parameters, check documentation
-</code></pre>
+<h3 id='return-codes-2'>Return Codes:</h3>
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>201</td>
+<td>Successfull</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Wrong parameters, check documentation</td>
+</tr>
+</tbody></table>
+
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
@@ -1328,6 +1381,424 @@ Remember — user your own header Authorization
 <td>Date when the list element was updated</td>
 </tr>
 </tbody></table>
+<h2 id='create-a-list-element'>Create a List Element</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/metadata_object?metadata_type=LIST_TEST2'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="ss">list_object: </span><span class="p">{</span>
+    <span class="ss">name: </span><span class="s2">"Test List Object 2"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"This is a test Object created by API"</span><span class="p">,</span>
+    <span class="ss">code: </span><span class="s2">"LIST_OBJECT_TEST2"</span><span class="p">,</span>
+    <span class="ss">attribute1: </span><span class="s2">"ATTR1"</span><span class="p">,</span>
+    <span class="ss">attribute2: </span><span class="s2">"ATTR2"</span>
+  <span class="p">}</span>
+<span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
+ <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/metadata_object?metadata_type=LIST_TEST2"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+  -X POST
+  -d <span class="s1">'{
+    "list_object": {
+      "name": "Test List Object 2",
+      "description": "This is a test Object created by API",
+      "code": "LIST_OBJECT_TEST2",
+      "attribute1": "ATTR1",
+      "attribute2": "ATTR2"
+    }
+  }'</span>
+</code></pre>
+<blockquote>
+<p>When successfull the above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">123456</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test List Object 2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is a test Object created by API"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LIST_OBJECT_TEST2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-09-05T06:31:59.000-03:00"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-09-05T06:31:59.000-03:00"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"metadata_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LIST_TEST2"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre>
+<p>This endpoint creates a list element</p>
+<h3 id='http-request-9'>HTTP Request</h3>
+<p><code>POST https://www.mydatascope.com/api/external/metadata_object</code></p>
+<h3 id='query-params'>Query params:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>metadata_type</td>
+<td>blank</td>
+<td>Internal code to identify the list (products, and more*)</td>
+</tr>
+</tbody></table>
+
+<p>*For locations objects use locations API</p>
+<h3 id='input-parameter-3'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Name of the element of the list</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Description of the element of the list</td>
+</tr>
+<tr>
+<td>code</td>
+<td>String</td>
+<td>Internal code of the element of the list</td>
+</tr>
+<tr>
+<td>attribute1</td>
+<td>String</td>
+<td>Custom attribute of the element of the list</td>
+</tr>
+<tr>
+<td>attribute2</td>
+<td>String</td>
+<td>Custom attribute of the element of the list</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-3'>Return Codes:</h3>
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>201</td>
+<td>Successfull</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Wrong parameters, check documentation</td>
+</tr>
+</tbody></table>
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+<h2 id='update-a-list-element'>Update a List Element</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/metadata_object/123456'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="ss">list_object: </span><span class="p">{</span>
+    <span class="ss">name: </span><span class="s2">"Test List Object 2"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"This is a test Object created by API"</span><span class="p">,</span>
+    <span class="ss">code: </span><span class="s2">"LIST_OBJECT_TEST2"</span><span class="p">,</span>
+    <span class="ss">attribute1: </span><span class="s2">"ATTR1"</span><span class="p">,</span>
+    <span class="ss">attribute2: </span><span class="s2">"ATTR2"</span>
+  <span class="p">}</span>
+<span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
+ <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/metadata_object/123456"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+  -X POST
+  -d <span class="s1">'{
+    "list_object": {
+      "name": "Test List Object 2",
+      "description": "This is a test Object created by API",
+      "code": "LIST_OBJECT_TEST2",
+      "attribute1": "ATTR1",
+      "attribute2": "ATTR2"
+    }
+  }'</span>
+</code></pre>
+<blockquote>
+<p>When successfull the above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">123456</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test List Object 2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is a test Object created by API"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LIST_OBJECT_TEST2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-09-05T06:31:59.000-03:00"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-09-05T06:31:59.000-03:00"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"metadata_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LIST_TEST2"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre>
+<p>This endpoint updates a list object</p>
+<h3 id='http-request-10'>HTTP Request</h3>
+<p><code>POST https://www.mydatascope.com/api/external/metadata_object/{id}</code></p>
+<h3 id='input-parameter-4'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Name of the element of the list</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Description of the element of the list</td>
+</tr>
+<tr>
+<td>code</td>
+<td>String</td>
+<td>Internal code of the element of the list</td>
+</tr>
+<tr>
+<td>attribute1</td>
+<td>String</td>
+<td>Custom attribute of the element of the list</td>
+</tr>
+<tr>
+<td>attribute2</td>
+<td>String</td>
+<td>Custom attribute of the element of the list</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-4'>Return Codes:</h3>
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>201</td>
+<td>Successfull</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Wrong parameters, check documentation</td>
+</tr>
+</tbody></table>
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+<h2 id='create-a-empty-list'>Create a empty List</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/metadata_types'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="ss">list: </span><span class="p">{</span>
+    <span class="ss">name: </span><span class="s2">"Test List"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span>
+    <span class="ss">code: </span><span class="s2">"LIST_TEST"</span><span class="p">,</span>
+    <span class="ss">list_type: </span><span class="s2">"standard"</span>
+  <span class="p">}</span>
+<span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
+ <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/metadata_types"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+  -X POST
+  -d <span class="s1">'{
+    "list": {
+      "name": "Test List",
+      "description": "This is a test location created by API",
+      "code": "LIST_TEST",
+      "list_type": "standard"
+    }
+  }'</span>
+</code></pre>
+<blockquote>
+<p>When successfull the above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">123456</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test List"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LIST_TEST"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"list_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre>
+<p>This endpoint creates a empty list</p>
+<h3 id='http-request-11'>HTTP Request</h3>
+<p><code>POST https://www.mydatascope.com/api/external/metadata_types</code></p>
+<h3 id='input-parameter-5'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Name of the element of the list</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Description of the element of the list</td>
+</tr>
+<tr>
+<td>code</td>
+<td>String</td>
+<td>Internal code of the element of the list</td>
+</tr>
+<tr>
+<td>list_type</td>
+<td>String</td>
+<td>Valid values: (&quot;standard&quot;, &quot;percent&quot;, &quot;price&quot;)</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-5'>Return Codes:</h3>
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>201</td>
+<td>Successfull</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Wrong parameters, check documentation</td>
+</tr>
+</tbody></table>
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+<h2 id='update-a-list'>Update a List</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/metadata_types/123456'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="ss">list: </span><span class="p">{</span>
+    <span class="ss">name: </span><span class="s2">"Test List"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span>
+    <span class="ss">code: </span><span class="s2">"LIST_TEST"</span><span class="p">,</span>
+    <span class="ss">list_type: </span><span class="s2">"standard"</span>
+  <span class="p">}</span>
+<span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
+ <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/metadata_types/123456"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+  -X POST
+  -d <span class="s1">'{
+    "list": {
+      "name": "Test List",
+      "description": "This is a test location created by API",
+      "code": "LIST_TEST",
+      "list_type": "standard"
+    }
+  }'</span>
+</code></pre>
+<blockquote>
+<p>When successfull the above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">123456</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test List"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is a test location created by API"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LIST_TEST"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"list_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre>
+<p>This endpoint updates a list</p>
+<h3 id='http-request-12'>HTTP Request</h3>
+<p><code>POST https://www.mydatascope.com/api/external/metadata_types/{id}</code></p>
+<h3 id='input-parameter-6'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Name of the element of the list</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Description of the element of the list</td>
+</tr>
+<tr>
+<td>code</td>
+<td>String</td>
+<td>Internal code of the element of the list</td>
+</tr>
+<tr>
+<td>list_type</td>
+<td>String</td>
+<td>Valid values: (&quot;standard&quot;, &quot;percent&quot;, &quot;price&quot;)</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-6'>Return Codes:</h3>
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>201</td>
+<td>Successfull</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Wrong parameters, check documentation</td>
+</tr>
+</tbody></table>
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
 <h1 id='task-assigns'>Task Assigns</h1><h2 id='create-task-assign'>Create Task Assign</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
@@ -1354,7 +1825,7 @@ Remember — user your own header Authorization
    </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 
-</span></code></pre><h3 id='http-request-9'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-13'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/assign_task</code></p>
 <h3 id='query-parameters-6'>Query Parameters</h3>
 <table><thead>
@@ -1473,7 +1944,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-10'>HTTP Request</h3>
+<h3 id='http-request-14'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/notifications</code></p>
 <h3 id='query-parameters-7'>Query Parameters</h3>
 <table><thead>
@@ -1571,7 +2042,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-11'>HTTP Request</h3>
+<h3 id='http-request-15'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/files</code></p>
 <h3 id='query-parameters-8'>Query Parameters</h3>
 <table><thead>
