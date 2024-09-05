@@ -355,6 +355,7 @@ require 'json'
 
 url = 'https://www.mydatascope.com/api/external/locations'
 response = RestClient.post url, {
+  location: {
     name: "Test Location",
     description: "This is a test location created by API",
     code: "LOC_TEST01",
@@ -367,6 +368,7 @@ response = RestClient.post url, {
     longitude: 151.285829,
     phone: "+18888888",
     email: "location@test.com"
+  }
 }.to_json, {
  :Authorization => 'b1cd93mfls9fdmfkadn23',
  :params => {}
@@ -379,18 +381,20 @@ curl "https://www.mydatascope.com/api/external/locations"
   -H "Authorization: b1cd93mfls9fdmfkadn23"
   -X POST
   -d '{
-    "name": "Test Location",
-    "description": "This is a test location created by API",
-    "code": "LOC_TEST01",
-    "company_code": "DSCODE_1",
-    "company_name": "Datascope Home",
-    "address": "P. Sherman, 42 Wallaby Way",
-    "city": "Sydney",
-    "country": "Australia",
-    "latitude": -33.673992,
-    "longitude": 151.285829,
-    "phone": "+18888888",
-    "email": "location@test.com"
+    "location": {
+      "name": "Test Location",
+      "description": "This is a test location created by API",
+      "code": "LOC_TEST01",
+      "company_code": "DSCODE_1",
+      "company_name": "Datascope Home",
+      "address": "P. Sherman, 42 Wallaby Way",
+      "city": "Sydney",
+      "country": "Australia",
+      "latitude": -33.673992,
+      "longitude": 151.285829,
+      "phone": "+18888888",
+      "email": "location@test.com"
+    }
   }'
 ```
 
@@ -440,18 +444,18 @@ email | String | Email of the Company
 
 ### Return Codes:
 
-```
-201: Successfull
-403: Forbidden
-422: Wrong parameters, check documentation
-```
+Code  | Description
+----  | -----------
+201   | Successfull
+403   | Forbidden
+422   | Wrong parameters, check documentation
 
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
 
 
-## Create a Location
+## Update a Location
 
 ```ruby
 require 'rest-client'
@@ -459,18 +463,20 @@ require 'json'
 
 url = 'https://www.mydatascope.com/api/external/locations/123456'
 response = RestClient.post url, {
-    name: "Test Location",
-    description: "This is a test location created by API",
-    code: "LOC_TEST01",
-    company_code: "DSCODE_1",
-    company_name: "Datascope Home",
-    address: "P. Sherman, 42 Wallaby Way",
-    city: "Sydney",
-    country: "Australia",
-    latitude: -33.673992,
-    longitude: 151.285829,
-    phone: "+18888888",
-    email: "location@test.com"
+    location: {
+      name: "Test Location",
+      description: "This is a test location created by API",
+      code: "LOC_TEST01",
+      company_code: "DSCODE_1",
+      company_name: "Datascope Home",
+      address: "P. Sherman, 42 Wallaby Way",
+      city: "Sydney",
+      country: "Australia",
+      latitude: -33.673992,
+      longitude: 151.285829,
+      phone: "+18888888",
+      email: "location@test.com"
+    }
 }.to_json, {
  :Authorization => 'b1cd93mfls9fdmfkadn23',
  :params => {}
@@ -483,18 +489,20 @@ curl "https://www.mydatascope.com/api/external/locations/123456"
   -H "Authorization: b1cd93mfls9fdmfkadn23"
   -X POST
   -d '{
-    "name": "Test Location",
-    "description": "This is a test location created by API",
-    "code": "LOC_TEST01",
-    "company_code": "DSCODE_1",
-    "company_name": "Datascope Home",
-    "address": "P. Sherman, 42 Wallaby Way",
-    "city": "Sydney",
-    "country": "Australia",
-    "latitude": -33.673992,
-    "longitude": 151.285829,
-    "phone": "+18888888",
-    "email": "location@test.com"
+    "location": {
+      "name": "Test Location",
+      "description": "This is a test location created by API",
+      "code": "LOC_TEST01",
+      "company_code": "DSCODE_1",
+      "company_name": "Datascope Home",
+      "address": "P. Sherman, 42 Wallaby Way",
+      "city": "Sydney",
+      "country": "Australia",
+      "latitude": -33.673992,
+      "longitude": 151.285829,
+      "phone": "+18888888",
+      "email": "location@test.com"
+    }
   }'
 ```
 
@@ -519,7 +527,7 @@ curl "https://www.mydatascope.com/api/external/locations/123456"
 
 ```
 
-This endpoint create a location
+This endpoint updates a location
 
 ### HTTP Request
 
@@ -544,12 +552,11 @@ email | String | Email of the Company
 
 ### Return Codes:
 
-```
-200: Successfull
-403: Forbidden
-404: Not found
-422: Wrong parameters, check documentation
-```
+Code  | Description
+----  | -----------
+201   | Successfull
+403   | Forbidden
+422   | Wrong parameters, check documentation
 
 <aside class="success">
 Remember — user your own header Authorization
@@ -695,6 +702,327 @@ attribute1 | String | Custom attribute of the element of the list
 attribute2 | String | Custom attribute of the element of the list
 created_at | Datetime | Date when the list element was created
 updated_at | Datetime | Date when the list element was updated
+
+
+## Create a List Element
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/metadata_object?metadata_type=LIST_TEST2'
+response = RestClient.post url, {
+  list_object: {
+    name: "Test List Object 2",
+    description: "This is a test Object created by API",
+    code: "LIST_OBJECT_TEST2",
+    attribute1: "ATTR1",
+    attribute2: "ATTR2"
+  }
+}.to_json, {
+ :Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/metadata_object?metadata_type=LIST_TEST2"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -X POST
+  -d '{
+    "list_object": {
+      "name": "Test List Object 2",
+      "description": "This is a test Object created by API",
+      "code": "LIST_OBJECT_TEST2",
+      "attribute1": "ATTR1",
+      "attribute2": "ATTR2"
+    }
+  }'
+```
+
+> When successfull the above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+    "id": 123456,
+    "name": "Test List Object 2",
+    "description": "This is a test Object created by API",
+    "code": "LIST_OBJECT_TEST2",
+    "created_at": "2024-09-05T06:31:59.000-03:00",
+    "updated_at": "2024-09-05T06:31:59.000-03:00",
+    "metadata_type": "LIST_TEST2"
+}
+
+```
+
+This endpoint creates a list element
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/metadata_object`
+
+### Query params:
+Parameter | Type | Description
+--------- | ------- | -----------
+metadata_type | blank | Internal code to identify the list (products, and more*)
+
+*For locations objects use locations API
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+name | String | Name of the element of the list
+description | String | Description of the element of the list
+code | String | Internal code of the element of the list
+attribute1 | String | Custom attribute of the element of the list
+attribute2 | String | Custom attribute of the element of the list
+
+### Return Codes:
+
+Code  | Description
+----  | -----------
+201   | Successfull
+403   | Forbidden
+422   | Wrong parameters, check documentation
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+
+## Update a List Element
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/metadata_object/123456'
+response = RestClient.post url, {
+  list_object: {
+    name: "Test List Object 2",
+    description: "This is a test Object created by API",
+    code: "LIST_OBJECT_TEST2",
+    attribute1: "ATTR1",
+    attribute2: "ATTR2"
+  }
+}.to_json, {
+ :Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/metadata_object/123456"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -X POST
+  -d '{
+    "list_object": {
+      "name": "Test List Object 2",
+      "description": "This is a test Object created by API",
+      "code": "LIST_OBJECT_TEST2",
+      "attribute1": "ATTR1",
+      "attribute2": "ATTR2"
+    }
+  }'
+```
+
+> When successfull the above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+    "id": 123456,
+    "name": "Test List Object 2",
+    "description": "This is a test Object created by API",
+    "code": "LIST_OBJECT_TEST2",
+    "created_at": "2024-09-05T06:31:59.000-03:00",
+    "updated_at": "2024-09-05T06:31:59.000-03:00",
+    "metadata_type": "LIST_TEST2"
+}
+
+```
+
+This endpoint updates a list object
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/metadata_object/{id}`
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+name | String | Name of the element of the list
+description | String | Description of the element of the list
+code | String | Internal code of the element of the list
+attribute1 | String | Custom attribute of the element of the list
+attribute2 | String | Custom attribute of the element of the list
+
+### Return Codes:
+
+Code  | Description
+----  | -----------
+201   | Successfull
+403   | Forbidden
+422   | Wrong parameters, check documentation
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+
+## Create a empty List
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/metadata_types'
+response = RestClient.post url, {
+  list: {
+    name: "Test List",
+    description: "This is a test location created by API",
+    code: "LIST_TEST",
+    list_type: "standard"
+  }
+}.to_json, {
+ :Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/metadata_types"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -X POST
+  -d '{
+    "list": {
+      "name": "Test List",
+      "description": "This is a test location created by API",
+      "code": "LIST_TEST",
+      "list_type": "standard"
+    }
+  }'
+```
+
+> When successfull the above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+    "id": 123456,
+    "name": "Test List",
+    "description": "This is a test location created by API",
+    "code": "LIST_TEST",
+    "list_type": "standard"
+}
+
+```
+
+This endpoint creates a empty list
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/metadata_types`
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+name | String | Name of the element of the list
+description | String | Description of the element of the list
+code | String | Internal code of the element of the list
+list_type | String | Valid values: ("standard", "percent", "price")
+
+### Return Codes:
+
+Code  | Description
+----  | -----------
+201   | Successfull
+403   | Forbidden
+422   | Wrong parameters, check documentation
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+
+## Update a List
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/metadata_types/123456'
+response = RestClient.post url, {
+  list: {
+    name: "Test List",
+    description: "This is a test location created by API",
+    code: "LIST_TEST",
+    list_type: "standard"
+  }
+}.to_json, {
+ :Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/metadata_types/123456"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -X POST
+  -d '{
+    "list": {
+      "name": "Test List",
+      "description": "This is a test location created by API",
+      "code": "LIST_TEST",
+      "list_type": "standard"
+    }
+  }'
+```
+
+> When successfull the above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+    "id": 123456,
+    "name": "Test List",
+    "description": "This is a test location created by API",
+    "code": "LIST_TEST",
+    "list_type": "standard"
+}
+
+```
+
+This endpoint updates a list
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/metadata_types/{id}`
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+name | String | Name of the element of the list
+description | String | Description of the element of the list
+code | String | Internal code of the element of the list
+list_type | String | Valid values: ("standard", "percent", "price")
+
+### Return Codes:
+
+Code  | Description
+----  | -----------
+201   | Successfull
+403   | Forbidden
+422   | Wrong parameters, check documentation
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
 
 # Task Assigns
 
