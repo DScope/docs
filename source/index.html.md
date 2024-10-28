@@ -1024,6 +1024,148 @@ Code  | Description
 Remember — user your own header Authorization
 </aside>
 
+
+## Bulk Update List Elements
+
+This endpoint allows bulk updating of metadata list objects, with soft deletion of objects not in the incoming list.
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/metadata_objects/bulk_update'
+response = RestClient.post url, {
+  metadata_type: "DATASCOPE_SAFETY_LIST_CODE",
+  objects: [
+    {
+      code: "PPE001",
+      name: "Helmet",
+      description: "Safety helmet in good condition",
+      attribute1: "Mandatory",
+      attribute2: "Daily check"
+    },
+    {
+      code: "PPE002",
+      name: "Boots",
+      description: "Steel-toed safety boots",
+      attribute1: "Mandatory",
+      attribute2: "Check for wear"
+    },
+    {
+      code: "PPE003",
+      name: "Glasses",
+      description: "Safety glasses with side shields",
+      attribute1: "Mandatory",
+      attribute2: "Clean daily"
+    }
+  ]
+}.to_json, {
+ :Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {}
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/metadata_objects/bulk_update"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -X POST
+  -d '{
+    "metadata_type": "DATASCOPE_SAFETY_LIST_CODE",
+    "objects": [
+      {
+        "code": "PPE001",
+        "name": "Helmet",
+        "description": "Safety helmet in good condition",
+        "attribute1": "Mandatory",
+        "attribute2": "Daily check"
+      },
+      {
+        "code": "PPE002",
+        "name": "Boots",
+        "description": "Steel-toed safety boots",
+        "attribute1": "Mandatory",
+        "attribute2": "Check for wear"
+      },
+      {
+        "code": "PPE003",
+        "name": "Glasses",
+        "description": "Safety glasses with side shields",
+        "attribute1": "Mandatory",
+        "attribute2": "Clean daily"
+      }
+    ]
+  }'
+```
+
+> When successful, the above command returns JSON structured like this:
+
+```json
+{
+  "id": 1,
+  "name": "Safety List",
+  "description": "List for safety equipment",
+  "code": "DATASCOPE_SAFETY_LIST_CODE",
+  "list_type": "safety",
+  "length": 3
+}
+```
+
+This endpoint updates multiple list objects in bulk.
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/metadata_objects/bulk_update`
+
+### Input Parameters
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| metadata_type | String | Internal code to identify the list (must not be "locations") |
+| list_objects | Array | Array of objects to be created or updated |
+
+### List Object Structure
+
+Each object in the `list_objects` array should have the following structure:
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| code | String | Internal code of the list element |
+| name | String | Name of the list element |
+| description | String | Description of the list element |
+| attribute1 | String | Custom attribute of the list element |
+| attribute2 | String | Custom attribute of the list element |
+
+### Return Codes
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful |
+| 400 | Bad Request if metadata_type is `locations` |
+| 403 | Forbidden |
+| 422 | Wrong parameters, check documentation |
+| 500 | Internal Server Error |
+
+### Response
+
+The response includes:
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| id | Integer | ID of the updated list |
+| name | String | Name of the updated list |
+| description | String | Description of the updated list |
+| code | String | Code for the updated list |
+| list_type | String | Type of the list |
+| length | Integer | Number of active list objects |
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+> **Warning**: This operation will delete all existing objects for the specified metadata_type and replace them with the new objects provided. This endpoint is currently in an **experimental stage**. Changes may be made to functionality or structure as we continue testing and refining its implementation. Use with caution, and consider testing thoroughly in your environment before relying on it in production.
+
+
 # Task Assigns
 
 ## Create Task Assign
