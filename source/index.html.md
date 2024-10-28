@@ -1027,6 +1027,8 @@ Remember — user your own header Authorization
 
 ## Bulk Update List Elements
 
+This endpoint allows bulk updating of metadata list objects, with soft deletion of objects not in the incoming list.
+
 ```ruby
 require 'rest-client'
 require 'json'
@@ -1100,9 +1102,12 @@ curl "https://www.mydatascope.com/api/external/metadata_objects/bulk_update"
 
 ```json
 {
-  "message": "List successfully updated",
-  "deleted_count": 2,
-  "created_count": 2
+  "id": 1,
+  "name": "Safety List",
+  "description": "List for safety equipment",
+  "code": "DATASCOPE_SAFETY_LIST_CODE",
+  "list_type": "safety",
+  "length": 3
 }
 ```
 
@@ -1116,12 +1121,12 @@ This endpoint updates multiple list objects in bulk.
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| metadata_type | String | Internal code to identify the list |
-| objects | Array | An array of objects to be updated or created |
+| metadata_type | String | Internal code to identify the list (must not be "locations") |
+| list_objects | Array | Array of objects to be created or updated |
 
-### Object Structure
+### List Object Structure
 
-Each object in the `objects` array should have the following structure:
+Each object in the `list_objects` array should have the following structure:
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
@@ -1136,6 +1141,7 @@ Each object in the `objects` array should have the following structure:
 | Code | Description |
 | ---- | ----------- |
 | 200 | Successful |
+| 400 | Bad Request if metadata_type is `locations` |
 | 403 | Forbidden |
 | 422 | Wrong parameters, check documentation |
 | 500 | Internal Server Error |
@@ -1146,13 +1152,18 @@ The response includes:
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |
-| message | String | A success message |
-| deleted_count | Integer | Number of objects deleted in the process |
-| created_count | Integer | Number of objects created or updated |
+| id | Integer | ID of the updated list |
+| name | String | Name of the updated list |
+| description | String | Description of the updated list |
+| code | String | Code for the updated list |
+| list_type | String | Type of the list |
+| length | Integer | Number of active list objects |
 
-> Remember — use your own Authorization header
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
 
-**Warning:** This operation will delete all existing objects for the specified metadata_type and replace them with the new objects provided.
+> **Warning**: This operation will delete all existing objects for the specified metadata_type and replace them with the new objects provided. This endpoint is currently in an **experimental stage**. Changes may be made to functionality or structure as we continue testing and refining its implementation. Use with caution, and consider testing thoroughly in your environment before relying on it in production.
 
 
 # Task Assigns
