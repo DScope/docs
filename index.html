@@ -1803,14 +1803,18 @@ Remember — user your own header Authorization
 Remember — user your own header Authorization
 </aside>
 <h2 id='bulk-update-list-elements'>Bulk Update List Elements</h2>
-<p>This endpoint allows bulk updating of metadata list objects, with soft deletion of objects not in the incoming list.</p>
+<p>This endpoint allows bulk updating of metadata list objects, with soft deletion of objects not in the incoming list. If an object with an existing code is provided, it will be updated. If a new code is used, the object will be created.</p>
+
+<blockquote>
+<p><strong>Warning</strong>: This operation will delete all existing objects for the specified metadata_type and replace them with the new objects provided. This endpoint is currently in an <strong>experimental stage</strong>. Changes may be made to functionality or structure as we continue testing and refining its implementation.</p>
+</blockquote>
 <pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
 <span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/metadata_objects/bulk_update'</span>
 <span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
   <span class="ss">metadata_type: </span><span class="s2">"DATASCOPE_SAFETY_LIST_CODE"</span><span class="p">,</span>
-  <span class="ss">objects: </span><span class="p">[</span>
+  <span class="ss">list_objects: </span><span class="p">[</span>
     <span class="p">{</span>
       <span class="ss">code: </span><span class="s2">"PPE001"</span><span class="p">,</span>
       <span class="ss">name: </span><span class="s2">"Helmet"</span><span class="p">,</span>
@@ -1843,7 +1847,7 @@ Remember — user your own header Authorization
   -X POST
   -d <span class="s1">'{
     "metadata_type": "DATASCOPE_SAFETY_LIST_CODE",
-    "objects": [
+    "list_objects": [
       {
         "code": "PPE001",
         "name": "Helmet",
@@ -1879,9 +1883,7 @@ Remember — user your own header Authorization
   </span><span class="s2">"list_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"safety"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>This endpoint updates multiple list objects in bulk.</p>
-<h3 id='http-request-13'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-13'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_objects/bulk_update</code></p>
 <h3 id='input-parameters'>Input Parameters</h3>
 <table><thead>
@@ -2011,10 +2013,6 @@ Remember — user your own header Authorization
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
-
-<blockquote>
-<p><strong>Warning</strong>: This operation will delete all existing objects for the specified metadata_type and replace them with the new objects provided. This endpoint is currently in an <strong>experimental stage</strong>. Changes may be made to functionality or structure as we continue testing and refining its implementation. Use with caution, and consider testing thoroughly in your environment before relying on it in production.</p>
-</blockquote>
 <h1 id='task-assigns'>Task Assigns</h1><h2 id='create-task-assign'>Create Task Assign</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
