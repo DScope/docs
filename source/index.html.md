@@ -1027,7 +1027,9 @@ Remember — user your own header Authorization
 
 ## Bulk Update List Elements
 
-This endpoint allows bulk updating of metadata list objects, with soft deletion of objects not in the incoming list.
+This endpoint allows bulk updating of metadata list objects, with soft deletion of objects not in the incoming list. If an object with an existing code is provided, it will be updated. If a new code is used, the object will be created.
+
+> **Warning**: This operation will delete all existing objects for the specified metadata_type and replace them with the new objects provided. This endpoint is currently in an **experimental stage**. Changes may be made to functionality or structure as we continue testing and refining its implementation.
 
 ```ruby
 require 'rest-client'
@@ -1036,7 +1038,7 @@ require 'json'
 url = 'https://www.mydatascope.com/api/external/metadata_objects/bulk_update'
 response = RestClient.post url, {
   metadata_type: "DATASCOPE_SAFETY_LIST_CODE",
-  objects: [
+  list_objects: [
     {
       code: "PPE001",
       name: "Helmet",
@@ -1072,7 +1074,7 @@ curl "https://www.mydatascope.com/api/external/metadata_objects/bulk_update"
   -X POST
   -d '{
     "metadata_type": "DATASCOPE_SAFETY_LIST_CODE",
-    "objects": [
+    "list_objects": [
       {
         "code": "PPE001",
         "name": "Helmet",
@@ -1110,8 +1112,6 @@ curl "https://www.mydatascope.com/api/external/metadata_objects/bulk_update"
   "length": 3
 }
 ```
-
-This endpoint updates multiple list objects in bulk.
 
 ### HTTP Request
 
@@ -1162,9 +1162,6 @@ The response includes:
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
-
-> **Warning**: This operation will delete all existing objects for the specified metadata_type and replace them with the new objects provided. This endpoint is currently in an **experimental stage**. Changes may be made to functionality or structure as we continue testing and refining its implementation. Use with caution, and consider testing thoroughly in your environment before relying on it in production.
-
 
 # Task Assigns
 
