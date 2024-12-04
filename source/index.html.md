@@ -1037,7 +1037,8 @@ require 'json'
 
 url = 'https://www.mydatascope.com/api/external/metadata_objects/bulk_update'
 response = RestClient.post url, {
-  metadata_type: "DATASCOPE_SAFETY_LIST_CODE",
+  metadata_type: "your_list_code",
+  name: "Safety Equipment List",
   list_objects: [
     {
       code: "PPE001",
@@ -1062,7 +1063,7 @@ response = RestClient.post url, {
     }
   ]
 }.to_json, {
- :Authorization => 'b1cd93mfls9fdmfkadn23',
+ :Authorization => '<YOUR_API_TOKEN>',
  :params => {}
 }
 JSON.parse(response)
@@ -1070,10 +1071,11 @@ JSON.parse(response)
 
 ```shell
 curl "https://www.mydatascope.com/api/external/metadata_objects/bulk_update"
-  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -H "Authorization: <YOUR_API_TOKEN>"
   -X POST
   -d '{
-    "metadata_type": "DATASCOPE_SAFETY_LIST_CODE",
+    "metadata_type": "your_list_code",
+    "name": "Safety Equipment List",
     "list_objects": [
       {
         "code": "PPE001",
@@ -1105,10 +1107,10 @@ curl "https://www.mydatascope.com/api/external/metadata_objects/bulk_update"
 ```json
 {
   "id": 1,
-  "name": "Safety List",
+  "name": "Safety Equipment List",
   "description": "List for safety equipment",
-  "code": "DATASCOPE_SAFETY_LIST_CODE",
-  "list_type": "safety",
+  "code": "your_list_code",
+  "list_type": "standard",
   "length": 3
 }
 ```
@@ -1122,6 +1124,7 @@ curl "https://www.mydatascope.com/api/external/metadata_objects/bulk_update"
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | metadata_type | String | Internal code to identify the list (must not be "locations") |
+| name | String | Name of the list to be created or updated |
 | list_objects | Array | Array of objects to be created or updated |
 
 ### List Object Structure
