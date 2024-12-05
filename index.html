@@ -1813,7 +1813,8 @@ Remember — user your own header Authorization
 
 <span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/metadata_objects/bulk_update'</span>
 <span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
-  <span class="ss">metadata_type: </span><span class="s2">"DATASCOPE_SAFETY_LIST_CODE"</span><span class="p">,</span>
+  <span class="ss">metadata_type: </span><span class="s2">"your_list_code"</span><span class="p">,</span>
+  <span class="ss">name: </span><span class="s2">"Safety Equipment List"</span><span class="p">,</span>
   <span class="ss">list_objects: </span><span class="p">[</span>
     <span class="p">{</span>
       <span class="ss">code: </span><span class="s2">"PPE001"</span><span class="p">,</span>
@@ -1838,15 +1839,16 @@ Remember — user your own header Authorization
     <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">}.</span><span class="nf">to_json</span><span class="p">,</span> <span class="p">{</span>
- <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'&lt;YOUR_API_TOKEN&gt;'</span><span class="p">,</span>
  <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{}</span>
 <span class="p">}</span>
 <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 </code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/metadata_objects/bulk_update"</span>
-  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+  -H <span class="s2">"Authorization: &lt;YOUR_API_TOKEN&gt;"</span>
   -X POST
   -d <span class="s1">'{
-    "metadata_type": "DATASCOPE_SAFETY_LIST_CODE",
+    "metadata_type": "your_list_code",
+    "name": "Safety Equipment List",
     "list_objects": [
       {
         "code": "PPE001",
@@ -1877,10 +1879,10 @@ Remember — user your own header Authorization
 </blockquote>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Safety List"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Safety Equipment List"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"List for safety equipment"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DATASCOPE_SAFETY_LIST_CODE"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"list_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"safety"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"your_list_code"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"list_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre><h3 id='http-request-13'>HTTP Request</h3>
@@ -1897,6 +1899,11 @@ Remember — user your own header Authorization
 <td>metadata_type</td>
 <td>String</td>
 <td>Internal code to identify the list (must not be &quot;locations&quot;)</td>
+</tr>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Name of the list to be created or updated</td>
 </tr>
 <tr>
 <td>list_objects</td>
