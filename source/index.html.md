@@ -20,7 +20,9 @@ Welcome to the DataScope API! You can use our API to access DataScope API endpoi
 
 We have language bindings in Shell and Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
-
+Last Update Date: 4-Nov-2025
+Last Updates:
+- Added Ticket's Endpoints (4-Nov-2025)
 
 
 # Authentication
@@ -929,3 +931,91 @@ To configure the webhook you need to go to the Integrations section and then Web
 <aside class="notice">
 TIP: It will only start sending information for the new forms done after the integration. 
 </aside>
+
+# Tickets (FKA Issues)
+## Get last 5 tickets
+```shell
+curl "https://www.mydatascope.com/api/external/last_findings"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/last_findings`
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+## Get Ticket Types
+```shell
+curl "https://www.mydatascope.com/api/external/findings/types"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+```json
+[  
+   {  
+      "id":"3rRET34tg3f27g6hHfsE",
+      "name":"Finding Type 1",
+   },
+   {
+     "id": "fe23fd32x43Dsa3D6y9T",
+     "name":"Finding Type 2",
+   }
+]
+```
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/findings/types`
+
+### Input Parameter
+Parameter | Type | Description
+--------- | ------- | -----------
+search | String | Optional. Name to search
+
+### Return Codes
+```
+200: OK
+```
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+## Create Ticket
+This endpoint create a ticket
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/findings/create`
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+author_email | String | Ticket's author email. Fallback: Owner of the API Key
+name | String | Required. Name of the Ticket
+description | String | Required. Description of the location
+expiration_date | String or Datetime | Required. Date or String with the date to expire the ticket (YYYY-MM-DD HH:MM)
+status | String | Status of ticket. Fallback: `open`. Options: `[open, in_progress, paused, closed]`
+priority | String | Status of ticket. Fallback: `medium`. Options: `[low, medium, high, critical]`
+location_id | Integer | Optional. ID of the location
+location_name | Integer | Optional. Address of the location in case of unrecognized `location_id`
+assignees | Array of Integers | Required. MobileUser IDs of user to be assigned to the ticket
+invitees | Array of Integers | Optional. MobileUser IDs of user to be invited to the ticket (ignoring already assigned ones)
+type | String | Optional. Ticket Type ID or Ticket Type Name. If provided, preset data will be retrieved from this type. Fallback: "Other" (no type assigned).
+
+### Return Codes:
+
+```
+201: Created
+403: Forbidden
+422: Unprocessable Entity
+```
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+
