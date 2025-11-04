@@ -942,6 +942,12 @@ curl "https://www.mydatascope.com/api/external/last_findings"
 
 `GET https://www.mydatascope.com/api/external/last_findings`
 
+### Return Codes
+```
+200: OK
+403: Forbidden
+```
+
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
@@ -977,6 +983,7 @@ search | String | Optional. Name to search
 ### Return Codes
 ```
 200: OK
+403: Forbidden
 ```
 
 <aside class="success">
