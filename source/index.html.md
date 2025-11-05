@@ -1033,8 +1033,8 @@ status | String | Status of ticket. Fallback: `open`. Options: `[open, in_progre
 priority | String | Status of ticket. Fallback: `medium`. Options: `[low, medium, high, critical]`
 location_id | Integer | Optional. ID of the location
 location_name | Integer | Optional. Address of the location in case of unrecognized `location_id`
-assignees | Array of Integers | Required. MobileUser IDs of user to be assigned to the ticket
-invitees | Array of Integers | Optional. MobileUser IDs of user to be invited to the ticket (ignoring already assigned ones)
+assignees | Array of Integers or Strings | Required. MobileUser IDs or emails of users to be assigned to the ticket
+invitees | Array of Integers or Strings | Optional. MobileUser IDs or emails of users to be invited to the ticket (ignoring already assigned ones)
 type | String | Optional. Ticket Type ID or Ticket Type Name. If provided, preset data will be retrieved from this type. Fallback: "Other" (no type assigned).
 creation_date | String or Datetime | Optional. Date or String with a custom creation date of ticket (YYYY-MM-DD HH:MM)
 
