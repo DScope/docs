@@ -1036,6 +1036,7 @@ location_name | Integer | Optional. Address of the location in case of unrecogni
 assignees | Array of Integers | Required. MobileUser IDs of user to be assigned to the ticket
 invitees | Array of Integers | Optional. MobileUser IDs of user to be invited to the ticket (ignoring already assigned ones)
 type | String | Optional. Ticket Type ID or Ticket Type Name. If provided, preset data will be retrieved from this type. Fallback: "Other" (no type assigned).
+creation_date | String or Datetime | Optional. Date or String with a custom creation date of ticket (YYYY-MM-DD HH:MM)
 
 ### Return Codes:
 
