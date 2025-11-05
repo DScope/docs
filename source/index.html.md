@@ -6,7 +6,7 @@ language_tabs: # must be one of https://git.io/vQNgJ
   - ruby
 
 toc_footers:
-  - <a href='https://www.mydatascope.com/webhooks'>Sign Up for a Developer Key</a>
+  - <a href='https://app.mydatascope.com/integrations'>Sign Up for a Developer Key</a>
 
 includes:
   - errors
