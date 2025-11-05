@@ -20,16 +20,17 @@ Welcome to the DataScope API! You can use our API to access DataScope API endpoi
 
 We have language bindings in Shell and Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
-Last Update Date: 4-Nov-2025
+Last Update Date: 5-Nov-2025
 Last Updates:
-- Added Ticket's Endpoints (4-Nov-2025)
+- Added Ticket's Endpoints (5-Nov-2025)
+- Updated old https://mydatascope.com/webhooks to https://app.mydatascope.com/integrations (5-Nov-2025)
 
 
 # Authentication
 
 
 
-DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](https://www.mydatascope.com/webhooks).
+DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](https://app.mydatascope.com/integrations).
 
 ![alt text](https://i.imgur.com/M4awUbe.jpg "Logo Title Text 1")
 
@@ -938,6 +939,17 @@ TIP: It will only start sending information for the new forms done after the int
 curl "https://www.mydatascope.com/api/external/last_findings"
   -H "Authorization: b1cd93mfls9fdmfkadn23"
 ```
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/last_findings'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+}
+JSON.parse(response)
+```
+
 ### HTTP Request
 
 `GET https://www.mydatascope.com/api/external/last_findings`
@@ -958,6 +970,18 @@ curl "https://www.mydatascope.com/api/external/findings/types"
   -H "Authorization: b1cd93mfls9fdmfkadn23"
 ```
 
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/findings/types'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => { search: 'Finding T'}
+}
+JSON.parse(response)
+```
+> The above command returns JSON structured like this, you can check the description of each parameter below:
 ```json
 [  
    {  
