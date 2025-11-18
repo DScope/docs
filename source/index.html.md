@@ -6,7 +6,7 @@ language_tabs: # must be one of https://git.io/vQNgJ
   - ruby
 
 toc_footers:
-  - <a href='https://www.mydatascope.com/webhooks'>Sign Up for a Developer Key</a>
+  - <a href='https://app.mydatascope.com/integrations'>Sign Up for a Developer Key</a>
 
 includes:
   - errors
@@ -20,14 +20,17 @@ Welcome to the DataScope API! You can use our API to access DataScope API endpoi
 
 We have language bindings in Shell and Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
-
+Last Update Date: 5-Nov-2025
+Last Updates:
+- Added Ticket's Endpoints (5-Nov-2025)
+- Updated old https://mydatascope.com/webhooks to https://app.mydatascope.com/integrations (5-Nov-2025)
 
 
 # Authentication
 
 
 
-DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](https://www.mydatascope.com/webhooks).
+DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](https://app.mydatascope.com/integrations).
 
 ![alt text](https://i.imgur.com/M4awUbe.jpg "Logo Title Text 1")
 
@@ -928,5 +931,123 @@ To configure the webhook you need to go to the Integrations section and then Web
 
 <aside class="notice">
 TIP: It will only start sending information for the new forms done after the integration. 
+</aside>
+
+
+# Tickets (FKA Issues)
+## Get last 5 tickets
+```shell
+curl "https://www.mydatascope.com/api/external/last_findings"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/last_findings'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+}
+JSON.parse(response)
+```
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/last_findings`
+
+### Return Codes
+```
+200: OK
+403: Forbidden
+```
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+## Get Ticket Types
+```shell
+curl "https://www.mydatascope.com/api/external/findings/types"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/findings/types'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => { search: 'Finding T'}
+}
+JSON.parse(response)
+```
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+```json
+[  
+   {  
+      "id":"3rRET34tg3f27g6hHfsE",
+      "name":"Finding Type 1",
+   },
+   {
+     "id": "fe23fd32x43Dsa3D6y9T",
+     "name":"Finding Type 2",
+   }
+]
+```
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/findings/types`
+
+### Input Parameter
+Parameter | Type | Description
+--------- | ------- | -----------
+search | String | Optional. Name to search
+
+### Return Codes
+```
+200: OK
+403: Forbidden
+```
+
+<aside class="success">
+Remember — user your own header Authorization
+</aside>
+
+## Create Ticket
+This endpoint create a ticket
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/findings/create`
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+author_email | String | Ticket's author email. Fallback: Owner of the API Key
+name | String | Required. Name of the Ticket
+description | String | Required. Description of the location
+expiration_date | String or Datetime | Required. Date or String with the date to expire the ticket (YYYY-MM-DD HH:MM)
+status | String | Status of ticket. Fallback: `open`. Options: `[open, in_progress, paused, closed]`
+priority | String | Status of ticket. Fallback: `medium`. Options: `[low, medium, high, critical]`
+location_id | Integer | Optional. ID of the location
+location_name | Integer | Optional. Address of the location in case of unrecognized `location_id`
+assignees | Array of Integers or Strings | Required. MobileUser IDs or emails of users to be assigned to the ticket
+invitees | Array of Integers or Strings | Optional. MobileUser IDs or emails of users to be invited to the ticket (ignoring already assigned ones)
+type | String | Optional. Ticket Type ID or Ticket Type Name. If provided, preset data will be retrieved from this type. Fallback: "Other" (no type assigned).
+creation_date | String or Datetime | Optional. Date or String with a custom creation date of ticket (YYYY-MM-DD HH:MM)
+
+### Return Codes:
+
+```
+201: Created
+403: Forbidden
+422: Unprocessable Entity
+```
+
+<aside class="success">
+Remember — user your own header Authorization
 </aside>
 
