@@ -933,6 +933,7 @@ To configure the webhook you need to go to the Integrations section and then Web
 TIP: It will only start sending information for the new forms done after the integration. 
 </aside>
 
+
 # Tickets (FKA Issues)
 ## Get last 5 tickets
 ```shell
@@ -1049,5 +1050,4 @@ creation_date | String or Datetime | Optional. Date or String with a custom crea
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
-
 
