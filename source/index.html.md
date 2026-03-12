@@ -1397,5 +1397,109 @@ To configure the webhook you need to go to the Integrations section and then Web
 ```
 
 <aside class="notice">
-TIP: It will only start sending information for the new forms done after the integration. 
+TIP: It will only start sending information for the new forms done after the integration.
+</aside>
+
+
+# Tickets (FKA Issues)
+
+## Get Tickets by Period
+
+```shell
+curl "https://www.mydatascope.com/api/external/findings?start=01-01-2026&end=31-01-2026"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/findings'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => { start: '01-01-2026', end: '31-01-2026' }
+}
+JSON.parse(response)
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+[
+  {
+    "id": "Krdz3aFoWZ4ZVgpuAart",
+    "code": 1,
+    "name": "ejemplo",
+    "description": "Ejemplo",
+    "type": null,
+    "status": "closed",
+    "priority": "high",
+    "creation_date": "2026-01-30T19:53:52.528+00:00",
+    "expiration_date": "2026-01-23T19:53:00.000+00:00",
+    "closure_date": "2026-02-05T15:23:12.360+00:00",
+    "closure_message": "Addressed",
+    "location_name": "Main Office",
+    "creator_name": "Juan Perez",
+    "assignees": "Juan Perez, Maria Lopez",
+    "invitees": "Carlos Silva",
+    "last_updated_by": "Juan Perez",
+    "form_answer_id": 12345,
+    "task_form_title": "Daily Inspection",
+    "task_form_question": "What issues were found?"
+  }
+]
+```
+
+This endpoint retrieves a list of Tickets filtered by creation date period.
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/findings`
+
+### Input Parameters
+
+Parameter | Type | Description
+--------- | ------- | -----------
+start | String | Optional. Start date in `dd-mm-yyyy` format. Defaults to 7 days ago
+end | String | Optional. End date in `dd-mm-yyyy` format. Defaults to today
+status | String | Optional. Filter by status: `open`, `in_progress`, `paused`, `closed`
+limit | Integer | Optional. Max number of results to return. Default: 200
+offset | Integer | Optional. Number of results to skip (for pagination). Default: 0
+
+The maximum allowed date range is **90 days**. Requests with a wider range will return `422 Unprocessable Entity`.
+
+### Response Fields
+
+Field | Type | Description
+--------- | ------- | -----------
+id | String | Firestore document ID
+code | Integer | Sequential ticket number within the account
+name | String | Ticket name
+description | String | Ticket description
+type | String | Ticket Type ID (null if no type assigned)
+status | String | Current status: `open`, `in_progress`, `paused`, `closed`
+priority | String | Priority level: `low`, `medium`, `high`, `critical`
+creation_date | Datetime | Date and time the ticket was created (ISO 8601)
+expiration_date | Datetime | Date and time the ticket expires (ISO 8601)
+closure_date | Datetime | Date and time the ticket was closed (null if not closed)
+closure_message | String | Message provided when closing the ticket (null if not closed)
+location_name | String | Name of the associated location (null if none)
+creator_name | String | Full name of the user who created the ticket
+assignees | String | Comma-separated list of assigned users' full names
+invitees | String | Comma-separated list of invited users' full names (empty string if none)
+last_updated_by | String | Full name of the user who last updated the ticket (null if not available)
+form_answer_id | Integer | ID of the linked form answer (null if none)
+task_form_title | String | Title of the linked form (null if no form answer linked)
+task_form_question | String | Question from the linked form answer (null if no form answer linked)
+
+### Return Codes
+
+```
+200: OK
+403: Forbidden
+422: Unprocessable Entity (invalid date range or range exceeds 90 days)
+```
+
+<aside class="success">
+Remember — use your own header Authorization
 </aside>
