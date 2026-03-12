@@ -1463,6 +1463,7 @@ Parameter | Type | Description
 start | String | Optional. Start date in `dd-mm-yyyy` format. Defaults to 7 days ago
 end | String | Optional. End date in `dd-mm-yyyy` format. Defaults to today
 status | String | Optional. Filter by status: `open`, `in_progress`, `paused`, `closed`
+task_form_id | Integer | Optional. Filter by the ID of the associated form. Only returns tickets linked to that form
 limit | Integer | Optional. Max number of results to return. Default: 200
 offset | Integer | Optional. Number of results to skip (for pagination). Default: 0
 
