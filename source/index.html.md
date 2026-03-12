@@ -1468,6 +1468,15 @@ offset | Integer | Optional. Number of results to skip (for pagination). Default
 
 The maximum allowed date range is **90 days**. Requests with a wider range will return `422 Unprocessable Entity`.
 
+### Pagination
+
+Results are paginated using `limit` and `offset`. `limit` controls how many results are returned, and `offset` controls how many to skip from the beginning.
+
+For example, if there are 400 tickets in the period:
+
+- First page: `limit=200&offset=0` → returns tickets 1–200
+- Second page: `limit=200&offset=200` → returns tickets 201–400
+
 ### Response Fields
 
 Field | Type | Description
