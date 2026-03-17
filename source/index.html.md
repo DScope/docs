@@ -1397,5 +1397,100 @@ To configure the webhook you need to go to the Integrations section and then Web
 ```
 
 <aside class="notice">
-TIP: It will only start sending information for the new forms done after the integration. 
+TIP: It will only start sending information for the new forms done after the integration.
+</aside>
+
+
+# Tickets (FKA Issues)
+
+## Get Ticket
+
+```shell
+curl "https://www.mydatascope.com/api/external/findings/Krdz3aFoWZ4ZVgpuAart"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/findings/Krdz3aFoWZ4ZVgpuAart'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+}
+JSON.parse(response)
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+  "id": "Krdz3aFoWZ4ZVgpuAart",
+  "code": 1,
+  "name": "ejemplo",
+  "description": "Ejemplo",
+  "type": null,
+  "status": "closed",
+  "priority": "high",
+  "creation_date": "2026-01-30T19:53:52.528+00:00",
+  "expiration_date": "2026-01-23T19:53:00.000+00:00",
+  "closure_date": "2026-02-05T15:23:12.360+00:00",
+  "closure_message": "Addressed",
+  "location_name": "Main Office",
+  "creator_name": "Juan Perez",
+  "assignees": "Juan Perez, Maria Lopez",
+  "invitees": "Carlos Silva",
+  "last_updated_by": "Juan Perez",
+  "form_answer_id": 12345,
+  "task_form_title": "Daily Inspection",
+  "task_form_question": "What issues were found?"
+}
+```
+
+This endpoint retrieves a single Ticket by its Firestore document ID.
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/findings/:id`
+
+### URL Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+id | String | Required. The Firestore document ID of the ticket. This can be obtained from the ticket URL in the DataScope web app (`?selected=<id>`)
+
+### Response Fields
+
+Field | Type | Description
+--------- | ------- | -----------
+id | String | Firestore document ID
+code | Integer | Sequential ticket number within the account
+name | String | Ticket name
+description | String | Ticket description
+type | String | Ticket Type ID (null if no type assigned)
+status | String | Current status: `open`, `in_progress`, `paused`, `closed`
+priority | String | Priority level: `low`, `medium`, `high`, `critical`
+creation_date | Datetime | Date and time the ticket was created (ISO 8601)
+expiration_date | Datetime | Date and time the ticket expires (ISO 8601)
+closure_date | Datetime | Date and time the ticket was closed (null if not closed)
+closure_message | String | Message provided when closing the ticket (null if not closed)
+location_name | String | Name of the associated location (null if none)
+creator_name | String | Full name of the user who created the ticket
+assignees | String | Comma-separated list of assigned users' full names
+invitees | String | Comma-separated list of invited users' full names (empty string if none)
+last_updated_by | String | Full name of the user who last updated the ticket (null if not available)
+form_answer_id | Integer | ID of the linked form answer (null if none)
+task_form_title | String | Title of the linked form (null if no form answer linked)
+task_form_question | String | Question from the linked form answer (null if no form answer linked)
+
+### Return Codes
+
+```
+200: OK
+404: Not Found
+403: Forbidden
+```
+
+<aside class="success">
+Remember — use your own header Authorization
 </aside>
