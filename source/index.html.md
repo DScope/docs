@@ -1426,22 +1426,34 @@ JSON.parse(response)
 ```json
 {
   "id": "Krdz3aFoWZ4ZVgpuAart",
-  "code": 1,
+  "code": "FIND-001",
   "name": "ejemplo",
   "description": "Ejemplo",
-  "type": null,
+  "type": "Safety",
   "status": "closed",
   "priority": "high",
-  "creation_date": "2026-01-30T19:53:52.528+00:00",
-  "expiration_date": "2026-01-23T19:53:00.000+00:00",
-  "closure_date": "2026-02-05T15:23:12.360+00:00",
+  "creation_date": "30/01/2026 19:53",
+  "expiration_date": "23/01/2026 19:53",
+  "closure_date": "05/02/2026 15:23",
   "closure_message": "Addressed",
+  "location_id": 42,
   "location_name": "Main Office",
+  "location_code": "MO-001",
+  "creator_id": 101,
+  "creator_email": "juan.perez@example.com",
   "creator_name": "Juan Perez",
-  "assignees": "Juan Perez, Maria Lopez",
-  "invitees": "Carlos Silva",
+  "assignees_concatenated": "user_id:101;;email:juan.perez@example.com;;name:Juan Perez&&user_id:102;;email:maria.lopez@example.com;;name:Maria Lopez",
+  "invitees_concatenated": "user_id:103;;email:carlos.silva@example.com;;name:Carlos Silva",
+  "assignees": {
+    "0": { "id": 101, "full_name": "Juan Perez", "email": "juan.perez@example.com" },
+    "1": { "id": 102, "full_name": "Maria Lopez", "email": "maria.lopez@example.com" }
+  },
+  "invitees": {
+    "0": { "id": 103, "full_name": "Carlos Silva", "email": "carlos.silva@example.com" }
+  },
   "last_updated_by": "Juan Perez",
   "form_answer_id": 12345,
+  "form_answer_code": "FA-001",
   "task_form_title": "Daily Inspection",
   "task_form_question": "What issues were found?"
 }
@@ -1464,22 +1476,29 @@ id | String | Required. The Firestore document ID of the ticket. This can be obt
 Field | Type | Description
 --------- | ------- | -----------
 id | String | Firestore document ID
-code | Integer | Sequential ticket number within the account
+code | String | Ticket code within the account
 name | String | Ticket name
 description | String | Ticket description
-type | String | Ticket Type ID (null if no type assigned)
+type | String | Resolved ticket type name (null if no type assigned)
 status | String | Current status: `open`, `in_progress`, `paused`, `closed`
 priority | String | Priority level: `low`, `medium`, `high`, `critical`
-creation_date | Datetime | Date and time the ticket was created (ISO 8601)
-expiration_date | Datetime | Date and time the ticket expires (ISO 8601)
-closure_date | Datetime | Date and time the ticket was closed (null if not closed)
+creation_date | String | Date and time the ticket was created, formatted in the account timezone (DD/MM/YYYY HH:MM)
+expiration_date | String | Date and time the ticket expires, formatted in the account timezone (null if none)
+closure_date | String | Date and time the ticket was closed, formatted in the account timezone (null if not closed)
 closure_message | String | Message provided when closing the ticket (null if not closed)
+location_id | Integer | ID of the associated location (null if none)
 location_name | String | Name of the associated location (null if none)
-creator_name | String | Full name of the user who created the ticket
-assignees | String | Comma-separated list of assigned users' full names
-invitees | String | Comma-separated list of invited users' full names (empty string if none)
+location_code | String | Code of the associated location (null if none)
+creator_id | Integer | ID of the user who created the ticket (null if not available)
+creator_email | String | Email of the user who created the ticket (null if not available)
+creator_name | String | Full name of the user who created the ticket (null if not available)
+assignees_concatenated | String | Assigned users in concatenated format: `user_id:X;;email:Y;;name:Z` joined by `&&` (empty string if none)
+invitees_concatenated | String | Invited users in concatenated format: `user_id:X;;email:Y;;name:Z` joined by `&&` (empty string if none)
+assignees | Object | Assigned users as an indexed object `{"0": {"id", "full_name", "email"}, ...}` (empty object if none)
+invitees | Object | Invited users as an indexed object `{"0": {"id", "full_name", "email"}, ...}` (empty object if none)
 last_updated_by | String | Full name of the user who last updated the ticket (null if not available)
 form_answer_id | Integer | ID of the linked form answer (null if none)
+form_answer_code | String | Code of the linked form answer (null if none)
 task_form_title | String | Title of the linked form (null if no form answer linked)
 task_form_question | String | Question from the linked form answer (null if no form answer linked)
 
@@ -1487,8 +1506,8 @@ task_form_question | String | Question from the linked form answer (null if no f
 
 ```
 200: OK
+401: Unauthorized
 404: Not Found
-403: Forbidden
 ```
 
 <aside class="success">
