@@ -1431,19 +1431,32 @@ JSON.parse(response)
     "code": 1,
     "name": "ejemplo",
     "description": "Ejemplo",
-    "type": null,
+    "type": "Safety",
     "status": "closed",
     "priority": "high",
     "creation_date": "30/01/2026 19:53",
     "expiration_date": "23/01/2026 19:53",
     "closure_date": "05/02/2026 15:23",
     "closure_message": "Addressed",
-    "location": "Main Office",
-    "nestable_location": null,
+    "location_id": 42,
+    "location_name": "Main Office",
+    "location_code": "LOC-001",
+    "asset_name": null,
+    "asset_identifier": null,
+    "creator_id": 7,
+    "creator_email": "juan.perez@example.com",
     "creator_name": "Juan Perez",
-    "assignees": "Juan Perez, Maria Lopez",
-    "invitees": "Carlos Silva",
+    "assignees_concatenated": "user_id:7;;email:juan.perez@example.com;;name:Juan Perez&&user_id:12;;email:maria.lopez@example.com;;name:Maria Lopez",
+    "invitees_concatenated": "user_id:18;;email:carlos.silva@example.com;;name:Carlos Silva",
+    "assignees": {
+      "0": { "id": 7, "full_name": "Juan Perez", "email": "juan.perez@example.com" },
+      "1": { "id": 12, "full_name": "Maria Lopez", "email": "maria.lopez@example.com" }
+    },
+    "invitees": {
+      "0": { "id": 18, "full_name": "Carlos Silva", "email": "carlos.silva@example.com" }
+    },
     "last_updated_by": "Juan Perez",
+    "form_answer_id": 101,
     "form_answer_code": "FA-12345",
     "task_form_title": "Daily Inspection",
     "task_form_question": "What issues were found?"
@@ -1466,7 +1479,7 @@ end | String | Optional. End date in `dd-mm-yyyy` format. Defaults to today
 status | String | Optional. Filter by status: `open`, `in_progress`, `paused`, `closed`
 task_form_id | Integer | Optional. Filter by the ID of the associated form. Only returns tickets linked to that form
 limit | Integer | Optional. Max number of results to return. Default: 200, max: 200
-offset | Integer | Optional. Number of results to skip (for pagination). Default: 0, max: 10000
+offset | Integer | Optional. Number of results to skip (for pagination). Default: 0, max: 2000
 
 The maximum allowed date range is **90 days**. Requests with a wider range will return `422 Unprocessable Entity`.
 
@@ -1487,19 +1500,27 @@ id | String | Firestore document ID
 code | Integer | Sequential ticket number within the account
 name | String | Ticket name
 description | String | Ticket description
-type | String | Ticket Type ID (null if no type assigned)
+type | String | Resolved ticket type name (null if no type assigned)
 status | String | Current status: `open`, `in_progress`, `paused`, `closed`
 priority | String | Priority level: `low`, `medium`, `high`, `critical`
 creation_date | String | Date and time the ticket was created, formatted according to account preferences (e.g. `30/01/2026 19:53`)
 expiration_date | String | Date and time the ticket expires, formatted according to account preferences (null if none)
 closure_date | String | Date and time the ticket was closed, formatted according to account preferences (null if not closed)
 closure_message | String | Message provided when closing the ticket (null if not closed)
-location | String | Name of the associated standard location (null if a nestable location or none)
-nestable_location | String | Name of the associated nestable location (null if a standard location or none)
+location_id | Integer | Database ID of the associated location (null if none)
+location_name | String | Name of the associated location (null if none)
+location_code | String | Code of the associated location (null if none)
+asset_name | String | Name of the linked asset (null if none)
+asset_identifier | String | Code/identifier of the linked asset (null if none)
+creator_id | Integer | Database ID of the user who created the ticket
+creator_email | String | Email of the user who created the ticket
 creator_name | String | Full name of the user who created the ticket
-assignees | String | Comma-separated list of assigned users' full names
-invitees | String | Comma-separated list of invited users' full names (empty string if none)
+assignees_concatenated | String | Assigned users as a `&&`-separated string, each entry formatted as `user_id:{id};;email:{email};;name:{name}` (empty string if none)
+invitees_concatenated | String | Invited users as a `&&`-separated string, same format as `assignees_concatenated` (empty string if none)
+assignees | Object | Assigned users as an indexed object: `{ "0": { "id": Integer, "full_name": String, "email": String }, ... }` (empty object if none)
+invitees | Object | Invited users as an indexed object, same shape as `assignees` (empty object if none)
 last_updated_by | String | Full name of the user who last updated the ticket (null if not available)
+form_answer_id | Integer | Database ID of the linked form answer (null if none)
 form_answer_code | String | Code of the linked form answer (null if none)
 task_form_title | String | Title of the linked form (null if no form answer linked)
 task_form_question | String | Question from the linked form answer (null if no form answer linked)
@@ -1508,7 +1529,7 @@ task_form_question | String | Question from the linked form answer (null if no f
 
 ```
 200: OK
-403: Forbidden
+401: Unauthorized
 422: Unprocessable Entity (invalid date range or range exceeds 90 days)
 ```
 
