@@ -1232,6 +1232,112 @@ code | String | Code to identify the task
 Remember — user your own header Authorization
 </aside>
 
+## Get Task Assign by ID
+
+```shell
+curl "https://www.mydatascope.com/api/external/task_assigns/4821" \
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/task_assigns/4821'
+response = RestClient.get url, {
+  :Authorization => 'b1cd93mfls9fdmfkadn23'
+}
+JSON.parse(response)
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+  "id": 4821,
+  "assign_id": "TA-2024-001",
+  "form_answer_code": "FA-0099",
+  "start_time": "2025-03-10 09:00:00",
+  "form_name": "Safety Inspection",
+  "user_email": "inspector@company.com",
+  "description": "Monthly fire extinguisher check",
+  "location_name": "Main Warehouse",
+  "location_code": "WH-001",
+  "location_type": "Location",
+  "location_address": "123 Main Ave",
+  "location_email": "warehouse@company.com",
+  "location_phone": "+1-555-0100",
+  "gap": 2,
+  "checklist": "Check extinguisher,Verify seal,Sign log",
+  "location_latitude": -33.4489,
+  "location_longitude": -70.6693,
+  "completed": "Yes",
+  "on_time": "Yes",
+  "delay_time": "0d/00h/00m",
+  "completed_datetime": "2025-03-10 10:45:00",
+  "late_response_allowed": false,
+  "mandatory": "for_everyone",
+  "confirmation_status": "completed",
+  "status": "completed",
+  "time_to_perform_minutes": 105.5,
+  "datetime_start": "2025-03-10 09:05:00",
+  "datetime_end": "2025-03-10 10:45:00",
+  "created_at": "2025-03-01 08:00:00",
+  "created_by": "Admin User"
+}
+```
+
+This endpoint retrieves the full detail of a single task assignment by its internal ID. Returns the same fields as the list endpoint. Returns 404 if the assignment does not belong to the authenticated account.
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/task_assigns/:id`
+
+### Path Parameters
+
+Parameter | Type | Description
+--------- | ------- | -----------
+id | Integer | Internal database ID of the task assignment
+
+### Response Fields
+
+Field | Type | Description
+--------- | ------- | -----------
+id | Integer | Internal database ID — unique across all periods
+assign_id | String | User-defined task code — may repeat across periods
+form_answer_code | String | Code of the submitted form answer, if completed
+start_time | String | Scheduled start time (account timezone)
+form_name | String | Name of the associated form
+user_email | String | Email of the assigned inspector
+description | String | Task description or instructions
+location_name | String | Name of the location
+location_code | String | Code of the location
+location_type | String | `Location` or `NestableLocation`
+location_address | String | Address of the location
+location_email | String | Email of the location
+location_phone | String | Phone of the location
+gap | Integer | Estimated hours to perform the task
+checklist | String | Comma-separated checklist items
+location_latitude | Float | Latitude of the location
+location_longitude | Float | Longitude of the location
+completed | String | `Yes` if a form answer exists, `No` otherwise
+on_time | String | `Yes` if completed before deadline, `No` if late, `null` if not completed
+delay_time | String | Delay formatted as `Xd/HHh/MMm`. `null` if not completed
+completed_datetime | String | When the last answer was submitted (account timezone)
+late_response_allowed | Boolean | Whether late submissions are permitted
+mandatory | String | `for_nobody`, `for_one`, or `for_everyone`
+confirmation_status | String | Acceptance state: `required`, `accepted`, `rejected`, `completed`, or `null`
+status | String | Task state: `completed`, `incomplete`, `sent`, `in_progress`, or `rejected`
+time_to_perform_minutes | Float | Minutes between first and last answer submission. `null` if not completed
+datetime_start | String | When the first answer was submitted (account timezone)
+datetime_end | String | When the last answer was submitted (account timezone)
+created_at | String | When the task assignment was created (account timezone)
+created_by | String | Full name of the user who created the task assignment
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+
 # Notifications
 
 ## List Last notifications
