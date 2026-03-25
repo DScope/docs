@@ -1256,7 +1256,8 @@ JSON.parse(response)
 {
   "id": 4821,
   "assign_id": "TA-2024-001",
-  "form_answer_code": "FA-0099",
+  "response_code": "FA-0099",
+  "priority": 1,
   "start_time": "2025-03-10 09:00:00",
   "form_name": "Safety Inspection",
   "user_email": "inspector@company.com",
@@ -1305,7 +1306,8 @@ Field | Type | Description
 --------- | ------- | -----------
 id | Integer | Internal database ID — unique across all periods
 assign_id | String | User-defined task code — may repeat across periods
-form_answer_code | String | Code of the submitted form answer, if completed
+response_code | String | Code of the submitted form answer, if completed
+priority | Integer | Task priority level (set when creating the task)
 start_time | String | Scheduled start time (account timezone)
 form_name | String | Name of the associated form
 user_email | String | Email of the assigned inspector
@@ -1365,7 +1367,8 @@ JSON.parse(response)
     {
       "id": 4821,
       "assign_id": "TA-2024-001",
-      "form_answer_code": "FA-0099",
+      "response_code": "FA-0099",
+  "priority": 1,
       "start_time": "2025-03-10 09:00:00",
       "form_name": "Safety Inspection",
       "user_email": "inspector@company.com",
@@ -1425,7 +1428,8 @@ Field | Type | Description
 --------- | ------- | -----------
 id | Integer | Internal database ID — unique across all periods
 assign_id | String | User-defined task code — may repeat across periods
-form_answer_code | String | Code of the submitted form answer, if completed
+response_code | String | Code of the submitted form answer, if completed
+priority | Integer | Task priority level (set when creating the task)
 start_time | String | Scheduled start time (account timezone)
 form_name | String | Name of the associated form
 user_email | String | Email of the assigned inspector
