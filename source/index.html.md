@@ -1327,7 +1327,7 @@ completed_datetime | String | When the last answer was submitted (account timezo
 late_response_allowed | Boolean | Whether late submissions are permitted
 mandatory | String | `for_nobody`, `for_one`, or `for_everyone`
 confirmation_status | String | Acceptance state: `required`, `accepted`, `rejected`, `completed`, or `null`
-status | String | Task state: `completed`, `incomplete`, `sent`, `in_progress`, or `rejected`
+status | String | Task state: `completed`, `incomplete`, `assigned`, `accepted`, or `rejected`
 time_to_perform_minutes | Float | Minutes between first and last answer submission. `null` if not completed
 datetime_start | String | When the first answer was submitted (account timezone)
 datetime_end | String | When the last answer was submitted (account timezone)
@@ -1401,7 +1401,7 @@ JSON.parse(response)
 }
 ```
 
-This endpoint retrieves a paginated list of task assignments for the authenticated account. The response fields match the platform's Excel export plus the internal `id`, enabling automated integrations without manual downloads.
+This endpoint retrieves a paginated list of task assignments for the authenticated account. The response fields match the platform's Excel export plus the internal `id`, enabling automated integrations without manual downloads. The `total` field reflects the number of task assignments matching the applied filters — without filters, it returns the count of all historical tasks in the account.
 
 ### HTTP Request
 
@@ -1413,7 +1413,7 @@ Parameter | Type | Description
 --------- | ------- | -----------
 start_date | String | Optional. Start date in `YYYY-MM-DD` format. Filters by `start_time >= date`
 end_date | String | Optional. End date in `YYYY-MM-DD` format. Filters by `start_time <= date`
-status | String | Optional. Filter by status: `completed`, `incomplete`, `sent`, `in_progress`, `rejected`
+status | String | Optional. Filter by status: `completed`, `incomplete`, `assigned`, `accepted`, `rejected`
 location_id | Integer | Optional. Filter by location ID
 user_email | String | Optional. Filter by the assigned inspector's email
 limit | Integer | Optional. Max number of results to return. Default: 100, max: 300
@@ -1447,12 +1447,16 @@ completed_datetime | String | When the last answer was submitted (account timezo
 late_response_allowed | Boolean | Whether late submissions are permitted
 mandatory | String | `for_nobody`, `for_one`, or `for_everyone`
 confirmation_status | String | Acceptance state: `required`, `accepted`, `rejected`, `completed`, or `null`
-status | String | Task state: `completed`, `incomplete`, `sent`, `in_progress`, or `rejected`
+status | String | Task state: `completed`, `incomplete`, `assigned`, `accepted`, or `rejected`
 time_to_perform_minutes | Float | Minutes between first and last answer submission. `null` if not completed
 datetime_start | String | When the first answer was submitted (account timezone)
 datetime_end | String | When the last answer was submitted (account timezone)
 created_at | String | When the task assignment was created (account timezone)
 created_by | String | Full name of the user who created the task assignment
+
+<aside class="notice">
+When no `start_date` / `end_date` filters are provided, this endpoint returns <strong>all historical task assignments</strong> for the account. The platform UI applies a default ±7-day window, so counts may differ. Use date filters to match the UI view.
+</aside>
 
 <aside class="success">
 Remember — use your own Authorization header
