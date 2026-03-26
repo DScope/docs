@@ -1281,8 +1281,8 @@ JSON.parse(response)
   "confirmation_status": "completed",
   "status": "completed",
   "time_to_perform_minutes": 105.5,
-  "datetime_start": "2025-03-10 09:05:00",
-  "datetime_end": "2025-03-10 10:45:00",
+  "response_start": "2025-03-10 09:05:00",
+  "response_end": "2025-03-10 10:45:00",
   "created_at": "2025-03-01 08:00:00",
   "created_by": "Admin User"
 }
@@ -1331,8 +1331,8 @@ mandatory | String | `for_nobody`, `for_one`, or `for_everyone`
 confirmation_status | String | Acceptance state: `required`, `accepted`, `rejected`, `completed`, or `null`
 status | String | Task state: `completed`, `incomplete`, `assigned`, `accepted`, or `rejected`
 time_to_perform_minutes | Float | Minutes between first and last answer submission. `null` if not completed
-datetime_start | String | When the first answer was submitted (account timezone)
-datetime_end | String | When the last answer was submitted (account timezone)
+response_start | String | When the first answer was submitted (account timezone)
+response_end | String | When the last answer was submitted (account timezone)
 created_at | String | When the task assignment was created (account timezone)
 created_by | String | Full name of the user who created the task assignment
 
@@ -1392,8 +1392,8 @@ JSON.parse(response)
       "confirmation_status": "completed",
       "status": "completed",
       "time_to_perform_minutes": 105.5,
-      "datetime_start": "2025-03-10 09:05:00",
-      "datetime_end": "2025-03-10 10:45:00",
+      "response_start": "2025-03-10 09:05:00",
+      "response_end": "2025-03-10 10:45:00",
       "created_at": "2025-03-01 08:00:00",
       "created_by": "Admin User"
     }
@@ -1453,8 +1453,8 @@ mandatory | String | `for_nobody`, `for_one`, or `for_everyone`
 confirmation_status | String | Acceptance state: `required`, `accepted`, `rejected`, `completed`, or `null`
 status | String | Task state: `completed`, `incomplete`, `assigned`, `accepted`, or `rejected`
 time_to_perform_minutes | Float | Minutes between first and last answer submission. `null` if not completed
-datetime_start | String | When the first answer was submitted (account timezone)
-datetime_end | String | When the last answer was submitted (account timezone)
+response_start | String | When the first answer was submitted (account timezone)
+response_end | String | When the last answer was submitted (account timezone)
 created_at | String | When the task assignment was created (account timezone)
 created_by | String | Full name of the user who created the task assignment
 
