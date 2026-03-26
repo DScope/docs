@@ -285,6 +285,12 @@
                   <li>
                     <a href="#create-task-assign" class="toc-h2 toc-link" data-title="create-task-assign">Create Task Assign</a>
                   </li>
+                  <li>
+                    <a href="#get-task-assign-by-id" class="toc-h2 toc-link" data-title="get-task-assign-by-id">Get Task Assign by ID</a>
+                  </li>
+                  <li>
+                    <a href="#get-task-assigns-by-period" class="toc-h2 toc-link" data-title="get-task-assigns-by-period">Get Task Assigns by Period</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -2136,6 +2142,514 @@ Remember — user your own header Authorization
 <aside class="success">
 Remember — user your own header Authorization
 </aside>
+<h2 id='get-task-assign-by-id'>Get Task Assign by ID</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/task_assigns/4821"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/task_assigns/4821'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4821</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"assign_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TA-2024-001"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"response_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FA-0099"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"priority"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-10 09:00:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"form_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Safety Inspection"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"user_email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"inspector@company.com"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Monthly fire extinguisher check"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Main Warehouse"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WH-001"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Location"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123 Main Ave"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"warehouse@company.com"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"+1-555-0100"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"gap"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"checklist"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Check extinguisher,Verify seal,Sign log"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-33.4489</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-70.6693</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"completed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yes"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"on_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yes"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"delay_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0d/00h/00m"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"completed_datetime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-10 10:45:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"late_response_allowed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"mandatory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"for_everyone"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"confirmation_status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"completed"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"completed"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"time_to_perform_minutes"</span><span class="p">:</span><span class="w"> </span><span class="mf">105.5</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"response_start"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-10 09:05:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"response_end"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-10 10:45:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-01 08:00:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"created_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin User"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>This endpoint retrieves the full detail of a single task assignment by its internal ID. Returns the same fields as the list endpoint. Returns 404 if the assignment does not belong to the authenticated account.</p>
+<h3 id='http-request-15'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/task_assigns/:id</code></p>
+<h3 id='path-parameters'>Path Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>Integer</td>
+<td>Internal database ID of the task assignment</td>
+</tr>
+</tbody></table>
+<h3 id='response-fields'>Response Fields</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>Integer</td>
+<td>Internal database ID — unique across all periods</td>
+</tr>
+<tr>
+<td>assign_id</td>
+<td>String</td>
+<td>User-defined task code — may repeat across periods</td>
+</tr>
+<tr>
+<td>response_code</td>
+<td>String</td>
+<td>Code of the submitted form answer, if completed</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>Integer</td>
+<td>Task priority level (set when creating the task)</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>String</td>
+<td>Scheduled start time (account timezone)</td>
+</tr>
+<tr>
+<td>form_name</td>
+<td>String</td>
+<td>Name of the associated form</td>
+</tr>
+<tr>
+<td>user_email</td>
+<td>String</td>
+<td>Email of the assigned inspector</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Task description or instructions</td>
+</tr>
+<tr>
+<td>location_name</td>
+<td>String</td>
+<td>Name of the location</td>
+</tr>
+<tr>
+<td>location_code</td>
+<td>String</td>
+<td>Code of the location</td>
+</tr>
+<tr>
+<td>location_type</td>
+<td>String</td>
+<td><code>Location</code> or <code>NestableLocation</code></td>
+</tr>
+<tr>
+<td>location_address</td>
+<td>String</td>
+<td>Address of the location</td>
+</tr>
+<tr>
+<td>location_email</td>
+<td>String</td>
+<td>Email of the location</td>
+</tr>
+<tr>
+<td>location_phone</td>
+<td>String</td>
+<td>Phone of the location</td>
+</tr>
+<tr>
+<td>gap</td>
+<td>Integer</td>
+<td>Estimated hours to perform the task</td>
+</tr>
+<tr>
+<td>checklist</td>
+<td>String</td>
+<td>Comma-separated checklist items</td>
+</tr>
+<tr>
+<td>location_latitude</td>
+<td>Float</td>
+<td>Latitude of the location</td>
+</tr>
+<tr>
+<td>location_longitude</td>
+<td>Float</td>
+<td>Longitude of the location</td>
+</tr>
+<tr>
+<td>completed</td>
+<td>String</td>
+<td><code>Yes</code> if a form answer exists, <code>No</code> otherwise</td>
+</tr>
+<tr>
+<td>on_time</td>
+<td>String</td>
+<td><code>Yes</code> if completed before deadline, <code>No</code> if late, <code>null</code> if not completed</td>
+</tr>
+<tr>
+<td>delay_time</td>
+<td>String</td>
+<td>Delay formatted as <code>Xd/HHh/MMm</code>. <code>null</code> if not completed</td>
+</tr>
+<tr>
+<td>completed_datetime</td>
+<td>String</td>
+<td>When the last answer was submitted (account timezone)</td>
+</tr>
+<tr>
+<td>late_response_allowed</td>
+<td>Boolean</td>
+<td>Whether late submissions are permitted</td>
+</tr>
+<tr>
+<td>mandatory</td>
+<td>String</td>
+<td><code>for_nobody</code>, <code>for_one</code>, or <code>for_everyone</code></td>
+</tr>
+<tr>
+<td>confirmation_status</td>
+<td>String</td>
+<td>Acceptance state: <code>required</code>, <code>accepted</code>, <code>rejected</code>, <code>completed</code>, or <code>null</code></td>
+</tr>
+<tr>
+<td>status</td>
+<td>String</td>
+<td>Task state: <code>completed</code>, <code>incomplete</code>, <code>assigned</code>, <code>accepted</code>, or <code>rejected</code></td>
+</tr>
+<tr>
+<td>time_to_perform_minutes</td>
+<td>Float</td>
+<td>Minutes between first and last answer submission. <code>null</code> if not completed</td>
+</tr>
+<tr>
+<td>response_start</td>
+<td>String</td>
+<td>When the first answer was submitted (account timezone)</td>
+</tr>
+<tr>
+<td>response_end</td>
+<td>String</td>
+<td>When the last answer was submitted (account timezone)</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>String</td>
+<td>When the task assignment was created (account timezone)</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>String</td>
+<td>Full name of the user who created the task assignment</td>
+</tr>
+</tbody></table>
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+<h2 id='get-task-assigns-by-period'>Get Task Assigns by Period</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/task_assigns?start_date=2025-03-01&amp;end_date=2025-03-31"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/task_assigns'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+  <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">start_date: </span><span class="s1">'2025-03-01'</span><span class="p">,</span> <span class="ss">end_date: </span><span class="s1">'2025-03-31'</span> <span class="p">}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"task_assigns"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4821</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"assign_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TA-2024-001"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"response_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FA-0099"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"priority"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-10 09:00:00"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Safety Inspection"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"user_email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"inspector@company.com"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Monthly fire extinguisher check"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"location_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Main Warehouse"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"location_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WH-001"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"location_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Location"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"location_address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123 Main Ave"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"location_email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"warehouse@company.com"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"location_phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"+1-555-0100"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"gap"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"checklist"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Check extinguisher,Verify seal,Sign log"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"location_latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-33.4489</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"location_longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-70.6693</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"completed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yes"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"on_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yes"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"delay_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0d/00h/00m"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"completed_datetime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-10 10:45:00"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"late_response_allowed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"mandatory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"for_everyone"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"confirmation_status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"completed"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"completed"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"time_to_perform_minutes"</span><span class="p">:</span><span class="w"> </span><span class="mf">105.5</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"response_start"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-10 09:05:00"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"response_end"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-10 10:45:00"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-03-01 08:00:00"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"created_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin User"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"limit"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"offset"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>This endpoint retrieves a paginated list of task assignments for the authenticated account. The response fields match the platform&#39;s Excel export plus the internal <code>id</code>, enabling automated integrations without manual downloads. The <code>total</code> field reflects the number of task assignments matching the applied filters — without filters, it returns the count of all historical tasks in the account.</p>
+<h3 id='http-request-16'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/task_assigns</code></p>
+<h3 id='input-parameters-2'>Input Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>start_date</td>
+<td>String</td>
+<td>Optional. Start date in <code>YYYY-MM-DD</code> format. Filters by <code>start_time &gt;= date</code></td>
+</tr>
+<tr>
+<td>end_date</td>
+<td>String</td>
+<td>Optional. End date in <code>YYYY-MM-DD</code> format. Filters by <code>start_time &lt;= date</code></td>
+</tr>
+<tr>
+<td>status</td>
+<td>String</td>
+<td>Optional. Filter by status: <code>completed</code>, <code>incomplete</code>, <code>assigned</code>, <code>accepted</code>, <code>rejected</code></td>
+</tr>
+<tr>
+<td>location_id</td>
+<td>Integer</td>
+<td>Optional. Filter by location ID</td>
+</tr>
+<tr>
+<td>user_email</td>
+<td>String</td>
+<td>Optional. Filter by the assigned inspector&#39;s email</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>Integer</td>
+<td>Optional. Max number of results to return. Default: 100, max: 300</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>Integer</td>
+<td>Optional. Number of results to skip (for pagination). Default: 0</td>
+</tr>
+</tbody></table>
+<h3 id='response-fields-2'>Response Fields</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>Integer</td>
+<td>Internal database ID — unique across all periods</td>
+</tr>
+<tr>
+<td>assign_id</td>
+<td>String</td>
+<td>User-defined task code — may repeat across periods</td>
+</tr>
+<tr>
+<td>response_code</td>
+<td>String</td>
+<td>Code of the submitted form answer, if completed</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>Integer</td>
+<td>Task priority level (set when creating the task)</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>String</td>
+<td>Scheduled start time (account timezone)</td>
+</tr>
+<tr>
+<td>form_name</td>
+<td>String</td>
+<td>Name of the associated form</td>
+</tr>
+<tr>
+<td>user_email</td>
+<td>String</td>
+<td>Email of the assigned inspector</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Task description or instructions</td>
+</tr>
+<tr>
+<td>location_name</td>
+<td>String</td>
+<td>Name of the location</td>
+</tr>
+<tr>
+<td>location_code</td>
+<td>String</td>
+<td>Code of the location</td>
+</tr>
+<tr>
+<td>location_type</td>
+<td>String</td>
+<td><code>Location</code> or <code>NestableLocation</code></td>
+</tr>
+<tr>
+<td>location_address</td>
+<td>String</td>
+<td>Address of the location</td>
+</tr>
+<tr>
+<td>location_email</td>
+<td>String</td>
+<td>Email of the location</td>
+</tr>
+<tr>
+<td>location_phone</td>
+<td>String</td>
+<td>Phone of the location</td>
+</tr>
+<tr>
+<td>gap</td>
+<td>Integer</td>
+<td>Estimated hours to perform the task</td>
+</tr>
+<tr>
+<td>checklist</td>
+<td>String</td>
+<td>Comma-separated checklist items</td>
+</tr>
+<tr>
+<td>location_latitude</td>
+<td>Float</td>
+<td>Latitude of the location</td>
+</tr>
+<tr>
+<td>location_longitude</td>
+<td>Float</td>
+<td>Longitude of the location</td>
+</tr>
+<tr>
+<td>completed</td>
+<td>String</td>
+<td><code>Yes</code> if a form answer exists, <code>No</code> otherwise</td>
+</tr>
+<tr>
+<td>on_time</td>
+<td>String</td>
+<td><code>Yes</code> if completed before deadline, <code>No</code> if late, <code>null</code> if not completed</td>
+</tr>
+<tr>
+<td>delay_time</td>
+<td>String</td>
+<td>Delay formatted as <code>Xd/HHh/MMm</code>. <code>null</code> if not completed</td>
+</tr>
+<tr>
+<td>completed_datetime</td>
+<td>String</td>
+<td>When the last answer was submitted (account timezone)</td>
+</tr>
+<tr>
+<td>late_response_allowed</td>
+<td>Boolean</td>
+<td>Whether late submissions are permitted</td>
+</tr>
+<tr>
+<td>mandatory</td>
+<td>String</td>
+<td><code>for_nobody</code>, <code>for_one</code>, or <code>for_everyone</code></td>
+</tr>
+<tr>
+<td>confirmation_status</td>
+<td>String</td>
+<td>Acceptance state: <code>required</code>, <code>accepted</code>, <code>rejected</code>, <code>completed</code>, or <code>null</code></td>
+</tr>
+<tr>
+<td>status</td>
+<td>String</td>
+<td>Task state: <code>completed</code>, <code>incomplete</code>, <code>assigned</code>, <code>accepted</code>, or <code>rejected</code></td>
+</tr>
+<tr>
+<td>time_to_perform_minutes</td>
+<td>Float</td>
+<td>Minutes between first and last answer submission. <code>null</code> if not completed</td>
+</tr>
+<tr>
+<td>response_start</td>
+<td>String</td>
+<td>When the first answer was submitted (account timezone)</td>
+</tr>
+<tr>
+<td>response_end</td>
+<td>String</td>
+<td>When the last answer was submitted (account timezone)</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>String</td>
+<td>When the task assignment was created (account timezone)</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>String</td>
+<td>Full name of the user who created the task assignment</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+When no `start_date` / `end_date` filters are provided, this endpoint returns <strong>all historical task assignments</strong> for the account. The platform UI applies a default ±7-day window, so counts may differ. Use date filters to match the UI view.
+</aside>
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
 <h1 id='notifications'>Notifications</h1><h2 id='list-last-notifications'>List Last notifications</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
@@ -2165,7 +2679,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-15'>HTTP Request</h3>
+<h3 id='http-request-17'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/notifications</code></p>
 <h3 id='query-parameters-7'>Query Parameters</h3>
 <table><thead>
@@ -2263,7 +2777,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-16'>HTTP Request</h3>
+<h3 id='http-request-18'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/files</code></p>
 <h3 id='query-parameters-8'>Query Parameters</h3>
 <table><thead>
