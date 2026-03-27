@@ -1343,7 +1343,7 @@ Remember — use your own Authorization header
 ## Get Task Assigns by Period
 
 ```shell
-curl "https://www.mydatascope.com/api/external/task_assigns?start_date=2025-03-01&end_date=2025-03-31" \
+curl "https://www.mydatascope.com/api/external/task_assigns?start=2025-03-01&end=2025-03-31" \
   -H "Authorization: b1cd93mfls9fdmfkadn23"
 ```
 
@@ -1354,7 +1354,7 @@ require 'json'
 url = 'https://www.mydatascope.com/api/external/task_assigns'
 response = RestClient.get url, {
   :Authorization => 'b1cd93mfls9fdmfkadn23',
-  :params => { start_date: '2025-03-01', end_date: '2025-03-31' }
+  :params => { start: '2025-03-01', end: '2025-03-31' }
 }
 JSON.parse(response)
 ```
@@ -1414,8 +1414,8 @@ This endpoint retrieves a paginated list of task assignments for the authenticat
 
 Parameter | Type | Description
 --------- | ------- | -----------
-start_date | String | Optional. Start date in `YYYY-MM-DD` format. Filters by `start_time >= date`
-end_date | String | Optional. End date in `YYYY-MM-DD` format. Filters by `start_time <= date`
+start | String | Optional. Start date in `YYYY-MM-DD` format. Filters by `start_time >= date`
+end | String | Optional. End date in `YYYY-MM-DD` format. Filters by `start_time <= date`
 status | String | Optional. Filter by status: `completed`, `incomplete`, `assigned`, `accepted`, `rejected`
 location_id | Integer | Optional. Filter by location ID
 user_email | String | Optional. Filter by the assigned inspector's email
