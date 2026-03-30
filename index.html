@@ -2375,7 +2375,7 @@ Remember — user your own header Authorization
 <aside class="success">
 Remember — use your own Authorization header
 </aside>
-<h2 id='get-task-assigns-by-period'>Get Task Assigns by Period</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/task_assigns?start_date=2025-03-01&amp;end_date=2025-03-31"</span> <span class="se">\</span>
+<h2 id='get-task-assigns-by-period'>Get Task Assigns by Period</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/task_assigns?start=2025-03-01&amp;end=2025-03-31"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
 </code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -2383,7 +2383,7 @@ Remember — use your own Authorization header
 <span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/task_assigns'</span>
 <span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
   <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
-  <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">start_date: </span><span class="s1">'2025-03-01'</span><span class="p">,</span> <span class="ss">end_date: </span><span class="s1">'2025-03-31'</span> <span class="p">}</span>
+  <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">start: </span><span class="s1">'2025-03-01'</span><span class="p">,</span> <span class="ss">end: </span><span class="s1">'2025-03-31'</span> <span class="p">}</span>
 <span class="p">}</span>
 <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 </code></pre>
@@ -2443,12 +2443,12 @@ Remember — use your own Authorization header
 </tr>
 </thead><tbody>
 <tr>
-<td>start_date</td>
+<td>start</td>
 <td>String</td>
 <td>Optional. Start date in <code>YYYY-MM-DD</code> format. Filters by <code>start_time &gt;= date</code></td>
 </tr>
 <tr>
-<td>end_date</td>
+<td>end</td>
 <td>String</td>
 <td>Optional. End date in <code>YYYY-MM-DD</code> format. Filters by <code>start_time &lt;= date</code></td>
 </tr>
