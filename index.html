@@ -321,6 +321,17 @@
               </ul>
           </li>
           <li>
+            <a href="#tickets-fka-issues" class="toc-h1 toc-link" data-title="tickets-fka-issues">Tickets (FKA Issues)</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#get-tickets-by-period" class="toc-h2 toc-link" data-title="get-tickets-by-period">Get Tickets by Period</a>
+                  </li>
+                  <li>
+                    <a href="#get-ticket" class="toc-h2 toc-link" data-title="get-ticket">Get Ticket</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="errors">Errors</a>
           </li>
       </div>
@@ -2871,7 +2882,433 @@ Remember — user your own header Authorization
 </span><span class="p">}]</span><span class="w">
 </span></code></pre>
 <aside class="notice">
-TIP: It will only start sending information for the new forms done after the integration. 
+TIP: It will only start sending information for the new forms done after the integration.
+</aside>
+<h1 id='tickets-fka-issues'>Tickets (FKA Issues)</h1><h2 id='get-tickets-by-period'>Get Tickets by Period</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/findings/list?start=01-01-2026&amp;end=31-01-2026"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/findings/list'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">start: </span><span class="s1">'01-01-2026'</span><span class="p">,</span> <span class="ss">end: </span><span class="s1">'31-01-2026'</span> <span class="p">}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Krdz3aFoWZ4ZVgpuAart"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ejemplo"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ejemplo"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Safety"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"closed"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"priority"</span><span class="p">:</span><span class="w"> </span><span class="s2">"high"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"creation_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"30/01/2026 19:53"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"expiration_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"23/01/2026 19:53"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"closure_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"05/02/2026 15:23"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"closure_message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Addressed"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"location_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"location_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Main Office"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"location_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LOC-001"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"asset_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"asset_identifier"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"creator_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"creator_email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"juan.perez@example.com"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"creator_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Juan Perez"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"assignees_concatenated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user_id:7;;email:juan.perez@example.com;;name:Juan Perez&amp;&amp;user_id:12;;email:maria.lopez@example.com;;name:Maria Lopez"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"invitees_concatenated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user_id:18;;email:carlos.silva@example.com;;name:Carlos Silva"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"assignees"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"0"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="s2">"full_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Juan Perez"</span><span class="p">,</span><span class="w"> </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"juan.perez@example.com"</span><span class="w"> </span><span class="p">},</span><span class="w">
+      </span><span class="s2">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="s2">"full_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Maria Lopez"</span><span class="p">,</span><span class="w"> </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"maria.lopez@example.com"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"invitees"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"0"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">18</span><span class="p">,</span><span class="w"> </span><span class="s2">"full_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Carlos Silva"</span><span class="p">,</span><span class="w"> </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"carlos.silva@example.com"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"last_updated_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Juan Perez"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"form_answer_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">101</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"form_answer_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FA-12345"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"task_form_title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Daily Inspection"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"task_form_question"</span><span class="p">:</span><span class="w"> </span><span class="s2">"What issues were found?"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+<p>This endpoint retrieves a list of Tickets filtered by creation date period.</p>
+<h3 id='http-request-19'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/findings/list</code></p>
+<h3 id='input-parameters-3'>Input Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>start</td>
+<td>String</td>
+<td>Optional. Start date in <code>dd-mm-yyyy</code> format. Defaults to 7 days ago</td>
+</tr>
+<tr>
+<td>end</td>
+<td>String</td>
+<td>Optional. End date in <code>dd-mm-yyyy</code> format. Defaults to today</td>
+</tr>
+<tr>
+<td>status</td>
+<td>String</td>
+<td>Optional. Filter by status: <code>open</code>, <code>in_progress</code>, <code>paused</code>, <code>closed</code></td>
+</tr>
+<tr>
+<td>task_form_id</td>
+<td>Integer</td>
+<td>Optional. Filter by the ID of the associated form. Only returns tickets linked to that form</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>Integer</td>
+<td>Optional. Max number of results to return. Default: 200, max: 200</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>Integer</td>
+<td>Optional. Number of results to skip (for pagination). Default: 0, max: 2000</td>
+</tr>
+</tbody></table>
+
+<p>The maximum allowed date range is <strong>90 days</strong>. Requests with a wider range will return <code>422 Unprocessable Entity</code>.</p>
+<h3 id='pagination'>Pagination</h3>
+<p>Results are paginated using <code>limit</code> and <code>offset</code>. <code>limit</code> controls how many results are returned, and <code>offset</code> controls how many to skip from the beginning.</p>
+
+<p>For example, if there are 400 tickets in the period:</p>
+
+<ul>
+<li>First page: <code>limit=200&amp;offset=0</code> → returns tickets 1–200</li>
+<li>Second page: <code>limit=200&amp;offset=200</code> → returns tickets 201–400</li>
+</ul>
+<h3 id='response-fields-3'>Response Fields</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>String</td>
+<td>Firestore document ID</td>
+</tr>
+<tr>
+<td>code</td>
+<td>Integer</td>
+<td>Sequential ticket number within the account</td>
+</tr>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Ticket name</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Ticket description</td>
+</tr>
+<tr>
+<td>type</td>
+<td>String</td>
+<td>Resolved ticket type name (null if no type assigned)</td>
+</tr>
+<tr>
+<td>status</td>
+<td>String</td>
+<td>Current status: <code>open</code>, <code>in_progress</code>, <code>paused</code>, <code>closed</code></td>
+</tr>
+<tr>
+<td>priority</td>
+<td>String</td>
+<td>Priority level: <code>low</code>, <code>medium</code>, <code>high</code>, <code>critical</code></td>
+</tr>
+<tr>
+<td>creation_date</td>
+<td>String</td>
+<td>Date and time the ticket was created, formatted according to account preferences (e.g. <code>30/01/2026 19:53</code>)</td>
+</tr>
+<tr>
+<td>expiration_date</td>
+<td>String</td>
+<td>Date and time the ticket expires, formatted according to account preferences (null if none)</td>
+</tr>
+<tr>
+<td>closure_date</td>
+<td>String</td>
+<td>Date and time the ticket was closed, formatted according to account preferences (null if not closed)</td>
+</tr>
+<tr>
+<td>closure_message</td>
+<td>String</td>
+<td>Message provided when closing the ticket (null if not closed)</td>
+</tr>
+<tr>
+<td>location_id</td>
+<td>Integer</td>
+<td>Database ID of the associated location (null if none)</td>
+</tr>
+<tr>
+<td>location_name</td>
+<td>String</td>
+<td>Name of the associated location (null if none)</td>
+</tr>
+<tr>
+<td>location_code</td>
+<td>String</td>
+<td>Code of the associated location (null if none)</td>
+</tr>
+<tr>
+<td>asset_name</td>
+<td>String</td>
+<td>Name of the linked asset (null if none)</td>
+</tr>
+<tr>
+<td>asset_identifier</td>
+<td>String</td>
+<td>Code/identifier of the linked asset (null if none)</td>
+</tr>
+<tr>
+<td>creator_id</td>
+<td>Integer</td>
+<td>Database ID of the user who created the ticket</td>
+</tr>
+<tr>
+<td>creator_email</td>
+<td>String</td>
+<td>Email of the user who created the ticket</td>
+</tr>
+<tr>
+<td>creator_name</td>
+<td>String</td>
+<td>Full name of the user who created the ticket</td>
+</tr>
+<tr>
+<td>assignees_concatenated</td>
+<td>String</td>
+<td>Assigned users as a <code>&amp;&amp;</code>-separated string, each entry formatted as <code>user_id:{id};;email:{email};;name:{name}</code> (empty string if none)</td>
+</tr>
+<tr>
+<td>invitees_concatenated</td>
+<td>String</td>
+<td>Invited users as a <code>&amp;&amp;</code>-separated string, same format as <code>assignees_concatenated</code> (empty string if none)</td>
+</tr>
+<tr>
+<td>assignees</td>
+<td>Object</td>
+<td>Assigned users as an indexed object: <code>{ &quot;0&quot;: { &quot;id&quot;: Integer, &quot;full_name&quot;: String, &quot;email&quot;: String }, ... }</code> (empty object if none)</td>
+</tr>
+<tr>
+<td>invitees</td>
+<td>Object</td>
+<td>Invited users as an indexed object, same shape as <code>assignees</code> (empty object if none)</td>
+</tr>
+<tr>
+<td>last_updated_by</td>
+<td>String</td>
+<td>Full name of the user who last updated the ticket (null if not available)</td>
+</tr>
+<tr>
+<td>form_answer_id</td>
+<td>Integer</td>
+<td>Database ID of the linked form answer (null if none)</td>
+</tr>
+<tr>
+<td>form_answer_code</td>
+<td>String</td>
+<td>Code of the linked form answer (null if none)</td>
+</tr>
+<tr>
+<td>task_form_title</td>
+<td>String</td>
+<td>Title of the linked form (null if no form answer linked)</td>
+</tr>
+<tr>
+<td>task_form_question</td>
+<td>String</td>
+<td>Question from the linked form answer (null if no form answer linked)</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-8'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+401: Unauthorized
+422: Unprocessable Entity (invalid date range or range exceeds 90 days)
+</code></pre>
+<aside class="success">
+Remember — use your own header Authorization
+</aside>
+<h2 id='get-ticket'>Get Ticket</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/findings/get/Krdz3aFoWZ4ZVgpuAart"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/findings/get/Krdz3aFoWZ4ZVgpuAart'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Krdz3aFoWZ4ZVgpuAart"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ejemplo"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ejemplo"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"closed"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"priority"</span><span class="p">:</span><span class="w"> </span><span class="s2">"high"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"creation_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-01-30T19:53:52.528+00:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"expiration_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-01-23T19:53:00.000+00:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"closure_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-02-05T15:23:12.360+00:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"closure_message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Addressed"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Main Office"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"creator_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Juan Perez"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"assignees"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Juan Perez, Maria Lopez"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"invitees"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Carlos Silva"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"last_updated_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Juan Perez"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"form_answer_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">12345</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"task_form_title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Daily Inspection"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"task_form_question"</span><span class="p">:</span><span class="w"> </span><span class="s2">"What issues were found?"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>This endpoint retrieves a single Ticket by its Firestore document ID.</p>
+<h3 id='http-request-20'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/findings/get/:id</code></p>
+<h3 id='url-parameter'>URL Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>String</td>
+<td>Required. The Firestore document ID of the ticket. This can be obtained from the ticket URL in the DataScope web app (<code>?selected=&lt;id&gt;</code>)</td>
+</tr>
+</tbody></table>
+<h3 id='response-fields-4'>Response Fields</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>String</td>
+<td>Firestore document ID</td>
+</tr>
+<tr>
+<td>code</td>
+<td>Integer</td>
+<td>Sequential ticket number within the account</td>
+</tr>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Ticket name</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Ticket description</td>
+</tr>
+<tr>
+<td>type</td>
+<td>String</td>
+<td>Ticket Type ID (null if no type assigned)</td>
+</tr>
+<tr>
+<td>status</td>
+<td>String</td>
+<td>Current status: <code>open</code>, <code>in_progress</code>, <code>paused</code>, <code>closed</code></td>
+</tr>
+<tr>
+<td>priority</td>
+<td>String</td>
+<td>Priority level: <code>low</code>, <code>medium</code>, <code>high</code>, <code>critical</code></td>
+</tr>
+<tr>
+<td>creation_date</td>
+<td>Datetime</td>
+<td>Date and time the ticket was created (ISO 8601)</td>
+</tr>
+<tr>
+<td>expiration_date</td>
+<td>Datetime</td>
+<td>Date and time the ticket expires (ISO 8601)</td>
+</tr>
+<tr>
+<td>closure_date</td>
+<td>Datetime</td>
+<td>Date and time the ticket was closed (null if not closed)</td>
+</tr>
+<tr>
+<td>closure_message</td>
+<td>String</td>
+<td>Message provided when closing the ticket (null if not closed)</td>
+</tr>
+<tr>
+<td>location_name</td>
+<td>String</td>
+<td>Name of the associated location (null if none)</td>
+</tr>
+<tr>
+<td>creator_name</td>
+<td>String</td>
+<td>Full name of the user who created the ticket</td>
+</tr>
+<tr>
+<td>assignees</td>
+<td>String</td>
+<td>Comma-separated list of assigned users&#39; full names</td>
+</tr>
+<tr>
+<td>invitees</td>
+<td>String</td>
+<td>Comma-separated list of invited users&#39; full names (empty string if none)</td>
+</tr>
+<tr>
+<td>last_updated_by</td>
+<td>String</td>
+<td>Full name of the user who last updated the ticket (null if not available)</td>
+</tr>
+<tr>
+<td>form_answer_id</td>
+<td>Integer</td>
+<td>ID of the linked form answer (null if none)</td>
+</tr>
+<tr>
+<td>task_form_title</td>
+<td>String</td>
+<td>Title of the linked form (null if no form answer linked)</td>
+</tr>
+<tr>
+<td>task_form_question</td>
+<td>String</td>
+<td>Question from the linked form answer (null if no form answer linked)</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-9'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+404: Not Found
+403: Forbidden
+</code></pre>
+<aside class="success">
+Remember — use your own header Authorization
 </aside>
 <h1 id='errors'>Errors</h1>
 <p>The DataScope API uses the following error codes:</p>
