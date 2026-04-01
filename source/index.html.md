@@ -1406,7 +1406,7 @@ TIP: It will only start sending information for the new forms done after the int
 ## Get Tickets by Period
 
 ```shell
-curl "https://www.mydatascope.com/api/external/findings?start=01-01-2026&end=31-01-2026"
+curl "https://www.mydatascope.com/api/external/findings/list?start=01-01-2026&end=31-01-2026"
   -H "Authorization: b1cd93mfls9fdmfkadn23"
 ```
 
@@ -1414,7 +1414,7 @@ curl "https://www.mydatascope.com/api/external/findings?start=01-01-2026&end=31-
 require 'rest-client'
 require 'json'
 
-url = 'https://www.mydatascope.com/api/external/findings'
+url = 'https://www.mydatascope.com/api/external/findings/list'
 response = RestClient.get url, {
 :Authorization => 'b1cd93mfls9fdmfkadn23',
  :params => { start: '01-01-2026', end: '31-01-2026' }
@@ -1468,7 +1468,7 @@ This endpoint retrieves a list of Tickets filtered by creation date period.
 
 ### HTTP Request
 
-`GET https://www.mydatascope.com/api/external/findings`
+`GET https://www.mydatascope.com/api/external/findings/list`
 
 ### Input Parameters
 
@@ -1541,7 +1541,7 @@ Remember — use your own header Authorization
 ## Get Ticket
 
 ```shell
-curl "https://www.mydatascope.com/api/external/findings/Krdz3aFoWZ4ZVgpuAart"
+curl "https://www.mydatascope.com/api/external/findings/get/Krdz3aFoWZ4ZVgpuAart"
   -H "Authorization: b1cd93mfls9fdmfkadn23"
 ```
 
@@ -1549,7 +1549,7 @@ curl "https://www.mydatascope.com/api/external/findings/Krdz3aFoWZ4ZVgpuAart"
 require 'rest-client'
 require 'json'
 
-url = 'https://www.mydatascope.com/api/external/findings/Krdz3aFoWZ4ZVgpuAart'
+url = 'https://www.mydatascope.com/api/external/findings/get/Krdz3aFoWZ4ZVgpuAart'
 response = RestClient.get url, {
 :Authorization => 'b1cd93mfls9fdmfkadn23',
 }
@@ -1586,7 +1586,7 @@ This endpoint retrieves a single Ticket by its Firestore document ID.
 
 ### HTTP Request
 
-`GET https://www.mydatascope.com/api/external/findings/:id`
+`GET https://www.mydatascope.com/api/external/findings/get/:id`
 
 ### URL Parameter
 
