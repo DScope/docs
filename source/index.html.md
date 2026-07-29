@@ -397,6 +397,10 @@ answer_metadata_comments | Checklist comment (text or photo) | the four above pl
 
 To install it: in Airbyte Cloud go to Settings, Sources, "Build a connector", then use the "..." menu and "Import YAML". Configure your API token and a start date, optionally restrict it to specific forms with `form_id`, publish the connector and create the connection with Sync mode "Incremental | Dedup".
 
+<aside class="warning">
+When you test a stream, the Connector Builder offers to replace the manifest's declared schema with one it infers from the sample response. Do not accept it. Airbyte drops any field that is <code>null</code> across every sampled record, and several fields here are legitimately null on a quiet account. One of them, <code>subform_index</code>, is part of the <code>answer_metadata_comments</code> primary key, so accepting the detected schema breaks that stream with "Path [] does not have field <code>subform_index</code> in the schema". The remaining differences the Builder reports are its own normalization (it rewrites <code>$schema</code>, reorders type unions, collapses <code>integer</code> into <code>number</code>, and drops <code>format</code>) and are safe to ignore.
+</aside>
+
 ### Customizing the manifest
 
 The manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of `custom_fields` are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.
@@ -408,7 +412,7 @@ What | Notes
 Stream names | `form_answers`, `answers` and `answer_metadata_comments` become table names in your destination. Rename them to match your own conventions
 `page_size` | 200 is the endpoint maximum, so you can only lower it. Lower values mean more requests for the same data
 Optional `custom_fields` | Add any field from the Custom Fields table above. When you add one, add it to that stream's schema too, so the destination types the column instead of guessing
-`base_url` and `form_id` | Both are configuration fields, meant to be set per source
+`form_id` | A configuration field, meant to be set per source
 
 **Change with care**
 

@@ -2,9 +2,9 @@
 # DataScope - Airbyte Low-Code (Declarative) Source Connector
 # =============================================================================
 # Created:       2026-07-23
-# Last updated:  2026-07-28  (fix CursorPagination Jinja: last_record singular,
-#                             last_page_size for stop_condition;
-#                             new answers_form_identification custom_field)
+# Last updated:  2026-07-29  (base_url hardcodeado a produccion; campos
+#                             faltantes en los schemas; aviso sobre el schema
+#                             detectado del Connector Builder)
 #
 # Actualizar `Last updated` en cada cambio funcional del manifest (nuevos
 # streams, cambios de PK/cursor, custom_fields, ajustes de extractor).
@@ -12,7 +12,8 @@
 # La fecha permite a quien replica el manifest saber si tiene la versión
 # actual comparándola con la última publicada por DataScope.
 # =============================================================================
-# El `base_url` default apunta a producción (https://www.mydatascope.com).
+# Apunta a producción (https://www.mydatascope.com). La URL es fija, no es un
+# campo configurable.
 #
 # Cómo usarlo:
 #   1. En Airbyte Cloud: Settings -> Sources -> "Build a connector".
@@ -25,6 +26,36 @@
 # la versión declarada en `version:`. Comparar con la versión que muestra el
 # Connector Builder en la esquina del proyecto y ajustar (o comentar la línea
 # para usar el default del deployment).
+# =============================================================================
+# NO ACEPTAR EL "SCHEMA DETECTADO" QUE PROPONE EL CONNECTOR BUILDER
+# =============================================================================
+# Al testear un stream, el Builder compara los schemas declarados acá con lo
+# que infiere de la muestra de respuestas, y ofrece reemplazar el declarado
+# por el detectado. No hay que aceptarlo.
+#
+# El motivo: Airbyte descarta del schema detectado cualquier campo que venga
+# `null` en TODOS los registros de la muestra, porque no puede inferir un tipo
+# desde puros nulls. Varios campos de este manifest son legítimamente null en
+# cuentas de prueba (`assign_*` sin tareas asignadas, `form_state` sin estados,
+# `subform_index` cuando ninguna respuesta está dentro de un grupo repetible).
+#
+# Con `subform_index` eso rompe el conector, no solo lo ensucia: es parte de la
+# primary key del stream `answer_metadata_comments`, así que al aceptar el
+# schema detectado la PK queda apuntando a un campo inexistente y el test
+# falla con:
+#
+#   Path [] does not have field `subform_index` in the schema and hence
+#   can't be marked as required.
+#
+# Y no se arregla sacándolo de la PK: `subform_index` distingue comentarios de
+# filas distintas de un mismo grupo repetible que marcaron la misma
+# alternativa. Sin él, uno sobrescribe al otro en el warehouse.
+#
+# Las diferencias que el Builder va a seguir mostrando son ruido de su propia
+# normalización y se pueden ignorar: reescribe `$schema`, reordena
+# `["null","string"]`, colapsa `integer` en `number` (no distingue int de float
+# al inferir desde JSON), descarta `format: date-time`, y agrega un bloque
+# `required` derivado de la PK y el cursor.
 # =============================================================================
 
 version: "5.10.2"
@@ -47,7 +78,12 @@ definitions:
   # ---- Requester compartido --------------------------------------------------
   requester:
     type: HttpRequester
-    url_base: "{{ config['base_url'] }}"
+    # URL fija de producción. Antes esto era un campo configurable
+    # (`config['base_url']`), pero no había caso de uso real para apuntarlo a
+    # otra parte y sí un modo de falla: si el campo queda vacío al configurar
+    # la source, el test del stream falla con un error de URL inválida que no
+    # dice cuál es el campo faltante.
+    url_base: "https://www.mydatascope.com"
     path: "/api/external/v5/answers"
     http_method: GET
     authenticator:
@@ -93,7 +129,7 @@ definitions:
       #   answers_latitude_longitude     → geo por answer
       #   answers_form_identification    → repite form_name y form_code dentro de cada answer del stream `answers` (evita el JOIN warehouse-side para consumers que quieren contexto de form al costado de cada fila)
       # FORM-LEVEL:
-      #   form_update_variations         → updated_date, updated_at_unix
+      #   form_update_variations         → updated, updated_date, updated_at_unix
       #   form_finished                  → boolean finished
       #   code_as_form_code              → form_code (además del `code` estándar)
       #   form_answer_id_as_id           → id == form_answer_id (PK simple del stream `form_answers`)
@@ -373,8 +409,24 @@ streams:
           updated_at:
             type: ["null", "string"]
             format: date-time
+          # Variantes compactas de las fechas, en formato YYYYMMDDHHMMSS y
+          # YYYYMMDD. `created`/`created_date` vienen siempre; `updated`,
+          # `updated_date` y `updated_at_unix` los agrega
+          # `form_update_variations`.
+          created:
+            type: ["null", "string"]
+          created_date:
+            type: ["null", "string"]
+          updated:
+            type: ["null", "string"]
+          updated_date:
+            type: ["null", "string"]
           updated_at_unix:
             type: ["null", "integer"]
+          # "<latitude>, <longitude>" en un solo string. Solo presente cuando
+          # la respuesta trae coordenadas.
+          latlong:
+            type: ["null", "string"]
           assign_id:
             type: ["null", "string", "integer"]
           assign_internal_id:
@@ -523,6 +575,16 @@ streams:
           form_answer_updated_at:
             type: ["null", "string"]
             format: date-time
+          # Array anidado presente solo en answers de tipo
+          # `select_option_metadata_comments`. Es la fuente del stream
+          # `answer_metadata_comments`, que lo extrae como filas propias. Se
+          # declara acá también porque el campo igual viaja en este stream, y
+          # si no está declarado Airbyte lo reporta como diferencia de schema.
+          metadata_comments:
+            type: ["null", "array"]
+            items:
+              type: ["null", "object"]
+              additionalProperties: true
 
   # ---------------------------------------------------------------------------
   # Stream 3: `answer_metadata_comments`: comentarios (texto + fotos) de las
@@ -606,12 +668,6 @@ spec:
           "Authorization: Bearer <token>".
         airbyte_secret: true
         order: 0
-      base_url:
-        type: string
-        title: Base URL
-        description: URL base de la instancia DataScope. El default es producción.
-        default: "https://www.mydatascope.com"
-        order: 1
       start_date:
         type: string
         title: Start date
@@ -619,7 +675,7 @@ spec:
         format: date-time
         examples:
           - "2024-01-01T00:00:00Z"
-        order: 2
+        order: 1
       form_id:
         type: string
         title: Form ID(s)
@@ -631,4 +687,4 @@ spec:
         examples:
           - "123"
           - "123,456,789"
-        order: 3
+        order: 2
