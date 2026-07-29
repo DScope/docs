@@ -395,6 +395,10 @@ form_answers | Form answer (one submission) | `form_answer_id`
 answers | Answer (one question and its value) | `form_answer_id`, `real_question_id`, `subform_index`, `answer_row_key`
 answer_metadata_comments | Checklist comment (text or photo) | the four above plus `data_type` and `data_index`
 
+<aside class="notice">
+In the <code>answers</code> and <code>answer_metadata_comments</code> streams, <code>subform_index</code> arrives as <code>-1</code> when the question does not live inside a Group of Repeatable Fields, where the API itself returns <code>null</code>. The manifest normalizes it because Airbyte removes null-valued keys from records, and a primary key cannot reference a field that is missing. Both streams use the same convention, so joining them on <code>(form_answer_id, real_question_id, subform_index, answer_row_key)</code> works without coalescing. <code>-1</code> never collides with a real row 0: a given question is either always inside a repeatable group or never, so the two values cannot both occur for the same <code>real_question_id</code>.
+</aside>
+
 To install it: in Airbyte Cloud go to Settings, Sources, "Build a connector", then use the "..." menu and "Import YAML". Configure your API token and a start date, optionally restrict it to specific forms with `form_id`, publish the connector and create the connection with Sync mode "Incremental | Dedup".
 
 <aside class="warning">

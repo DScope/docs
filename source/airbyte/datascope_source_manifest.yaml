@@ -3,8 +3,8 @@
 # =============================================================================
 # Created:       2026-07-23
 # Last updated:  2026-07-29  (base_url hardcodeado a produccion; campos
-#                             faltantes en los schemas; aviso sobre el schema
-#                             detectado del Connector Builder)
+#                             faltantes en los schemas; subform_index
+#                             normalizado a -1 via AddFields)
 #
 # Actualizar `Last updated` en cada cambio funcional del manifest (nuevos
 # streams, cambios de PK/cursor, custom_fields, ajustes de extractor).
@@ -41,23 +41,19 @@
 #
 # El botón peligroso es "Overwrite declared schema".
 #
-# El motivo: Airbyte descarta del schema detectado cualquier campo que venga
-# `null` en TODOS los registros de la muestra, porque no puede inferir un tipo
-# desde puros nulls. Varios campos de este manifest son legítimamente null en
-# cuentas de prueba (`assign_*` sin tareas asignadas, `form_state` sin estados,
-# `subform_index` cuando ninguna respuesta está dentro de un grupo repetible).
+# El motivo: Airbyte DESCARTA DEL REGISTRO las claves con valor null, y sobre
+# ese registro ya recortado infiere el schema. Así que un campo que viene null
+# en toda la muestra desaparece del schema detectado, y aceptarlo lo borra de
+# la declaración. Varios campos son legítimamente null en cuentas con pocos
+# datos: `assign_*` sin tareas asignadas, `form_state` sin estados,
+# `subform_index` cuando ninguna respuesta está dentro de un grupo repetible.
 #
-# Con `subform_index` eso rompe el conector, no solo lo ensucia: es parte de la
-# primary key del stream `answer_metadata_comments`, así que al aceptar el
-# schema detectado la PK queda apuntando a un campo inexistente y el test
-# falla con:
-#
-#   Path [] does not have field `subform_index` in the schema and hence
-#   can't be marked as required.
-#
-# Y no se arregla sacándolo de la PK: `subform_index` distingue comentarios de
-# filas distintas de un mismo grupo repetible que marcaron la misma
-# alternativa. Sin él, uno sobrescribe al otro en el warehouse.
+# Ese mismo recorte de nulls es la razón por la que los streams `answers` y
+# `answer_metadata_comments` llevan una transformación `AddFields` que
+# normaliza `subform_index` a -1: como el campo forma parte de sus primary
+# keys, y Airbyte marca las PK como `required`, un null lo hace desaparecer y
+# el stream falla. El detalle completo está en el comentario de esa
+# transformación, en el stream `answers`.
 #
 # Las diferencias que el Builder va a seguir mostrando son ruido de su propia
 # normalización y se pueden ignorar: reescribe `$schema`, reordena
@@ -503,6 +499,36 @@ streams:
       - answer_row_key
     retriever:
       $ref: "#/definitions/retriever_answers"
+    # Normaliza `subform_index` null a -1. OBLIGATORIO, no es cosmético.
+    #
+    # Airbyte descarta del registro las claves con valor null antes de inferir
+    # el schema y antes de validar los campos requeridos. Como marca como
+    # `required` a todo campo de la primary key, un `subform_index` null hace
+    # fallar el stream con:
+    #
+    #   Path [] does not have field `subform_index` in the schema and hence
+    #   can't be marked as required.
+    #
+    # El endpoint devuelve `"subform_index": null` correctamente (verificable
+    # en la pestaña Response del Connector Builder); es Airbyte el que lo
+    # filtra. Y el campo no se puede sacar de la PK: es lo único que
+    # distingue dos respuestas de filas distintas de un mismo grupo repetible.
+    #
+    # -1 significa "la pregunta no está dentro de un grupo repetible". No
+    # colisiona con la fila 0 real: una pregunta dada está siempre dentro de
+    # un grupo o siempre fuera, nunca las dos cosas, así que para un mismo
+    # `real_question_id` el -1 y el 0 no coexisten.
+    #
+    # Se aplica igual en el stream `answer_metadata_comments` para que el join
+    # entre ambos por (form_answer_id, real_question_id, subform_index,
+    # answer_row_key) siga siendo válido en el warehouse.
+    transformations:
+      - type: AddFields
+        fields:
+          - type: AddedFieldDefinition
+            path: ["subform_index"]
+            value: "{{ -1 if record.get('subform_index') is none else record['subform_index'] }}"
+            value_type: integer
     incremental_sync:
       $ref: "#/definitions/incremental_cursor_answers"
     schema_loader:
@@ -620,6 +646,17 @@ streams:
       - data_index
     retriever:
       $ref: "#/definitions/retriever_metadata_comments"
+    # Misma normalización que en el stream `answers`, y por el mismo motivo
+    # (ver el comentario extenso allá). Tiene que estar en los dos streams
+    # para que el join por (form_answer_id, real_question_id, subform_index,
+    # answer_row_key) compare -1 contra -1 y no -1 contra null.
+    transformations:
+      - type: AddFields
+        fields:
+          - type: AddedFieldDefinition
+            path: ["subform_index"]
+            value: "{{ -1 if record.get('subform_index') is none else record['subform_index'] }}"
+            value_type: integer
     incremental_sync:
       $ref: "#/definitions/incremental_cursor_answers"
     schema_loader:
