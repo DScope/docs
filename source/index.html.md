@@ -225,6 +225,210 @@ answers | Array | array with all the question of the specific form answer.
   assign_location_description | String | Description of the location assigned
   assign_location_code" | String | Code of the location assigned
 
+## Get All Answers V5 (Beta)
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/v5/answers'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {
+   :date_modified => true,
+   :order_date => true,
+   :custom_fields => 'answers_data_in_array,answers_extra_data'
+ }
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/v5/answers?date_modified=true&order_date=true&custom_fields=answers_data_in_array,answers_extra_data"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> With `answers_data_in_array` the questions are nested in an `answers` array instead of becoming top-level keys, so the response shape stays the same across forms:
+
+```json
+[
+   {
+      "form_answer_id":257189,
+      "form_id":432,
+      "form_name":"Example Form",
+      "form_code":"2342",
+      "form_state":"Accepted",
+      "user_name":"Example User",
+      "user_identifier":"user@email.com",
+      "created_at":"2026-07-16T16:52:05.000Z",
+      "updated_at":"2026-07-18T09:14:22.000Z",
+      "latitude":-33.398803,
+      "longitude":-70.559834,
+      "answers":[
+         {
+            "question_value":"Example value",
+            "question_name":"Example question",
+            "question_type":"text",
+            "question_id":1180,
+            "real_question_id":1180,
+            "subform_index":null,
+            "metadata_type":null,
+            "metadata_id":null
+         },
+         {
+            "question_value":"Alternative 1",
+            "question_name":"Example checklist",
+            "question_type":"select_check_metadata",
+            "question_id":1181,
+            "real_question_id":1181,
+            "subform_index":null,
+            "metadata_type":"list_objects",
+            "metadata_id":90412
+         }
+      ]
+   }
+]
+```
+
+Answers V5 is a single endpoint that can reproduce the response shape of every previous version (v1, v2, v3, v4) and adds opt-in fields on top. Instead of a new endpoint per feature, you pick the version you want as a baseline through `version` and switch extra data on through `custom_fields`.
+
+The most requested use case is the `answers_data_in_array` shape shown above. In v1 to v4 each question becomes its own top-level key, so every form produces a different set of columns and a relational destination (BigQuery, Snowflake, Postgres) cannot model it cleanly. With `answers_data_in_array` the questions move into a nested `answers` array and the response schema stops changing per form.
+
+<aside class="notice">
+This endpoint is in Beta. It is stable and in production use, but the field list keeps growing. The companion page <a href="https://datascopers.notion.site/Explicaci-n-Answers-V5-Beta-1a03acd7c7a08005b827d66010b5ff1c">Explicación Answers V5</a> (written in Spanish) walks through the same material and tracks the change history release by release. Feedback and bug reports are welcome.
+</aside>
+
+<aside class="warning">
+The user whose token you use needs export permission in DataScope. Ask your account administrator to confirm it before setting up a recurring integration.
+</aside>
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/v5/answers`
+
+### Query Parameters
+
+Parameter | Type | Default | Description
+--------- | ---- | ------- | -----------
+version | String | v5 | Reproduce the response shape of a previous version. One of `v1`, `v2`, `v3`, `v4`, `v5`.
+custom_fields | String | blank | Comma separated list of extra data to include. See the table below.
+form_id | Integer or String | blank | One form ID, or several comma separated. This ID is in the URL when you edit a form, eg. https://app.mydatascope.com/task_forms/XXXX/edit
+user_id | Integer | blank | If set, only answers from that user
+location_id | Integer | blank | If set, only answers from that location
+days_limit | Integer | 7 | Days between start and end when you do not send them (max range 90 days)
+start | String | last `days_limit` days | Start of the date range, ISO 8601 (eg. `2026-07-01T00:00:00Z`)
+end | String | date of the last answer | End of the date range, ISO 8601. Max range 90 days
+date_modified | Boolean | false | Filter by modification date (`updated_at`) instead of creation date. Use it to pull edits, not only new submissions
+order_date | Boolean | false | Sort by `updated_at` instead of the default question order. Required whenever you page through modified answers
+sort_order | String | asc | Direction for `order_date`. `asc` or `desc`. Keep `asc` for any incremental integration
+limit | Integer | 200 | Records per page. Default and max are 200
+page | Integer | 1 | Page number. With a limit of 200, page 2 returns the next 200 records
+offset | Integer | 0 | Shifts the start of the pagination
+since | String | blank | Keyset pagination cursor, built from the `updated_at` and `form_answer_id` of the last record you read. More efficient than `page` or `offset` on large exports. See "Pagination with since" below
+
+<aside class="notice">
+Send <code>date_modified=true</code> and <code>order_date=true</code> together whenever you page through modified answers. Filtering by modification date while sorting by something else drops records at page boundaries.
+</aside>
+
+### Pagination with since
+
+`page` and `offset` work as in previous versions. For large or recurring exports prefer `since`, which pages from the last record you already read instead of counting rows from the beginning:
+
+1. Request the first page normally, with `date_modified=true` and `order_date=true`.
+2. Take `updated_at` and `form_answer_id` from the last record of the response.
+3. Send them back as `since=<updated_at>|<form_answer_id>` to get the next page.
+4. Repeat until a page returns fewer records than `limit`.
+
+A malformed cursor returns `400` with `{"error": "invalid_since_cursor"}`. When `since` is present the response is always sorted ascending, regardless of `sort_order`.
+
+### Custom Fields
+
+`custom_fields` unlocks extra data. Send the names comma separated, for example `custom_fields=answers_data_in_array,answers_extra_data,answers_selected_metadata`. Unknown names are ignored silently.
+
+Custom Field | Description
+------------ | -----------
+answers_data_in_array | Nest the questions in an `answers` array instead of top-level keys. This is what keeps the schema stable across forms (already in v1)
+answers_extra_data | Per answer metadata: `question_id`, `real_question_id`, `subform_index`, `question_type`, `metadata_type`, `metadata_id`, `name`
+answers_latitude_longitude | Latitude and longitude of each answer (already in v2 and v4)
+answers_selected_metadata | Name, description, code and attributes of the list object or location selected in an answer
+answers_activity_data | `start_time`, `end_time`, `duration`, `day_start` and `full_duration` for Activity List answers
+answers_activity_order | Period index for Activity List answers. Distinguishes several periods that selected the same alternative
+answers_row_key | Stable per row discriminator. Combined with `form_answer_id`, `real_question_id` and `subform_index` it gives each answer row a primary key that survives edits
+answers_form_answer_updated_at | `updated_at` of the parent form answer repeated inside each answer. Useful as an incremental cursor when you consume the answers as their own table
+answers_metadata_comments_array | Checklist comments as a nested `metadata_comments` array on each answer, instead of flat prefixed columns
+answers_form_identification | `form_name` and `form_code` repeated inside each answer, so you do not need to join back to the form answer
+answers_comments | Checklist comments as flat prefixed columns (`comment`, `comment_1`, ...). Already in versions above 2. Do not combine with `answers_metadata_comments_array`
+answers_as_v3 | Reproduce the special v3 answer format
+code_as_form_code | Include the answer code as `form_code` (already in versions above 2)
+form_answer_id_as_id | Include the form answer ID as `id` (already in v3)
+form_finished | Include whether the form synchronized completely (already in v3)
+form_update_variations | Include `updated_date` and `updated_at_unix`
+assign_base_data | Basic data of the assigned Task: internal ID, custom ID, name, description, code. Required by the `task_*` and `assign_location_*` fields below
+task_description | Description of the assigned Task
+task_mandatory | Whether the assigned Task is mandatory
+task_late_response_allowed | Whether the assigned Task accepts answers after the deadline
+task_group_id | Group ID of the assigned Task
+task_mobile_user_id | User ID of the assigned Task
+task_start_time | Start datetime of the assigned Task
+task_gap | Hour window to complete the assigned Task
+assign_location_city | City of the location of the assigned Task (already in v3)
+assign_location_region | Region of the location of the assigned Task
+assign_location_country | Country of the location of the assigned Task
+assign_location_email | Email of the location of the assigned Task
+assign_location_latitude | Latitude of the location of the assigned Task
+assign_location_longitude | Longitude of the location of the assigned Task
+assign_location_company_email | Company email of the location. Only for Locations
+assign_location_company_name | Company name of the location. Only for Locations
+assign_location_company_code | Company code of the location. Only for Locations
+
+### Airbyte Cloud connector
+
+If your destination is a data warehouse, you do not need to write the pagination and incremental logic yourself. DataScope publishes a ready to use low-code connector manifest for Airbyte:
+
+[Download the manifest (YAML)](https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml)
+
+It defines three related streams that you can join in your warehouse:
+
+Stream | One row per | Primary key
+------ | ----------- | -----------
+form_answers | Form answer (one submission) | `form_answer_id`
+answers | Answer (one question and its value) | `form_answer_id`, `real_question_id`, `subform_index`, `answer_row_key`
+answer_metadata_comments | Checklist comment (text or photo) | the four above plus `data_type` and `data_index`
+
+To install it: in Airbyte Cloud go to Settings, Sources, "Build a connector", then use the "..." menu and "Import YAML". Configure your API token and a start date, optionally restrict it to specific forms with `form_id`, publish the connector and create the connection with Sync mode "Incremental | Dedup".
+
+### Customizing the manifest
+
+The manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of `custom_fields` are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.
+
+**Safe to change**
+
+What | Notes
+---- | -----
+Stream names | `form_answers`, `answers` and `answer_metadata_comments` become table names in your destination. Rename them to match your own conventions
+`page_size` | 200 is the endpoint maximum, so you can only lower it. Lower values mean more requests for the same data
+Optional `custom_fields` | Add any field from the Custom Fields table above. When you add one, add it to that stream's schema too, so the destination types the column instead of guessing
+`base_url` and `form_id` | Both are configuration fields, meant to be set per source
+
+**Change with care**
+
+What | What breaks
+---- | -----------
+`order_date`, or the sort direction | Incremental sync depends on ascending `updated_at`. Descending puts the newest record on the first page, the cursor jumps to it, and everything behind it is never synced again
+`primary_key` on any stream | These tuples are what make deduplication correct across edits. Shortening one collapses rows that are actually distinct; adding a mutable field creates a new row on every edit
+`cursor_field`, or the `incremental_sync` blocks | The child streams inherit the parent form answer's `updated_at`. Pointing them somewhere else stalls the sync state
+Extractor `field_path` | The wildcard shape is exact. A wrong path returns zero records with no error, which looks like an empty account
+The structural `custom_fields` | `answers_data_in_array`, `answers_extra_data`, `answers_row_key`, `answers_form_answer_updated_at` and `answers_metadata_comments_array` feed the primary keys and the cursors. Removing one breaks whatever depended on it
+Adding `limit` to `request_parameters` | The paginator already injects it, and duplicating it fails the sync with a request collision
+
+<aside class="notice">
+Rename streams before the first sync if you can. Airbyte treats a renamed stream as a new one, so renaming later creates a fresh table in your destination and re-syncs the history into it, leaving the previous table behind.
+</aside>
+
+<aside class="warning">
+If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
+</aside>
+
 ## Change Answer
 
 ```ruby
