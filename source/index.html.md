@@ -398,7 +398,11 @@ answer_metadata_comments | Checklist comment (text or photo) | the four above pl
 To install it: in Airbyte Cloud go to Settings, Sources, "Build a connector", then use the "..." menu and "Import YAML". Configure your API token and a start date, optionally restrict it to specific forms with `form_id`, publish the connector and create the connection with Sync mode "Incremental | Dedup".
 
 <aside class="warning">
-When you test a stream, the Connector Builder offers to replace the manifest's declared schema with one it infers from the sample response. Do not accept it. Airbyte drops any field that is <code>null</code> across every sampled record, and several fields here are legitimately null on a quiet account. One of them, <code>subform_index</code>, is part of the <code>answer_metadata_comments</code> primary key, so accepting the detected schema breaks that stream with "Path [] does not have field <code>subform_index</code> in the schema". The remaining differences the Builder reports are its own normalization (it rewrites <code>$schema</code>, reorders type unions, collapses <code>integer</code> into <code>number</code>, and drops <code>format</code>) and are safe to ignore.
+Testing a stream shows "Detected schema and declared schema are different", with an <b>Overwrite declared schema</b> button. Do not press it, and do not press <b>Merge properties</b> either. There is no dismiss button: leaving the notice alone is the correct action. It stays as an indicator on the Schema tab but blocks nothing, because the schema declared in the manifest is what runs.
+</aside>
+
+<aside class="notice">
+Why overwriting breaks things: Airbyte drops any field that is <code>null</code> across every sampled record, since it cannot infer a type from nulls alone, and several fields here are legitimately null on a quiet account. One of them, <code>subform_index</code>, is part of the <code>answer_metadata_comments</code> primary key, so overwriting leaves that key pointing at a field that no longer exists and the stream fails with "Path [] does not have field <code>subform_index</code> in the schema". Everything else the Builder reports is its own normalization: it rewrites <code>$schema</code>, reorders type unions, collapses <code>integer</code> into <code>number</code>, and drops <code>format</code>.
 </aside>
 
 ### Customizing the manifest

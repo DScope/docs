@@ -30,8 +30,16 @@
 # NO ACEPTAR EL "SCHEMA DETECTADO" QUE PROPONE EL CONNECTOR BUILDER
 # =============================================================================
 # Al testear un stream, el Builder compara los schemas declarados acá con lo
-# que infiere de la muestra de respuestas, y ofrece reemplazar el declarado
-# por el detectado. No hay que aceptarlo.
+# que infiere de la muestra de respuestas y muestra el aviso "Detected schema
+# and declared schema are different", con dos botones: "Overwrite declared
+# schema" y "Merge properties".
+#
+# No hay que apretar ninguno. No existe un botón de "descartar": ignorar el
+# aviso ES la acción correcta. El warning queda como indicador en la pestaña
+# Schema, pero no bloquea el test ni la sincronización, porque en runtime se
+# usa el schema declarado en este archivo.
+#
+# El botón peligroso es "Overwrite declared schema".
 #
 # El motivo: Airbyte descarta del schema detectado cualquier campo que venga
 # `null` en TODOS los registros de la muestra, porque no puede inferir un tipo
