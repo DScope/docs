@@ -385,8 +385,7 @@ assign_location_company_code | Company code of the location. Only for Locations
 
 If your destination is a data warehouse, you do not need to write the pagination and incremental logic yourself. DataScope publishes a ready to use low-code connector manifest for Airbyte:
 
-- [Download the manifest (YAML)](https://raw.githubusercontent.com/DScope/docs/master/source/airbyte/datascope_source_manifest.yaml)
-- [Browse it on GitHub](https://github.com/DScope/docs/blob/master/source/airbyte/datascope_source_manifest.yaml)
+[Download the manifest (YAML)](https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml)
 
 It defines three related streams that you can join in your warehouse:
 
