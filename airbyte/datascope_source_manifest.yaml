@@ -1,0 +1,634 @@
+# =============================================================================
+# DataScope - Airbyte Low-Code (Declarative) Source Connector
+# =============================================================================
+# Created:       2026-07-23
+# Last updated:  2026-07-28  (fix CursorPagination Jinja: last_record singular,
+#                             last_page_size for stop_condition;
+#                             new answers_form_identification custom_field)
+#
+# Actualizar `Last updated` en cada cambio funcional del manifest (nuevos
+# streams, cambios de PK/cursor, custom_fields, ajustes de extractor).
+# Los cambios puramente cosméticos (comentarios, whitespace) no cuentan.
+# La fecha permite a quien replica el manifest saber si tiene la versión
+# actual comparándola con la última publicada por DataScope.
+# =============================================================================
+# El `base_url` default apunta a producción (https://www.mydatascope.com).
+#
+# Cómo usarlo:
+#   1. En Airbyte Cloud: Settings -> Sources -> "Build a connector".
+#   2. Menú "..." -> "Import YAML" y selecciona este archivo.
+#   3. En "Testing values" (o al configurar la source): ingresa `api_token`
+#      (el token de tu usuario de DataScope) y `start_date` en ISO 8601.
+#   4. Publica el conector y crea la conexión con Sync mode = "Incremental | Dedup".
+#
+# Si Airbyte Cloud rechaza el import con un error genérico, probablemente sea
+# la versión declarada en `version:`. Comparar con la versión que muestra el
+# Connector Builder en la esquina del proyecto y ajustar (o comentar la línea
+# para usar el default del deployment).
+# =============================================================================
+
+version: "5.10.2"
+
+type: DeclarativeSource
+
+check:
+  type: CheckStream
+  stream_names:
+    - form_answers
+    - answers
+    - answer_metadata_comments
+
+definitions:
+  # ---- Autenticación: Authorization: Bearer <api_token> ----------------------
+  authenticator:
+    type: BearerAuthenticator
+    api_token: "{{ config['api_token'] }}"
+
+  # ---- Requester compartido --------------------------------------------------
+  requester:
+    type: HttpRequester
+    url_base: "{{ config['base_url'] }}"
+    path: "/api/external/v5/answers"
+    http_method: GET
+    authenticator:
+      $ref: "#/definitions/authenticator"
+    request_parameters:
+      # Trae por fecha de modificación (nuevos + editados).
+      date_modified: "true"
+      # Ordena por form_answers.updated_at ASC.
+      #
+      # NO cambiar a DESC (via `sort_order: "desc"`) mientras `incremental_sync`
+      # esté activo. El DatetimeBasedCursor de Airbyte avanza el cursor state al
+      # MAX(updated_at) visto por sync; con DESC el primer record ya es el
+      # máximo, así que todo el resto queda "detrás del cursor" y se salta
+      # permanentemente en el siguiente sync. ASC es la única dirección
+      # compatible con incremental.
+      #
+      # Contrato de consistencia con ASC: `updated_at` solo avanza hacia
+      # adelante, así que una fila editada durante un sync en curso puede
+      # reaparecer en una página posterior con sus valores nuevos, o quedar
+      # para el sync siguiente si su nuevo `updated_at` supera la ventana.
+      # Airbyte deduplica por primary key, así que en el warehouse converge
+      # al último estado. No hay pérdida de datos.
+      order_date: "true"
+      version: "v5"
+      # Filtro opcional por form(s). Cuando el cliente deja el campo
+      # `form_id` vacío en la config de Airbyte, se manda como string vacía
+      # y el backend lo interpreta como "sin filtro" (split(',') sobre "" da
+      # []). Cuando el cliente pone "123" o "123,456,789", el endpoint hace
+      # `WHERE form_id IN (...)`.
+      form_id: "{{ config.get('form_id') or '' }}"
+      # NOTA: `limit` NO va acá: lo inyecta el paginator (page_size_option → limit=200).
+      # Duplicarlo causa "Request body collision, duplicate keys detected at key path: limit".
+      #
+      # ─── custom_fields activos (la lista de abajo, en orden) ──────────────
+      # STRUCTURAL: pilares del schema estable + PK del stream `answers`:
+      #   answers_data_in_array          → anida `answers[]` (schema estable)
+      #   answers_extra_data             → meta por answer (question_id, real_question_id, subform_index, metadata_id, question_type, name)
+      #   answers_row_key                → discriminador PK type-aware
+      #   answers_activity_order         → period index para activity_period_time
+      #   answers_form_answer_updated_at → cursor incremental heredado del parent
+      #   answers_activity_data          → start/end/duration para activity_period_time (nombres fijos, schema-safe)
+      #   answers_metadata_comments_array → fuente del stream `answer_metadata_comments`
+      #   answers_latitude_longitude     → geo por answer
+      #   answers_form_identification    → repite form_name y form_code dentro de cada answer del stream `answers` (evita el JOIN warehouse-side para consumers que quieren contexto de form al costado de cada fila)
+      # FORM-LEVEL:
+      #   form_update_variations         → updated_date, updated_at_unix
+      #   form_finished                  → boolean finished
+      #   code_as_form_code              → form_code (además del `code` estándar)
+      #   form_answer_id_as_id           → id == form_answer_id (PK simple del stream `form_answers`)
+      # TASKASSIGN CONTEXT:
+      #   assign_base_data               → assign_id, location_name, description, code
+      #   assign_location_city           → ciudad del assign
+      #
+      # ─── OPCIONALES (no van en la config baseline) ───────────────────────
+      # No están activos por default porque en la mayoría de las
+      # configuraciones iniciales no aportan al modelo de datos que el cliente
+      # arma en su warehouse (agregarlos ensancha el schema sin beneficio
+      # inmediato). Se activan cuando el caso de uso lo pide, son campos
+      # reales, con consumidores reales:
+      #   answers_selected_metadata      → list_object metadata del alternative (name, description, code, attribute1/2 + location)
+      #   task_description               → descripción del TaskAssign asociado (requiere assign_base_data)
+      #   task_gap, task_group_id, task_mandatory,
+      #   task_late_response_allowed, task_mobile_user_id, task_start_time
+      #                                  → atributos extra del TaskAssign
+      #   assign_location_company_email, _company_code, _company_name,
+      #   assign_location_country, _email, _latitude, _longitude, _region
+      #                                  → metadata de location extendida
+      #
+      # ─── NO agregar (deliberadamente excluidos) ──────────────────────────
+      #   answers_as_v3                  → layer de retrocompat que reformatea a shape v3.
+      #                                    Contradice el goal del rebuild (schema v5 puro).
+      #   answers_comments               → expone comments como columnas flat prefijadas
+      #                                    (comment, comment_1, comment_type_1, …).
+      #                                    Es el anti-pattern polimórfico que el
+      #                                    stream `answer_metadata_comments` reemplaza.
+      #                                    MUTUALLY EXCLUSIVE con
+      #                                    `answers_metadata_comments_array`.
+      custom_fields: "answers_data_in_array,answers_extra_data,answers_form_answer_updated_at,answers_activity_order,answers_row_key,answers_activity_data,answers_metadata_comments_array,answers_latitude_longitude,answers_form_identification,form_update_variations,form_finished,code_as_form_code,form_answer_id_as_id,assign_base_data,assign_location_city"
+
+  # ---- Paginación: keyset (seek) sobre (updated_at, form_answer_id) ---------
+  # Reemplaza el patrón OFFSET/LIMIT anterior. Motivos:
+  #   1. Correctness: si una fila se edita entre la página N y N+1 y se mueve
+  #      dentro del sort ASC, un OFFSET N+1 podría re-emitirla (retrabajo, no
+  #      pérdida). Keyset evita esa clase entera de escenario porque el
+  #      "cursor" es una tupla concreta, no una posición.
+  #   2. Performance: OFFSET N escanea N filas antes de aplicar LIMIT, así
+  #      que backfills largos crecen lineal en N. Keyset seek arranca en el
+  #      punto exacto vía el índice compuesto, con costo constante por página.
+  #
+  # El backend acepta `since=<ISO8601>|<form_answer_id>`. En la primera
+  # página el token no se envía (Airbyte no lo tiene aún) y el endpoint
+  # cae al path clásico `updated_at BETWEEN start AND end LIMIT`; a partir
+  # de la segunda página, el cursor extraído del último record navega
+  # `(updated_at, id) > (parsed_ts, parsed_id)`. `stop_condition` corta
+  # cuando la página devuelve menos de `page_size` filas.
+  #
+  # Dos paginators porque el campo del cursor difiere por stream:
+  # - `paginator_form_answers`: el record IS un form_answer → `updated_at`
+  #   y `form_answer_id` viven en la raíz.
+  # - `paginator_child`: los records son answers o metadata_comments
+  #   aplanados; el par vive como `form_answer_updated_at` y
+  #   `form_answer_id`.
+  paginator_form_answers:
+    type: DefaultPaginator
+    page_size_option:
+      type: RequestOption
+      field_name: "limit"
+      inject_into: "request_parameter"
+    page_token_option:
+      type: RequestOption
+      field_name: "since"
+      inject_into: "request_parameter"
+    pagination_strategy:
+      type: CursorPagination
+      page_size: 200
+      # `last_record` (singular) es el único record accesor que expone esta
+      # versión del low-code CDK. Usar `last_records[-1]` genera
+      # "Jinja macro has undeclared variables: {'last_records'}". El
+      # `stop_condition` usa `last_page_size` (numérico) por el mismo motivo:
+      # `last_records | length` referencia la variable plural que no existe.
+      cursor_value: "{{ last_record['updated_at'] }}|{{ last_record['form_answer_id'] }}"
+      stop_condition: "{{ last_page_size < 200 }}"
+
+  paginator_child:
+    type: DefaultPaginator
+    page_size_option:
+      type: RequestOption
+      field_name: "limit"
+      inject_into: "request_parameter"
+    page_token_option:
+      type: RequestOption
+      field_name: "since"
+      inject_into: "request_parameter"
+    pagination_strategy:
+      type: CursorPagination
+      page_size: 200
+      cursor_value: "{{ last_record['form_answer_updated_at'] }}|{{ last_record['form_answer_id'] }}"
+      stop_condition: "{{ last_page_size < 200 }}"
+
+  # ---- Selector para el stream `answers`: extrae cada form_answer del array raíz
+  record_selector:
+    type: RecordSelector
+    extractor:
+      type: DpathExtractor
+      field_path: []
+
+  # ---- Selector para el stream `answers` (hijo): aplana el array `answers`
+  # anidado dentro de cada form_answer.
+  #
+  # Path shape sigue las mismas tres constraints empíricas del stream
+  # `answer_metadata_comments` (ver el bloque de ese stream más abajo):
+  #   - `**` en position 0: obligatorio para atravesar el list-root response
+  #   - `*` literal en otro nivel: triggerea el modo wildcard en Airbyte
+  #     (equality-check `"*" in path`), evita que caiga a `dpath.get()`
+  #   - Trailing `*`: itera el array `answers` a items individuales
+  record_selector_answers:
+    type: RecordSelector
+    extractor:
+      type: DpathExtractor
+      field_path: ["**", "answers", "*"]
+
+  # ---- Retriever para `answers` (headers de form_answer) --------------------
+  retriever:
+    type: SimpleRetriever
+    requester:
+      $ref: "#/definitions/requester"
+    record_selector:
+      $ref: "#/definitions/record_selector"
+    paginator:
+      $ref: "#/definitions/paginator_form_answers"
+
+  # ---- Retriever para `answers` (question-value pairs aplanados) ------------
+  retriever_answers:
+    type: SimpleRetriever
+    requester:
+      $ref: "#/definitions/requester"
+    record_selector:
+      $ref: "#/definitions/record_selector_answers"
+    paginator:
+      $ref: "#/definitions/paginator_child"
+
+  # ---- Selector para el stream `answer_metadata_comments`: extrae los
+  # comentarios (text + image de multiphoto) de las preguntas tipo
+  # `select_option_metadata_comments`. Cada answer_item de ese tipo lleva un
+  # array anidado `metadata_comments[]` cuando el backend tiene activo el
+  # custom_field `answers_metadata_comments_array`.
+  #
+  # Path shape derivada empíricamente. Las tres constraints son obligatorias:
+  #   - `**` en position 0: OBLIGATORIO cuando el body root es un array.
+  #     `*` en position 0 no itera el list root (silent 0-record failure).
+  #   - `*` literal en algún otro nivel: obligatorio para que Airbyte detecte
+  #     wildcards y use `dpath.values()` en vez de `dpath.get()` (equality
+  #     check `"*" in path_list`, y `**` solo no cuenta).
+  #   - Trailing `*`: obligatorio cuando el leaf es un array container.
+  #     Sin él dpath devuelve list-of-arrays y Airbyte tropieza intentando
+  #     `dict.update([{N-key dict}, ...])`.
+  record_selector_metadata_comments:
+    type: RecordSelector
+    extractor:
+      type: DpathExtractor
+      field_path: ["**", "answers", "*", "metadata_comments", "*"]
+
+  # ---- Retriever para `answer_metadata_comments` ----------------------------
+  retriever_metadata_comments:
+    type: SimpleRetriever
+    requester:
+      $ref: "#/definitions/requester"
+    record_selector:
+      $ref: "#/definitions/record_selector_metadata_comments"
+    paginator:
+      $ref: "#/definitions/paginator_child"
+
+  # ---- Incremental por updated_at (para el stream `answers`) ---------------
+  incremental_cursor:
+    type: DatetimeBasedCursor
+    cursor_field: "updated_at"
+    # Formato principal ISO 8601 UTC compacto. Los fallbacks de abajo aceptan
+    # variaciones con/sin milisegundos y con/sin offset explícito.
+    datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+    cursor_datetime_formats:
+      - "%Y-%m-%dT%H:%M:%SZ"
+      - "%Y-%m-%dT%H:%M:%S%z"
+      - "%Y-%m-%dT%H:%M:%S.%fZ"
+      - "%Y-%m-%dT%H:%M:%S.%f%z"
+    start_datetime:
+      type: MinMaxDatetime
+      datetime: "{{ config['start_date'] }}"
+      datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+    # El endpoint acota la ventana a 90 días; usamos pasos de 30 días.
+    step: "P30D"
+    cursor_granularity: "P1D"
+    # Re-consulta 1 día para no perder registros; modo Dedup en destino evita duplicados.
+    lookback_window: "P1D"
+    start_time_option:
+      type: RequestOption
+      field_name: "start"
+      inject_into: "request_parameter"
+    end_time_option:
+      type: RequestOption
+      field_name: "end"
+      inject_into: "request_parameter"
+
+  # ---- Incremental por form_answer_updated_at (para el stream `answers`)
+  # Idéntico al cursor del padre salvo por `cursor_field`: los answer records
+  # individuales no tienen `updated_at` propio, pero sí `form_answer_updated_at`
+  # (inyectado por el backend cuando `answers_form_answer_updated_at` está en
+  # custom_fields).
+  incremental_cursor_answers:
+    type: DatetimeBasedCursor
+    cursor_field: "form_answer_updated_at"
+    datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+    cursor_datetime_formats:
+      - "%Y-%m-%dT%H:%M:%SZ"
+      - "%Y-%m-%dT%H:%M:%S%z"
+      - "%Y-%m-%dT%H:%M:%S.%fZ"
+      - "%Y-%m-%dT%H:%M:%S.%f%z"
+    start_datetime:
+      type: MinMaxDatetime
+      datetime: "{{ config['start_date'] }}"
+      datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+    step: "P30D"
+    cursor_granularity: "P1D"
+    lookback_window: "P1D"
+    start_time_option:
+      type: RequestOption
+      field_name: "start"
+      inject_into: "request_parameter"
+    end_time_option:
+      type: RequestOption
+      field_name: "end"
+      inject_into: "request_parameter"
+
+streams:
+  # ---------------------------------------------------------------------------
+  # Stream 1: `form_answers`: headers de cada envío del formulario.
+  # Cada fila es un form_answer completo. El array `answers[]` queda anidado
+  # para quienes prefieran usar UNNEST en BigQuery directamente, sin joinear
+  # contra el stream `answers` aplanado.
+  # ---------------------------------------------------------------------------
+  - type: DeclarativeStream
+    name: form_answers
+    primary_key: "form_answer_id"
+    retriever:
+      $ref: "#/definitions/retriever"
+    incremental_sync:
+      $ref: "#/definitions/incremental_cursor"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        $schema: "http://json-schema.org/draft-07/schema#"
+        type: object
+        additionalProperties: true
+        properties:
+          id:
+            type: ["null", "integer"]
+          form_answer_id:
+            type: ["null", "integer"]
+          form_id:
+            type: ["null", "integer"]
+          form_name:
+            type: ["null", "string"]
+          form_state:
+            type: ["null", "string"]
+          code:
+            type: ["null", "string"]
+          form_code:
+            type: ["null", "string"]
+          user_name:
+            type: ["null", "string"]
+          user_identifier:
+            type: ["null", "string"]
+          finished:
+            type: ["null", "boolean"]
+          deleted:
+            type: ["null", "boolean"]
+          latitude:
+            type: ["null", "string", "number"]
+          longitude:
+            type: ["null", "string", "number"]
+          created_at:
+            type: ["null", "string"]
+            format: date-time
+          updated_at:
+            type: ["null", "string"]
+            format: date-time
+          updated_at_unix:
+            type: ["null", "integer"]
+          assign_id:
+            type: ["null", "string", "integer"]
+          assign_internal_id:
+            type: ["null", "integer"]
+          assign_location_name:
+            type: ["null", "string"]
+          assign_location_code:
+            type: ["null", "string"]
+          assign_location_city:
+            type: ["null", "string"]
+          answers:
+            type: ["null", "array"]
+            items:
+              type: object
+              additionalProperties: true
+
+  # ---------------------------------------------------------------------------
+  # Stream 2: `answers`: cada question-value pair como fila individual
+  # Aplana el array `answers[]` de cada form_answer. `form_answer_id` es FK al
+  # stream `form_answers`. En BigQuery queda como una tabla tabulada y joinable
+  # (una fila por respuesta).
+  #
+  # KNOWN LIMITATION: orphan rows on deletion (activity periods, multi-select
+  # unchecked, subform row removed, etc.). El API filtra `expired=true` y no
+  # emite tombstone, así que la fila removida se queda en el warehouse. El
+  # `form_answer_updated_at` de la fila queda "congelado" en la versión previa
+  # a la edición → downstream filtra por generation con:
+  #
+  #   SELECT *
+  #   FROM `dataset.answers` a
+  #   WHERE a.form_answer_updated_at = (
+  #     SELECT MAX(form_answer_updated_at)
+  #     FROM `dataset.answers`
+  #     WHERE form_answer_id = a.form_answer_id
+  #       AND real_question_id = a.real_question_id
+  #       AND COALESCE(subform_index, -1) = COALESCE(a.subform_index, -1)
+  #   )
+  #
+  # Partición por `(form_answer_id, real_question_id, subform_index)`, no
+  # solo por `form_answer_id`, para no filtrar filas de OTRAS preguntas del
+  # mismo form_answer que legítimamente tienen timestamps distintos.
+  # ---------------------------------------------------------------------------
+  - type: DeclarativeStream
+    name: answers
+    # PK compuesta type-safe: cubre single-value edits, multi-value adds,
+    # subforms, activity_period_time, y sub-preguntas de repeatable groups.
+    #   - `real_question_id`: identidad estable del template question.
+    #     Necesario para distinguir sub-preguntas de un mismo repeatable
+    #     group: `question_id` apunta al grupo padre, `real_question_id`
+    #     apunta a la sub-question específica.
+    #   - `subform_index`: nº de repetición dentro de un repeatable group.
+    #   - `answer_row_key`: discriminador polimórfico según tipo, calculado
+    #     por el backend y poblado cuando `answers_row_key` está en
+    #     custom_fields.
+    #       * Single-value (text/number/date/photo/signature/`select_metadata`):
+    #         `null`. La identidad no depende de `metadata_id`, así el edit
+    #         de una selección single-choice sigue el mismo tuple PK.
+    #       * Multi-value metadata (checklist/checkbox/etc.): `"m<metadata_id>"`.
+    #       * `select_activity_period_time`: `"m<metadata_id>-p<period_index>"`.
+    #       * `attachment`/`multi_photo`: `"f<file_index>"` (parent label
+    #         stripped de `question_name`, dejando solo el índice).
+    primary_key:
+      - form_answer_id
+      - real_question_id
+      - subform_index
+      - answer_row_key
+    retriever:
+      $ref: "#/definitions/retriever_answers"
+    incremental_sync:
+      $ref: "#/definitions/incremental_cursor_answers"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        $schema: "http://json-schema.org/draft-07/schema#"
+        type: object
+        additionalProperties: true
+        properties:
+          form_answer_id:
+            type: ["null", "integer"]
+          form_id:
+            type: ["null", "integer"]
+          form_code:
+            type: ["null", "string"]
+          # Emitted alongside form_code inside each nested answer when
+          # `answers_form_identification` is active. Saves a warehouse-side
+          # JOIN to `form_answers` for consumers that want form context
+          # co-located with each answer row (dashboards, per-form
+          # analytics tables).
+          form_name:
+            type: ["null", "string"]
+          form_state:
+            type: ["null", "string"]
+          latitude:
+            type: ["null", "number"]
+          longitude:
+            type: ["null", "number"]
+          question_id:
+            type: ["null", "integer"]
+          # Stable id de la sub-pregunta en el template del form. Difiere de
+          # `question_id` en sub-preguntas de un `Group of Repeatable Fields`
+          # (donde `question_id` apunta al grupo padre y `real_question_id` a
+          # cada sub-pregunta individual). Load-bearing en la PK.
+          real_question_id:
+            type: ["null", "integer"]
+          question_name:
+            type: ["null", "string"]
+          question_type:
+            type: ["null", "string"]
+          question_value:
+            type: ["null", "string"]
+          name:
+            type: ["null", "string"]
+          metadata_id:
+            type: ["null", "integer"]
+          metadata_type:
+            type: ["null", "string"]
+          subform_index:
+            type: ["null", "integer"]
+          # Server-side period index para select_activity_period_time. Poblado
+          # por el backend cuando `answers_activity_order` está en custom_fields.
+          # Null para todos los otros question types.
+          activity_order:
+            type: ["null", "integer"]
+          # Discriminador polimórfico calculado por el backend (ver PK docs
+          # arriba). Null para single-value types, deliberadamente, así
+          # `select_metadata` edits mantienen PK estable aunque `metadata_id`
+          # cambie.
+          answer_row_key:
+            type: ["null", "string"]
+          # Sub-fields de select_activity_period_time. Nombres fijos,
+          # schema-estable. Poblado por el backend cuando `answers_activity_data`
+          # está en custom_fields. Null para todos los otros question types.
+          start_time:
+            type: ["null", "string"]
+          end_time:
+            type: ["null", "string"]
+          duration:
+            type: ["null", "string"]
+          day_start:
+            type: ["null", "string"]
+          full_duration:
+            type: ["null", "string"]
+          # Cursor field para incremental, inyectado por el backend cuando
+          # `answers_form_answer_updated_at` está activo en custom_fields.
+          # Hereda el `updated_at` del form_answer padre.
+          form_answer_updated_at:
+            type: ["null", "string"]
+            format: date-time
+
+  # ---------------------------------------------------------------------------
+  # Stream 3: `answer_metadata_comments`: comentarios (texto + fotos) de las
+  # respuestas de tipo `select_option_metadata_comments`. Es la tercera capa
+  # del modelo: form_answer → answer → metadata_comment.
+  #
+  # Cada fila = un metadata comment (texto O una foto de multiphoto). En el
+  # warehouse se joinea al stream `answers` con:
+  #   ON (form_answer_id, real_question_id, subform_index, answer_row_key)
+  #
+  # Se agrega separado del stream `answers` para evitar columnas polimórficas
+  # (comment, comment_1, comment_type_1, ...) que romperían la estabilidad
+  # del schema del stream padre.
+  # ---------------------------------------------------------------------------
+  - type: DeclarativeStream
+    name: answer_metadata_comments
+    # PK compuesta: FK al parent answer + discriminadores propios (data_type
+    # + data_index) para distinguir múltiples comentarios en la misma answer.
+    primary_key:
+      - form_answer_id
+      - real_question_id
+      - subform_index
+      - answer_row_key
+      - data_type
+      - data_index
+    retriever:
+      $ref: "#/definitions/retriever_metadata_comments"
+    incremental_sync:
+      $ref: "#/definitions/incremental_cursor_answers"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        $schema: "http://json-schema.org/draft-07/schema#"
+        type: object
+        additionalProperties: true
+        properties:
+          # FK subset: matchea la PK del stream `answers`. El cliente joinea
+          # por estos cuatro campos para reconstituir la relación padre/hijo.
+          form_answer_id:
+            type: ["null", "integer"]
+          real_question_id:
+            type: ["null", "integer"]
+          subform_index:
+            type: ["null", "integer"]
+          answer_row_key:
+            type: ["null", "string"]
+          # Contexto informativo del parent (no PK, solo conveniencia).
+          metadata_id:
+            type: ["null", "integer"]
+          # Identidad propia del comment.
+          data_type:
+            type: ["null", "string"]
+          data_index:
+            type: ["null", "integer"]
+          value:
+            type: ["null", "string"]
+          # Cursor field: hereda del form_answer padre. Mismo mecanismo que
+          # `form_answer_updated_at` en el stream `answers`.
+          form_answer_updated_at:
+            type: ["null", "string"]
+            format: date-time
+
+# =============================================================================
+# Spec: parámetros que pide Airbyte al configurar la fuente
+# =============================================================================
+spec:
+  type: Spec
+  connection_specification:
+    $schema: "http://json-schema.org/draft-07/schema#"
+    type: object
+    required:
+      - api_token
+      - start_date
+    additionalProperties: true
+    properties:
+      api_token:
+        type: string
+        title: API Token
+        description: >-
+          Token de la API de DataScope (User.token). Se envía como
+          "Authorization: Bearer <token>".
+        airbyte_secret: true
+        order: 0
+      base_url:
+        type: string
+        title: Base URL
+        description: URL base de la instancia DataScope. El default es producción.
+        default: "https://www.mydatascope.com"
+        order: 1
+      start_date:
+        type: string
+        title: Start date
+        description: Fecha desde la cual sincronizar (por updated_at). Formato ISO 8601 UTC.
+        format: date-time
+        examples:
+          - "2024-01-01T00:00:00Z"
+        order: 2
+      form_id:
+        type: string
+        title: Form ID(s)
+        description: >-
+          Opcional. Filtra la sincronización a uno o más formularios
+          específicos. Ingresa un ID (ej. "123") o una lista separada por
+          comas (ej. "123,456,789"). Dejar vacío para sincronizar todos los
+          formularios de la cuenta.
+        examples:
+          - "123"
+          - "123,456,789"
+        order: 3

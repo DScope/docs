@@ -235,6 +235,9 @@
                     <a href="#get-all-answers-with-metadata" class="toc-h2 toc-link" data-title="get-all-answers-with-metadata">Get All Answers with metadata</a>
                   </li>
                   <li>
+                    <a href="#get-all-answers-v5-beta" class="toc-h2 toc-link" data-title="get-all-answers-v5-beta">Get All Answers V5 (Beta)</a>
+                  </li>
+                  <li>
                     <a href="#change-answer" class="toc-h2 toc-link" data-title="change-answer">Change Answer</a>
                   </li>
               </ul>
@@ -720,6 +723,435 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 <td> Code of the location assigned</td>
 </tr>
 </tbody></table>
+<h2 id='get-all-answers-v5-beta'>Get All Answers V5 (Beta)</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/v5/answers'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{</span>
+   <span class="ss">:date_modified</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+   <span class="ss">:order_date</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+   <span class="ss">:custom_fields</span> <span class="o">=&gt;</span> <span class="s1">'answers_data_in_array,answers_extra_data'</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/v5/answers?date_modified=true&amp;order_date=true&amp;custom_fields=answers_data_in_array,answers_extra_data"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre>
+<blockquote>
+<p>With <code>answers_data_in_array</code> the questions are nested in an <code>answers</code> array instead of becoming top-level keys, so the response shape stays the same across forms:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"form_answer_id"</span><span class="p">:</span><span class="mi">257189</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_id"</span><span class="p">:</span><span class="mi">432</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_name"</span><span class="p">:</span><span class="s2">"Example Form"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_code"</span><span class="p">:</span><span class="s2">"2342"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_state"</span><span class="p">:</span><span class="s2">"Accepted"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"user_name"</span><span class="p">:</span><span class="s2">"Example User"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"user_identifier"</span><span class="p">:</span><span class="s2">"user@email.com"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"created_at"</span><span class="p">:</span><span class="s2">"2026-07-16T16:52:05.000Z"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="s2">"2026-07-18T09:14:22.000Z"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"latitude"</span><span class="p">:</span><span class="mf">-33.398803</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"longitude"</span><span class="p">:</span><span class="mf">-70.559834</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"answers"</span><span class="p">:[</span><span class="w">
+         </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"question_value"</span><span class="p">:</span><span class="s2">"Example value"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"question_name"</span><span class="p">:</span><span class="s2">"Example question"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"question_type"</span><span class="p">:</span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"question_id"</span><span class="p">:</span><span class="mi">1180</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"real_question_id"</span><span class="p">:</span><span class="mi">1180</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"subform_index"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"metadata_type"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"metadata_id"</span><span class="p">:</span><span class="kc">null</span><span class="w">
+         </span><span class="p">},</span><span class="w">
+         </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"question_value"</span><span class="p">:</span><span class="s2">"Alternative 1"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"question_name"</span><span class="p">:</span><span class="s2">"Example checklist"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"question_type"</span><span class="p">:</span><span class="s2">"select_check_metadata"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"question_id"</span><span class="p">:</span><span class="mi">1181</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"real_question_id"</span><span class="p">:</span><span class="mi">1181</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"subform_index"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"metadata_type"</span><span class="p">:</span><span class="s2">"list_objects"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"metadata_id"</span><span class="p">:</span><span class="mi">90412</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+   </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+<p>Answers V5 is a single endpoint that can reproduce the response shape of every previous version (v1, v2, v3, v4) and adds opt-in fields on top. Instead of a new endpoint per feature, you pick the version you want as a baseline through <code>version</code> and switch extra data on through <code>custom_fields</code>.</p>
+
+<p>The most requested use case is the <code>answers_data_in_array</code> shape shown above. In v1 to v4 each question becomes its own top-level key, so every form produces a different set of columns and a relational destination (BigQuery, Snowflake, Postgres) cannot model it cleanly. With <code>answers_data_in_array</code> the questions move into a nested <code>answers</code> array and the response schema stops changing per form.</p>
+
+<aside class="notice">
+This endpoint is in Beta. It is stable and in production use, but the field list keeps growing. The companion page <a href="https://datascopers.notion.site/Explicaci-n-Answers-V5-Beta-1a03acd7c7a08005b827d66010b5ff1c">Explicación Answers V5</a> (written in Spanish) walks through the same material and tracks the change history release by release. Feedback and bug reports are welcome.
+</aside>
+
+<aside class="warning">
+The user whose token you use needs export permission in DataScope. Ask your account administrator to confirm it before setting up a recurring integration.
+</aside>
+<h3 id='http-request-3'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/v5/answers</code></p>
+<h3 id='query-parameters-3'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>version</td>
+<td>String</td>
+<td>v5</td>
+<td>Reproduce the response shape of a previous version. One of <code>v1</code>, <code>v2</code>, <code>v3</code>, <code>v4</code>, <code>v5</code>.</td>
+</tr>
+<tr>
+<td>custom_fields</td>
+<td>String</td>
+<td>blank</td>
+<td>Comma separated list of extra data to include. See the table below.</td>
+</tr>
+<tr>
+<td>form_id</td>
+<td>Integer or String</td>
+<td>blank</td>
+<td>One form ID, or several comma separated. This ID is in the URL when you edit a form, eg. https://app.mydatascope.com/task_forms/XXXX/edit</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>Integer</td>
+<td>blank</td>
+<td>If set, only answers from that user</td>
+</tr>
+<tr>
+<td>location_id</td>
+<td>Integer</td>
+<td>blank</td>
+<td>If set, only answers from that location</td>
+</tr>
+<tr>
+<td>days_limit</td>
+<td>Integer</td>
+<td>7</td>
+<td>Days between start and end when you do not send them (max range 90 days)</td>
+</tr>
+<tr>
+<td>start</td>
+<td>String</td>
+<td>last <code>days_limit</code> days</td>
+<td>Start of the date range, ISO 8601 (eg. <code>2026-07-01T00:00:00Z</code>)</td>
+</tr>
+<tr>
+<td>end</td>
+<td>String</td>
+<td>date of the last answer</td>
+<td>End of the date range, ISO 8601. Max range 90 days</td>
+</tr>
+<tr>
+<td>date_modified</td>
+<td>Boolean</td>
+<td>false</td>
+<td>Filter by modification date (<code>updated_at</code>) instead of creation date. Use it to pull edits, not only new submissions</td>
+</tr>
+<tr>
+<td>order_date</td>
+<td>Boolean</td>
+<td>false</td>
+<td>Sort by <code>updated_at</code> instead of the default question order. Required whenever you page through modified answers</td>
+</tr>
+<tr>
+<td>sort_order</td>
+<td>String</td>
+<td>asc</td>
+<td>Direction for <code>order_date</code>. <code>asc</code> or <code>desc</code>. Keep <code>asc</code> for any incremental integration</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>Integer</td>
+<td>200</td>
+<td>Records per page. Default and max are 200</td>
+</tr>
+<tr>
+<td>page</td>
+<td>Integer</td>
+<td>1</td>
+<td>Page number. With a limit of 200, page 2 returns the next 200 records</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>Integer</td>
+<td>0</td>
+<td>Shifts the start of the pagination</td>
+</tr>
+<tr>
+<td>since</td>
+<td>String</td>
+<td>blank</td>
+<td>Keyset pagination cursor, built from the <code>updated_at</code> and <code>form_answer_id</code> of the last record you read. More efficient than <code>page</code> or <code>offset</code> on large exports. See &quot;Pagination with since&quot; below</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Send <code>date_modified=true</code> and <code>order_date=true</code> together whenever you page through modified answers. Filtering by modification date while sorting by something else drops records at page boundaries.
+</aside>
+<h3 id='pagination-with-since'>Pagination with since</h3>
+<p><code>page</code> and <code>offset</code> work as in previous versions. For large or recurring exports prefer <code>since</code>, which pages from the last record you already read instead of counting rows from the beginning:</p>
+
+<ol>
+<li>Request the first page normally, with <code>date_modified=true</code> and <code>order_date=true</code>.</li>
+<li>Take <code>updated_at</code> and <code>form_answer_id</code> from the last record of the response.</li>
+<li>Send them back as <code>since=&lt;updated_at&gt;|&lt;form_answer_id&gt;</code> to get the next page.</li>
+<li>Repeat until a page returns fewer records than <code>limit</code>.</li>
+</ol>
+
+<p>A malformed cursor returns <code>400</code> with <code>{&quot;error&quot;: &quot;invalid_since_cursor&quot;}</code>. When <code>since</code> is present the response is always sorted ascending, regardless of <code>sort_order</code>.</p>
+<h3 id='custom-fields'>Custom Fields</h3>
+<p><code>custom_fields</code> unlocks extra data. Send the names comma separated, for example <code>custom_fields=answers_data_in_array,answers_extra_data,answers_selected_metadata</code>. Unknown names are ignored silently.</p>
+
+<table><thead>
+<tr>
+<th>Custom Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>answers_data_in_array</td>
+<td>Nest the questions in an <code>answers</code> array instead of top-level keys. This is what keeps the schema stable across forms (already in v1)</td>
+</tr>
+<tr>
+<td>answers_extra_data</td>
+<td>Per answer metadata: <code>question_id</code>, <code>real_question_id</code>, <code>subform_index</code>, <code>question_type</code>, <code>metadata_type</code>, <code>metadata_id</code>, <code>name</code></td>
+</tr>
+<tr>
+<td>answers_latitude_longitude</td>
+<td>Latitude and longitude of each answer (already in v2 and v4)</td>
+</tr>
+<tr>
+<td>answers_selected_metadata</td>
+<td>Name, description, code and attributes of the list object or location selected in an answer</td>
+</tr>
+<tr>
+<td>answers_activity_data</td>
+<td><code>start_time</code>, <code>end_time</code>, <code>duration</code>, <code>day_start</code> and <code>full_duration</code> for Activity List answers</td>
+</tr>
+<tr>
+<td>answers_activity_order</td>
+<td>Period index for Activity List answers. Distinguishes several periods that selected the same alternative</td>
+</tr>
+<tr>
+<td>answers_row_key</td>
+<td>Stable per row discriminator. Combined with <code>form_answer_id</code>, <code>real_question_id</code> and <code>subform_index</code> it gives each answer row a primary key that survives edits</td>
+</tr>
+<tr>
+<td>answers_form_answer_updated_at</td>
+<td><code>updated_at</code> of the parent form answer repeated inside each answer. Useful as an incremental cursor when you consume the answers as their own table</td>
+</tr>
+<tr>
+<td>answers_metadata_comments_array</td>
+<td>Checklist comments as a nested <code>metadata_comments</code> array on each answer, instead of flat prefixed columns</td>
+</tr>
+<tr>
+<td>answers_form_identification</td>
+<td><code>form_name</code> and <code>form_code</code> repeated inside each answer, so you do not need to join back to the form answer</td>
+</tr>
+<tr>
+<td>answers_comments</td>
+<td>Checklist comments as flat prefixed columns (<code>comment</code>, <code>comment_1</code>, ...). Already in versions above 2. Do not combine with <code>answers_metadata_comments_array</code></td>
+</tr>
+<tr>
+<td>answers_as_v3</td>
+<td>Reproduce the special v3 answer format</td>
+</tr>
+<tr>
+<td>code_as_form_code</td>
+<td>Include the answer code as <code>form_code</code> (already in versions above 2)</td>
+</tr>
+<tr>
+<td>form_answer_id_as_id</td>
+<td>Include the form answer ID as <code>id</code> (already in v3)</td>
+</tr>
+<tr>
+<td>form_finished</td>
+<td>Include whether the form synchronized completely (already in v3)</td>
+</tr>
+<tr>
+<td>form_update_variations</td>
+<td>Include <code>updated_date</code> and <code>updated_at_unix</code></td>
+</tr>
+<tr>
+<td>assign_base_data</td>
+<td>Basic data of the assigned Task: internal ID, custom ID, name, description, code. Required by the <code>task_*</code> and <code>assign_location_*</code> fields below</td>
+</tr>
+<tr>
+<td>task_description</td>
+<td>Description of the assigned Task</td>
+</tr>
+<tr>
+<td>task_mandatory</td>
+<td>Whether the assigned Task is mandatory</td>
+</tr>
+<tr>
+<td>task_late_response_allowed</td>
+<td>Whether the assigned Task accepts answers after the deadline</td>
+</tr>
+<tr>
+<td>task_group_id</td>
+<td>Group ID of the assigned Task</td>
+</tr>
+<tr>
+<td>task_mobile_user_id</td>
+<td>User ID of the assigned Task</td>
+</tr>
+<tr>
+<td>task_start_time</td>
+<td>Start datetime of the assigned Task</td>
+</tr>
+<tr>
+<td>task_gap</td>
+<td>Hour window to complete the assigned Task</td>
+</tr>
+<tr>
+<td>assign_location_city</td>
+<td>City of the location of the assigned Task (already in v3)</td>
+</tr>
+<tr>
+<td>assign_location_region</td>
+<td>Region of the location of the assigned Task</td>
+</tr>
+<tr>
+<td>assign_location_country</td>
+<td>Country of the location of the assigned Task</td>
+</tr>
+<tr>
+<td>assign_location_email</td>
+<td>Email of the location of the assigned Task</td>
+</tr>
+<tr>
+<td>assign_location_latitude</td>
+<td>Latitude of the location of the assigned Task</td>
+</tr>
+<tr>
+<td>assign_location_longitude</td>
+<td>Longitude of the location of the assigned Task</td>
+</tr>
+<tr>
+<td>assign_location_company_email</td>
+<td>Company email of the location. Only for Locations</td>
+</tr>
+<tr>
+<td>assign_location_company_name</td>
+<td>Company name of the location. Only for Locations</td>
+</tr>
+<tr>
+<td>assign_location_company_code</td>
+<td>Company code of the location. Only for Locations</td>
+</tr>
+</tbody></table>
+<h3 id='airbyte-cloud-connector'>Airbyte Cloud connector</h3>
+<p>If your destination is a data warehouse, you do not need to write the pagination and incremental logic yourself. DataScope publishes a ready to use low-code connector manifest for Airbyte:</p>
+
+<p><a href="https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml">Download the manifest (YAML)</a></p>
+
+<p>It defines three related streams that you can join in your warehouse:</p>
+
+<table><thead>
+<tr>
+<th>Stream</th>
+<th>One row per</th>
+<th>Primary key</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>form_answers</td>
+<td>Form answer (one submission)</td>
+<td><code>form_answer_id</code></td>
+</tr>
+<tr>
+<td>answers</td>
+<td>Answer (one question and its value)</td>
+<td><code>form_answer_id</code>, <code>real_question_id</code>, <code>subform_index</code>, <code>answer_row_key</code></td>
+</tr>
+<tr>
+<td>answer_metadata_comments</td>
+<td>Checklist comment (text or photo)</td>
+<td>the four above plus <code>data_type</code> and <code>data_index</code></td>
+</tr>
+</tbody></table>
+
+<p>To install it: in Airbyte Cloud go to Settings, Sources, &quot;Build a connector&quot;, then use the &quot;...&quot; menu and &quot;Import YAML&quot;. Configure your API token and a start date, optionally restrict it to specific forms with <code>form_id</code>, publish the connector and create the connection with Sync mode &quot;Incremental | Dedup&quot;.</p>
+<h3 id='customizing-the-manifest'>Customizing the manifest</h3>
+<p>The manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of <code>custom_fields</code> are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.</p>
+
+<p><strong>Safe to change</strong></p>
+
+<table><thead>
+<tr>
+<th>What</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Stream names</td>
+<td><code>form_answers</code>, <code>answers</code> and <code>answer_metadata_comments</code> become table names in your destination. Rename them to match your own conventions</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>200 is the endpoint maximum, so you can only lower it. Lower values mean more requests for the same data</td>
+</tr>
+<tr>
+<td>Optional <code>custom_fields</code></td>
+<td>Add any field from the Custom Fields table above. When you add one, add it to that stream&#39;s schema too, so the destination types the column instead of guessing</td>
+</tr>
+<tr>
+<td><code>base_url</code> and <code>form_id</code></td>
+<td>Both are configuration fields, meant to be set per source</td>
+</tr>
+</tbody></table>
+
+<p><strong>Change with care</strong></p>
+
+<table><thead>
+<tr>
+<th>What</th>
+<th>What breaks</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>order_date</code>, or the sort direction</td>
+<td>Incremental sync depends on ascending <code>updated_at</code>. Descending puts the newest record on the first page, the cursor jumps to it, and everything behind it is never synced again</td>
+</tr>
+<tr>
+<td><code>primary_key</code> on any stream</td>
+<td>These tuples are what make deduplication correct across edits. Shortening one collapses rows that are actually distinct; adding a mutable field creates a new row on every edit</td>
+</tr>
+<tr>
+<td><code>cursor_field</code>, or the <code>incremental_sync</code> blocks</td>
+<td>The child streams inherit the parent form answer&#39;s <code>updated_at</code>. Pointing them somewhere else stalls the sync state</td>
+</tr>
+<tr>
+<td>Extractor <code>field_path</code></td>
+<td>The wildcard shape is exact. A wrong path returns zero records with no error, which looks like an empty account</td>
+</tr>
+<tr>
+<td>The structural <code>custom_fields</code></td>
+<td><code>answers_data_in_array</code>, <code>answers_extra_data</code>, <code>answers_row_key</code>, <code>answers_form_answer_updated_at</code> and <code>answers_metadata_comments_array</code> feed the primary keys and the cursors. Removing one breaks whatever depended on it</td>
+</tr>
+<tr>
+<td>Adding <code>limit</code> to <code>request_parameters</code></td>
+<td>The paginator already injects it, and duplicating it fails the sync with a request collision</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Rename streams before the first sync if you can. Airbyte treats a renamed stream as a new one, so renaming later creates a fresh table in your destination and re-syncs the history into it, leaving the previous table behind.
+</aside>
+
+<aside class="warning">
+If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
+</aside>
 <h2 id='change-answer'>Change Answer</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
@@ -745,9 +1177,9 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
    </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 
-</span></code></pre><h3 id='http-request-3'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-4'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/change_form_answer</code></p>
-<h3 id='query-parameters-3'>Query Parameters</h3>
+<h3 id='query-parameters-4'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -810,7 +1242,7 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 
 </span></code></pre>
 <p>This endpoint retrieves all locations</p>
-<h3 id='http-request-4'>HTTP Request</h3>
+<h3 id='http-request-5'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='output-parameter-3'>Output Parameter</h3>
 <table><thead>
@@ -955,7 +1387,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint create a location</p>
-<h3 id='http-request-5'>HTTP Request</h3>
+<h3 id='http-request-6'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='input-parameter'>Input Parameter</h3>
 <table><thead>
@@ -1115,7 +1547,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint updates a location</p>
-<h3 id='http-request-6'>HTTP Request</h3>
+<h3 id='http-request-7'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='input-parameter-2'>Input Parameter</h3>
 <table><thead>
@@ -1255,9 +1687,9 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-7'>HTTP Request</h3>
+<h3 id='http-request-8'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_objects</code></p>
-<h3 id='query-parameters-4'>Query Parameters</h3>
+<h3 id='query-parameters-5'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1341,9 +1773,9 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint retrieves a specific element of the list</p>
-<h3 id='http-request-8'>HTTP Request</h3>
+<h3 id='http-request-9'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_object</code></p>
-<h3 id='query-parameters-5'>Query Parameters</h3>
+<h3 id='query-parameters-6'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1446,7 +1878,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint creates a list element</p>
-<h3 id='http-request-9'>HTTP Request</h3>
+<h3 id='http-request-10'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_object</code></p>
 <h3 id='query-params'>Query params:</h3>
 <table><thead>
@@ -1567,7 +1999,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint updates a list object</p>
-<h3 id='http-request-10'>HTTP Request</h3>
+<h3 id='http-request-11'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_object/{id}</code></p>
 <h3 id='input-parameter-4'>Input Parameter</h3>
 <table><thead>
@@ -1668,7 +2100,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint creates a empty list</p>
-<h3 id='http-request-11'>HTTP Request</h3>
+<h3 id='http-request-12'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_types</code></p>
 <h3 id='input-parameter-5'>Input Parameter</h3>
 <table><thead>
@@ -1764,7 +2196,7 @@ Remember — user your own header Authorization
 
 </span></code></pre>
 <p>This endpoint updates a list</p>
-<h3 id='http-request-12'>HTTP Request</h3>
+<h3 id='http-request-13'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_types/{id}</code></p>
 <h3 id='input-parameter-6'>Input Parameter</h3>
 <table><thead>
@@ -1902,7 +2334,7 @@ Remember — user your own header Authorization
   </span><span class="s2">"list_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='http-request-13'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-14'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_objects/bulk_update</code></p>
 <h3 id='input-parameters'>Input Parameters</h3>
 <table><thead>
@@ -2063,9 +2495,9 @@ Remember — user your own header Authorization
    </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 
-</span></code></pre><h3 id='http-request-14'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-15'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/assign_task</code></p>
-<h3 id='query-parameters-6'>Query Parameters</h3>
+<h3 id='query-parameters-7'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2202,7 +2634,7 @@ Remember — user your own header Authorization
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves the full detail of a single task assignment by its internal ID. Returns the same fields as the list endpoint. Returns 404 if the assignment does not belong to the authenticated account.</p>
-<h3 id='http-request-15'>HTTP Request</h3>
+<h3 id='http-request-16'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/task_assigns/:id</code></p>
 <h3 id='path-parameters'>Path Parameters</h3>
 <table><thead>
@@ -2443,7 +2875,7 @@ Remember — use your own Authorization header
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a paginated list of task assignments for the authenticated account. The response fields match the platform&#39;s Excel export plus the internal <code>id</code>, enabling automated integrations without manual downloads. The <code>total</code> field reflects the number of task assignments matching the applied filters — without filters, it returns the count of all historical tasks in the account.</p>
-<h3 id='http-request-16'>HTTP Request</h3>
+<h3 id='http-request-17'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/task_assigns</code></p>
 <h3 id='input-parameters-2'>Input Parameters</h3>
 <table><thead>
@@ -2690,9 +3122,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-17'>HTTP Request</h3>
+<h3 id='http-request-18'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/notifications</code></p>
-<h3 id='query-parameters-7'>Query Parameters</h3>
+<h3 id='query-parameters-8'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2788,9 +3220,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-18'>HTTP Request</h3>
+<h3 id='http-request-19'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/files</code></p>
-<h3 id='query-parameters-8'>Query Parameters</h3>
+<h3 id='query-parameters-9'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2938,7 +3370,7 @@ TIP: It will only start sending information for the new forms done after the int
 </span><span class="p">]</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a list of Tickets filtered by creation date period.</p>
-<h3 id='http-request-19'>HTTP Request</h3>
+<h3 id='http-request-20'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/findings/list</code></p>
 <h3 id='input-parameters-3'>Input Parameters</h3>
 <table><thead>
@@ -3183,7 +3615,7 @@ Remember — use your own header Authorization
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a single Ticket by its Firestore document ID.</p>
-<h3 id='http-request-20'>HTTP Request</h3>
+<h3 id='http-request-21'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/findings/get/:id</code></p>
 <h3 id='url-parameter'>URL Parameter</h3>
 <table><thead>
