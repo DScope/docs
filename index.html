@@ -1081,7 +1081,19 @@ Send <code>date_modified=true</code> and <code>order_date=true</code> together w
 </tr>
 </tbody></table>
 
+<aside class="notice">
+In the <code>answers</code> and <code>answer_metadata_comments</code> streams, <code>subform_index</code> arrives as <code>-1</code> when the question does not live inside a Group of Repeatable Fields, where the API itself returns <code>null</code>. The manifest normalizes it because Airbyte removes null-valued keys from records, and a primary key cannot reference a field that is missing. Both streams use the same convention, so joining them on <code>(form_answer_id, real_question_id, subform_index, answer_row_key)</code> works without coalescing. <code>-1</code> never collides with a real row 0: a given question is either always inside a repeatable group or never, so the two values cannot both occur for the same <code>real_question_id</code>.
+</aside>
+
 <p>To install it: in Airbyte Cloud go to Settings, Sources, &quot;Build a connector&quot;, then use the &quot;...&quot; menu and &quot;Import YAML&quot;. Configure your API token and a start date, optionally restrict it to specific forms with <code>form_id</code>, publish the connector and create the connection with Sync mode &quot;Incremental | Dedup&quot;.</p>
+
+<aside class="warning">
+Testing a stream shows "Detected schema and declared schema are different", with an <b>Overwrite declared schema</b> button. Do not press it, and do not press <b>Merge properties</b> either. There is no dismiss button: leaving the notice alone is the correct action. It stays as an indicator on the Schema tab but blocks nothing, because the schema declared in the manifest is what runs.
+</aside>
+
+<aside class="notice">
+Why overwriting breaks things: Airbyte drops any field that is <code>null</code> across every sampled record, since it cannot infer a type from nulls alone, and several fields here are legitimately null on a quiet account. One of them, <code>subform_index</code>, is part of the <code>answer_metadata_comments</code> primary key, so overwriting leaves that key pointing at a field that no longer exists and the stream fails with "Path [] does not have field <code>subform_index</code> in the schema". Everything else the Builder reports is its own normalization: it rewrites <code>$schema</code>, reorders type unions, collapses <code>integer</code> into <code>number</code>, and drops <code>format</code>.
+</aside>
 <h3 id='customizing-the-manifest'>Customizing the manifest</h3>
 <p>The manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of <code>custom_fields</code> are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.</p>
 
@@ -1106,8 +1118,8 @@ Send <code>date_modified=true</code> and <code>order_date=true</code> together w
 <td>Add any field from the Custom Fields table above. When you add one, add it to that stream&#39;s schema too, so the destination types the column instead of guessing</td>
 </tr>
 <tr>
-<td><code>base_url</code> and <code>form_id</code></td>
-<td>Both are configuration fields, meant to be set per source</td>
+<td><code>form_id</code></td>
+<td>A configuration field, meant to be set per source</td>
 </tr>
 </tbody></table>
 
