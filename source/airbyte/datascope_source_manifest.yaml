@@ -2,9 +2,9 @@
 # DataScope - Airbyte Low-Code (Declarative) Source Connector
 # =============================================================================
 # Created:       2026-07-23
-# Last updated:  2026-07-28  (fix CursorPagination Jinja: last_record singular,
-#                             last_page_size for stop_condition;
-#                             new answers_form_identification custom_field)
+# Last updated:  2026-07-29  (base_url hardcodeado a produccion; campos
+#                             faltantes en los schemas; subform_index
+#                             normalizado a -1 via AddFields)
 #
 # Actualizar `Last updated` en cada cambio funcional del manifest (nuevos
 # streams, cambios de PK/cursor, custom_fields, ajustes de extractor).
@@ -12,7 +12,8 @@
 # La fecha permite a quien replica el manifest saber si tiene la versión
 # actual comparándola con la última publicada por DataScope.
 # =============================================================================
-# El `base_url` default apunta a producción (https://www.mydatascope.com).
+# Apunta a producción (https://www.mydatascope.com). La URL es fija, no es un
+# campo configurable.
 #
 # Cómo usarlo:
 #   1. En Airbyte Cloud: Settings -> Sources -> "Build a connector".
@@ -25,6 +26,40 @@
 # la versión declarada en `version:`. Comparar con la versión que muestra el
 # Connector Builder en la esquina del proyecto y ajustar (o comentar la línea
 # para usar el default del deployment).
+# =============================================================================
+# NO ACEPTAR EL "SCHEMA DETECTADO" QUE PROPONE EL CONNECTOR BUILDER
+# =============================================================================
+# Al testear un stream, el Builder compara los schemas declarados acá con lo
+# que infiere de la muestra de respuestas y muestra el aviso "Detected schema
+# and declared schema are different", con dos botones: "Overwrite declared
+# schema" y "Merge properties".
+#
+# No hay que apretar ninguno. No existe un botón de "descartar": ignorar el
+# aviso ES la acción correcta. El warning queda como indicador en la pestaña
+# Schema, pero no bloquea el test ni la sincronización, porque en runtime se
+# usa el schema declarado en este archivo.
+#
+# El botón peligroso es "Overwrite declared schema".
+#
+# El motivo: Airbyte DESCARTA DEL REGISTRO las claves con valor null, y sobre
+# ese registro ya recortado infiere el schema. Así que un campo que viene null
+# en toda la muestra desaparece del schema detectado, y aceptarlo lo borra de
+# la declaración. Varios campos son legítimamente null en cuentas con pocos
+# datos: `assign_*` sin tareas asignadas, `form_state` sin estados,
+# `subform_index` cuando ninguna respuesta está dentro de un grupo repetible.
+#
+# Ese mismo recorte de nulls es la razón por la que los streams `answers` y
+# `answer_metadata_comments` llevan una transformación `AddFields` que
+# normaliza `subform_index` a -1: como el campo forma parte de sus primary
+# keys, y Airbyte marca las PK como `required`, un null lo hace desaparecer y
+# el stream falla. El detalle completo está en el comentario de esa
+# transformación, en el stream `answers`.
+#
+# Las diferencias que el Builder va a seguir mostrando son ruido de su propia
+# normalización y se pueden ignorar: reescribe `$schema`, reordena
+# `["null","string"]`, colapsa `integer` en `number` (no distingue int de float
+# al inferir desde JSON), descarta `format: date-time`, y agrega un bloque
+# `required` derivado de la PK y el cursor.
 # =============================================================================
 
 version: "5.10.2"
@@ -47,7 +82,12 @@ definitions:
   # ---- Requester compartido --------------------------------------------------
   requester:
     type: HttpRequester
-    url_base: "{{ config['base_url'] }}"
+    # URL fija de producción. Antes esto era un campo configurable
+    # (`config['base_url']`), pero no había caso de uso real para apuntarlo a
+    # otra parte y sí un modo de falla: si el campo queda vacío al configurar
+    # la source, el test del stream falla con un error de URL inválida que no
+    # dice cuál es el campo faltante.
+    url_base: "https://www.mydatascope.com"
     path: "/api/external/v5/answers"
     http_method: GET
     authenticator:
@@ -93,7 +133,7 @@ definitions:
       #   answers_latitude_longitude     → geo por answer
       #   answers_form_identification    → repite form_name y form_code dentro de cada answer del stream `answers` (evita el JOIN warehouse-side para consumers que quieren contexto de form al costado de cada fila)
       # FORM-LEVEL:
-      #   form_update_variations         → updated_date, updated_at_unix
+      #   form_update_variations         → updated, updated_date, updated_at_unix
       #   form_finished                  → boolean finished
       #   code_as_form_code              → form_code (además del `code` estándar)
       #   form_answer_id_as_id           → id == form_answer_id (PK simple del stream `form_answers`)
@@ -373,8 +413,24 @@ streams:
           updated_at:
             type: ["null", "string"]
             format: date-time
+          # Variantes compactas de las fechas, en formato YYYYMMDDHHMMSS y
+          # YYYYMMDD. `created`/`created_date` vienen siempre; `updated`,
+          # `updated_date` y `updated_at_unix` los agrega
+          # `form_update_variations`.
+          created:
+            type: ["null", "string"]
+          created_date:
+            type: ["null", "string"]
+          updated:
+            type: ["null", "string"]
+          updated_date:
+            type: ["null", "string"]
           updated_at_unix:
             type: ["null", "integer"]
+          # "<latitude>, <longitude>" en un solo string. Solo presente cuando
+          # la respuesta trae coordenadas.
+          latlong:
+            type: ["null", "string"]
           assign_id:
             type: ["null", "string", "integer"]
           assign_internal_id:
@@ -443,6 +499,36 @@ streams:
       - answer_row_key
     retriever:
       $ref: "#/definitions/retriever_answers"
+    # Normaliza `subform_index` null a -1. OBLIGATORIO, no es cosmético.
+    #
+    # Airbyte descarta del registro las claves con valor null antes de inferir
+    # el schema y antes de validar los campos requeridos. Como marca como
+    # `required` a todo campo de la primary key, un `subform_index` null hace
+    # fallar el stream con:
+    #
+    #   Path [] does not have field `subform_index` in the schema and hence
+    #   can't be marked as required.
+    #
+    # El endpoint devuelve `"subform_index": null` correctamente (verificable
+    # en la pestaña Response del Connector Builder); es Airbyte el que lo
+    # filtra. Y el campo no se puede sacar de la PK: es lo único que
+    # distingue dos respuestas de filas distintas de un mismo grupo repetible.
+    #
+    # -1 significa "la pregunta no está dentro de un grupo repetible". No
+    # colisiona con la fila 0 real: una pregunta dada está siempre dentro de
+    # un grupo o siempre fuera, nunca las dos cosas, así que para un mismo
+    # `real_question_id` el -1 y el 0 no coexisten.
+    #
+    # Se aplica igual en el stream `answer_metadata_comments` para que el join
+    # entre ambos por (form_answer_id, real_question_id, subform_index,
+    # answer_row_key) siga siendo válido en el warehouse.
+    transformations:
+      - type: AddFields
+        fields:
+          - type: AddedFieldDefinition
+            path: ["subform_index"]
+            value: "{{ -1 if record.get('subform_index') is none else record['subform_index'] }}"
+            value_type: integer
     incremental_sync:
       $ref: "#/definitions/incremental_cursor_answers"
     schema_loader:
@@ -523,6 +609,16 @@ streams:
           form_answer_updated_at:
             type: ["null", "string"]
             format: date-time
+          # Array anidado presente solo en answers de tipo
+          # `select_option_metadata_comments`. Es la fuente del stream
+          # `answer_metadata_comments`, que lo extrae como filas propias. Se
+          # declara acá también porque el campo igual viaja en este stream, y
+          # si no está declarado Airbyte lo reporta como diferencia de schema.
+          metadata_comments:
+            type: ["null", "array"]
+            items:
+              type: ["null", "object"]
+              additionalProperties: true
 
   # ---------------------------------------------------------------------------
   # Stream 3: `answer_metadata_comments`: comentarios (texto + fotos) de las
@@ -550,6 +646,17 @@ streams:
       - data_index
     retriever:
       $ref: "#/definitions/retriever_metadata_comments"
+    # Misma normalización que en el stream `answers`, y por el mismo motivo
+    # (ver el comentario extenso allá). Tiene que estar en los dos streams
+    # para que el join por (form_answer_id, real_question_id, subform_index,
+    # answer_row_key) compare -1 contra -1 y no -1 contra null.
+    transformations:
+      - type: AddFields
+        fields:
+          - type: AddedFieldDefinition
+            path: ["subform_index"]
+            value: "{{ -1 if record.get('subform_index') is none else record['subform_index'] }}"
+            value_type: integer
     incremental_sync:
       $ref: "#/definitions/incremental_cursor_answers"
     schema_loader:
@@ -606,12 +713,6 @@ spec:
           "Authorization: Bearer <token>".
         airbyte_secret: true
         order: 0
-      base_url:
-        type: string
-        title: Base URL
-        description: URL base de la instancia DataScope. El default es producción.
-        default: "https://www.mydatascope.com"
-        order: 1
       start_date:
         type: string
         title: Start date
@@ -619,7 +720,7 @@ spec:
         format: date-time
         examples:
           - "2024-01-01T00:00:00Z"
-        order: 2
+        order: 1
       form_id:
         type: string
         title: Form ID(s)
@@ -631,4 +732,4 @@ spec:
         examples:
           - "123"
           - "123,456,789"
-        order: 3
+        order: 2
