@@ -295,7 +295,7 @@ Answers V5 is a single endpoint that can reproduce the response shape of every p
 The most requested use case is the `answers_data_in_array` shape shown above. In v1 to v4 each question becomes its own top-level key, so every form produces a different set of columns and a relational destination (BigQuery, Snowflake, Postgres) cannot model it cleanly. With `answers_data_in_array` the questions move into a nested `answers` array and the response schema stops changing per form.
 
 <aside class="notice">
-This endpoint is in Beta. It is stable and in production use, but the field list keeps growing. Feedback and bug reports are welcome.
+This endpoint is in Beta. It is stable and in production use, but the field list keeps growing. The companion page <a href="https://datascopers.notion.site/Explicaci-n-Answers-V5-Beta-1a03acd7c7a08005b827d66010b5ff1c">Explicación Answers V5</a> (written in Spanish) walks through the same material and tracks the change history release by release. Feedback and bug reports are welcome.
 </aside>
 
 <aside class="warning">
