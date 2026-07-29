@@ -397,8 +397,36 @@ answer_metadata_comments | Checklist comment (text or photo) | the four above pl
 
 To install it: in Airbyte Cloud go to Settings, Sources, "Build a connector", then use the "..." menu and "Import YAML". Configure your API token and a start date, optionally restrict it to specific forms with `form_id`, publish the connector and create the connection with Sync mode "Incremental | Dedup".
 
+### Customizing the manifest
+
+The manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of `custom_fields` are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.
+
+**Safe to change**
+
+What | Notes
+---- | -----
+Stream names | `form_answers`, `answers` and `answer_metadata_comments` become table names in your destination. Rename them to match your own conventions
+`page_size` | 200 is the endpoint maximum, so you can only lower it. Lower values mean more requests for the same data
+Optional `custom_fields` | Add any field from the Custom Fields table above. When you add one, add it to that stream's schema too, so the destination types the column instead of guessing
+`base_url` and `form_id` | Both are configuration fields, meant to be set per source
+
+**Change with care**
+
+What | What breaks
+---- | -----------
+`order_date`, or the sort direction | Incremental sync depends on ascending `updated_at`. Descending puts the newest record on the first page, the cursor jumps to it, and everything behind it is never synced again
+`primary_key` on any stream | These tuples are what make deduplication correct across edits. Shortening one collapses rows that are actually distinct; adding a mutable field creates a new row on every edit
+`cursor_field`, or the `incremental_sync` blocks | The child streams inherit the parent form answer's `updated_at`. Pointing them somewhere else stalls the sync state
+Extractor `field_path` | The wildcard shape is exact. A wrong path returns zero records with no error, which looks like an empty account
+The structural `custom_fields` | `answers_data_in_array`, `answers_extra_data`, `answers_row_key`, `answers_form_answer_updated_at` and `answers_metadata_comments_array` feed the primary keys and the cursors. Removing one breaks whatever depended on it
+Adding `limit` to `request_parameters` | The paginator already injects it, and duplicating it fails the sync with a request collision
+
 <aside class="notice">
-The manifest already sends the right combination of parameters and custom fields. If you change the sort direction to descending while incremental sync is on, the cursor stops advancing correctly and records are skipped. Keep it ascending.
+Rename streams before the first sync if you can. Airbyte treats a renamed stream as a new one, so renaming later creates a fresh table in your destination and re-syncs the history into it, leaving the previous table behind.
+</aside>
+
+<aside class="warning">
+If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
 </aside>
 
 ## Change Answer
