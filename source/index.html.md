@@ -1856,12 +1856,13 @@ Both move data out of DataScope, and they answer different questions.
 
 A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable **Send modifications** on the webhook.
 
-The **[Answers V5 endpoint](#get-all-answers-v5-beta)** fits when you need a queryable copy of your data, a table in BigQuery, Snowflake or Postgres that stays current. You pull on a schedule rather than receive pushes, which buys two things a push cannot give you:
+The **[Answers V5 endpoint](#get-all-answers-v5-beta)** fits when you need a queryable copy of your data, a table in BigQuery, Snowflake or Postgres that stays current. You pull on a schedule rather than receive pushes, and you get three things in exchange:
 
-Need | Why a push falls short
----- | ---------------------
-Everything before today | A webhook only covers forms submitted after you configure it, per the tip above, and it cannot replay what your endpoint missed while it was down. The API takes a `start_date`, so a first sync can backfill history and a later sync can re-read any window with `date_modified=true`
-A stable schema | In the webhook payload each answer becomes its own top-level key, built from the question's name. So the set of keys differs per form, and shifts again whenever a question is renamed or a repeatable group gains a row. A relational destination cannot model that. `answers_data_in_array` moves the answers into an array instead, keyed by stable ids, and the schema stops changing
+What the API adds | How
+----------------- | ---
+Access to everything, not only what comes next | A webhook starts sending at the moment you configure it, per the tip above, and cannot replay what your endpoint missed while it was down. The API takes a `start_date`, so a first sync backfills history and any later sync can re-read a window with `date_modified=true`
+A schema you can model | `answers_data_in_array` returns the answers inside a nested array rather than as top-level keys, so the response shape stays the same regardless of the form or how many questions it has. That is what makes a relational destination practical
+Control over the payload | `custom_fields` selects exactly which fields you receive, so you can start minimal and add only what your model needs. `version` reproduces the response shape of any earlier API version if you are migrating from one
 
 If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the [Airbyte Cloud connector](#airbyte-cloud-connector) covers all of it.
 
