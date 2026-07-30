@@ -321,6 +321,9 @@
                   <li>
                     <a href="#output" class="toc-h2 toc-link" data-title="output">Output</a>
                   </li>
+                  <li>
+                    <a href="#webhooks-or-the-answers-api" class="toc-h2 toc-link" data-title="webhooks-or-the-answers-api">Webhooks or the Answers API</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -3328,6 +3331,36 @@ Remember — user your own header Authorization
 <aside class="notice">
 TIP: It will only start sending information for the new forms done after the integration.
 </aside>
+<h2 id='webhooks-or-the-answers-api'>Webhooks or the Answers API</h2>
+<p>Both move data out of DataScope, and they answer different questions.</p>
+
+<p>A <strong>webhook</strong> fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable <strong>Send modifications</strong> on the webhook.</p>
+
+<p>The <strong><a href="#get-all-answers-v5-beta">Answers V5 endpoint</a></strong> fits when you need a queryable copy of your data, a table in BigQuery, Snowflake or Postgres that stays current. You pull on a schedule rather than receive pushes, and you get three things in exchange:</p>
+
+<table><thead>
+<tr>
+<th>What the API adds</th>
+<th>How</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Access to everything, not only what comes next</td>
+<td>A webhook starts sending at the moment you configure it, per the tip above, and cannot replay what your endpoint missed while it was down. The API takes a <code>start_date</code>, so a first sync backfills history and any later sync can re-read a window with <code>date_modified=true</code></td>
+</tr>
+<tr>
+<td>A schema you can model</td>
+<td><code>answers_data_in_array</code> returns the answers inside a nested array rather than as top-level keys, so the response shape stays the same regardless of the form or how many questions it has. That is what makes a relational destination practical</td>
+</tr>
+<tr>
+<td>Control over the payload</td>
+<td><code>custom_fields</code> selects exactly which fields you receive, so you can start minimal and add only what your model needs. <code>version</code> reproduces the response shape of any earlier API version if you are migrating from one</td>
+</tr>
+</tbody></table>
+
+<p>If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the <a href="#airbyte-cloud-connector">Airbyte Cloud connector</a> covers all of it.</p>
+
+<p>Using both is normal. A webhook for the immediate reaction, the connector for the warehouse copy.</p>
 <h1 id='tickets-fka-issues'>Tickets (FKA Issues)</h1><h2 id='get-tickets-by-period'>Get Tickets by Period</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/findings/list?start=01-01-2026&amp;end=31-01-2026"</span>
   -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
 </code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
