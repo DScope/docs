@@ -1861,7 +1861,7 @@ The **[Answers V5 endpoint](#get-all-answers-v5-beta)** fits when you need a que
 Need | Why a push falls short
 ---- | ---------------------
 Everything before today | A webhook only covers forms submitted after you configure it, per the tip above, and it cannot replay what your endpoint missed while it was down. The API takes a `start_date`, so a first sync can backfill history and a later sync can re-read any window with `date_modified=true`
-A stable schema | The webhook payload keys each answer by `[question_name][question_id]`, visible in the sample above, so every form yields a different set of keys and a relational destination cannot model it. `answers_data_in_array` nests the answers in an array instead, and the schema stops changing per form
+A stable schema | In the webhook payload each answer becomes its own top-level key, built from the question's name. So the set of keys differs per form, and shifts again whenever a question is renamed or a repeatable group gains a row. A relational destination cannot model that. `answers_data_in_array` moves the answers into an array instead, keyed by stable ids, and the schema stops changing
 
 If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the [Airbyte Cloud connector](#airbyte-cloud-connector) covers all of it.
 
