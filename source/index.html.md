@@ -1850,6 +1850,24 @@ To configure the webhook you need to go to the Integrations section and then Web
 TIP: It will only start sending information for the new forms done after the integration.
 </aside>
 
+## Webhooks or the Answers API
+
+Both move data out of DataScope, and they answer different questions.
+
+A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts.
+
+The **[Answers V5 endpoint](#get-all-answers-v5-beta)** fits when you need a queryable copy of your data, a table in BigQuery, Snowflake or Postgres that stays current. You pull on a schedule rather than receive pushes, which buys three things a webhook cannot give you:
+
+Need | Why the webhook falls short
+---- | --------------------------
+History | Webhooks only cover forms submitted after you configure them, per the tip above. The API takes a `start_date` and backfills
+Edits | A webhook fires on new submissions. With `date_modified=true` the API also returns answers edited after they were first synced
+A stable schema | The webhook payload keys each answer by `[question_name][question_id]`, so every form yields a different set of keys and a relational destination cannot model it. `answers_data_in_array` nests the answers in an array instead, and the schema stops changing per form
+
+If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the [Airbyte Cloud connector](#airbyte-cloud-connector) covers all three.
+
+Using both is normal. A webhook for the immediate reaction, the connector for the warehouse copy.
+
 
 # Tickets (FKA Issues)
 
