@@ -2218,11 +2218,15 @@ Remember — use your own Authorization header
 
 # Changelog
 
-**29-Jul-2026**
+**04-Aug-2026**
 
-- Added [Answers V5 (Beta)](#get-all-answers-v5-beta), its `custom_fields`, and the [Airbyte Cloud connector manifest](#airbyte-cloud-connector)
 - Documented three Ticket endpoints that were missing from this reference: last tickets, ticket types and ticket creation
 - Updated the developer portal links to https://app.mydatascope.com/integrations
+- Moved this changelog into its own section
+
+**30-Jul-2026**
+
+- Added [Answers V5 (Beta)](#get-all-answers-v5-beta), its `custom_fields`, and the [Airbyte Cloud connector manifest](#airbyte-cloud-connector)
 
 **Apr-2026**
 
