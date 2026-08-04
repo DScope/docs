@@ -1,3 +1,28 @@
+# DataScope API Documentation
+
+## You are on `master`. The documentation is maintained on `main`.
+
+The live reference at **https://dscope.github.io/docs/** is built from `main`. This branch does not publish, and its content is behind.
+
+| Branch | Role |
+| --- | --- |
+| **`main`** | Where the documentation is maintained, and the branch the site is built from. `.github/workflows/deploy.yml` triggers on pushes there and publishes to `gh-pages` |
+| `master` | GitHub's configured default branch, which is most likely why you landed here. Nothing merged into it reaches the live site |
+
+### Open your pull requests against `main`
+
+GitHub preselects `master` because it is the configured default, so you have to change the base branch yourself. If you already opened one against `master`, you can retarget it from the pull request page without losing the review.
+
+This mismatch between the default branch and the publishing branch is how the two drifted apart in the first place: documentation accumulated on both sides for months, and each ended up missing endpoints the other had.
+
+### Treat the content here as outdated
+
+`master` is deliberately left behind rather than kept in sync with `main`, so its copy of `source/index.html.md` is not the published one. As of August 2026 it is missing the Answers V5 endpoint and its Airbyte Cloud connector manifest, several Ticket and Task Assign endpoints, and the List and List Element CRUD documentation.
+
+If you need to read the reference, use the live site. If you need to change it, branch from `main`.
+
+---
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/lord/img/master/logo-slate.png" alt="Slate: API Documentation Generator" width="226">
   <br>
