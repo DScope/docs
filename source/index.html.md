@@ -20,12 +20,7 @@ Welcome to the DataScope API! You can use our API to access DataScope API endpoi
 
 We have language bindings in Shell and Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
-Last Update Date: 29-Jul-2026
-Last Updates:
-- Documented the three Ticket endpoints that were missing here: last tickets, ticket types and ticket creation (29-Jul-2026)
-- Added Answers V5 (Beta), its custom fields and the Airbyte Cloud connector manifest (29-Jul-2026)
-- Updated the developer portal links to https://app.mydatascope.com/integrations (29-Jul-2026)
-- Added Findings and Task Assigns endpoints, and List and List Object CRUD (Apr-2026)
+See the [Changelog](#changelog) for what changed recently.
 
 
 
@@ -2220,3 +2215,25 @@ creation_date | String or Datetime | Optional. Date or String with a custom crea
 <aside class="success">
 Remember — use your own Authorization header
 </aside>
+
+# Changelog
+
+**04-Aug-2026**
+
+- Documented three Ticket endpoints that were missing from this reference: last tickets, ticket types and ticket creation
+- Updated the developer portal links to https://app.mydatascope.com/integrations
+- Moved this changelog into its own section
+
+**30-Jul-2026**
+
+- Added [Answers V5 (Beta)](#get-all-answers-v5-beta), its `custom_fields`, and the [Airbyte Cloud connector manifest](#airbyte-cloud-connector)
+
+**Apr-2026**
+
+- Added the Ticket endpoints for fetching by period and by id
+- Added the Task Assign endpoints for fetching by period and by id
+- Added CRUD for Lists and List Elements, including bulk update
+
+**Nov-2025**
+
+- Added the first Ticket endpoints
