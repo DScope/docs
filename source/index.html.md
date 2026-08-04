@@ -6,7 +6,7 @@ language_tabs: # must be one of https://git.io/vQNgJ
   - ruby
 
 toc_footers:
-  - <a href='https://www.mydatascope.com/webhooks'>Sign Up for a Developer Key</a>
+  - <a href='https://app.mydatascope.com/integrations'>Sign Up for a Developer Key</a>
 
 includes:
   - errors
@@ -20,6 +20,13 @@ Welcome to the DataScope API! You can use our API to access DataScope API endpoi
 
 We have language bindings in Shell and Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
+Last Update Date: 29-Jul-2026
+Last Updates:
+- Documented the three Ticket endpoints that were missing here: last tickets, ticket types and ticket creation (29-Jul-2026)
+- Added Answers V5 (Beta), its custom fields and the Airbyte Cloud connector manifest (29-Jul-2026)
+- Updated the developer portal links to https://app.mydatascope.com/integrations (29-Jul-2026)
+- Added Findings and Task Assigns endpoints, and List and List Object CRUD (Apr-2026)
+
 
 
 
@@ -27,7 +34,7 @@ We have language bindings in Shell and Ruby! You can view code examples in the d
 
 
 
-DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](https://www.mydatascope.com/webhooks).
+DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our [developer portal](https://app.mydatascope.com/integrations).
 
 ![alt text](https://i.imgur.com/M4awUbe.jpg "Logo Title Text 1")
 
@@ -560,7 +567,7 @@ company_code | String | Code of the company
 company_name | Date | Name of the Company
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 ## Create a Location
@@ -667,7 +674,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -775,7 +782,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1004,7 +1011,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1085,7 +1092,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1161,7 +1168,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1237,7 +1244,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1379,7 +1386,7 @@ The response includes:
 | length | Integer | Number of active list objects |
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 # Task Assigns
@@ -1445,7 +1452,7 @@ gap | Integer | Hours to perform task
 code | String | Code to identify the task
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 ## Get Task Assign by ID
@@ -1808,7 +1815,7 @@ form_code | String | Code of the form
 user | String | Name of the user
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 # Webhooks
@@ -1821,7 +1828,7 @@ DataScope Webhook notifications are sent in an HTTP POST request, and their cont
 
 ## Configuration
 
-To configure the webhook you need to go to the Integrations section and then Webhooks and click on [New Webhook](https://mydatascope.com/webhooks/new).
+To configure the webhook you need to go to the Integrations section and then Webhooks and click on [New Webhook](https://app.mydatascope.com/integrations).
 
 ![New Webhook](https://data-scope.s3-us-west-2.amazonaws.com/images/other/Captura+de+pantalla+2020-09-08+a+la(s)+13.23.28.png "New Webhook")
 
@@ -2002,7 +2009,7 @@ task_form_question | String | Question from the linked form answer (null if no f
 ```
 
 <aside class="success">
-Remember — use your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -2095,5 +2102,121 @@ task_form_question | String | Question from the linked form answer (null if no f
 ```
 
 <aside class="success">
-Remember — use your own header Authorization
+Remember — use your own Authorization header
+</aside>
+
+## Get last 5 tickets
+```shell
+curl "https://www.mydatascope.com/api/external/last_findings"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/last_findings'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+}
+JSON.parse(response)
+```
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/last_findings`
+
+### Return Codes
+```
+200: OK
+403: Forbidden
+```
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+
+## Get Ticket Types
+```shell
+curl "https://www.mydatascope.com/api/external/findings/types"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/findings/types'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => { search: 'Finding T'}
+}
+JSON.parse(response)
+```
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+```json
+[  
+   {  
+      "id":"3rRET34tg3f27g6hHfsE",
+      "name":"Finding Type 1",
+   },
+   {
+     "id": "fe23fd32x43Dsa3D6y9T",
+     "name":"Finding Type 2",
+   }
+]
+```
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/findings/types`
+
+### Input Parameter
+Parameter | Type | Description
+--------- | ------- | -----------
+search | String | Optional. Name to search
+
+### Return Codes
+```
+200: OK
+403: Forbidden
+```
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+
+## Create Ticket
+This endpoint create a ticket
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/findings/create`
+
+### Input Parameter
+
+Parameter | Type | Description
+--------- | ------- | -----------
+author_email | String | Ticket's author email. Fallback: Owner of the API Key
+name | String | Required. Name of the Ticket
+description | String | Required. Description of the location
+expiration_date | String or Datetime | Required. Date or String with the date to expire the ticket (YYYY-MM-DD HH:MM)
+status | String | Status of ticket. Fallback: `open`. Options: `[open, in_progress, paused, closed]`
+priority | String | Status of ticket. Fallback: `medium`. Options: `[low, medium, high, critical]`
+location_id | Integer | Optional. ID of the location
+location_name | Integer | Optional. Name of the location in case of unrecognized `location_id`
+assignees | Array of Integers or Strings | Required. MobileUser IDs or emails of users to be assigned to the ticket
+invitees | Array of Integers or Strings | Optional. MobileUser IDs or emails of users to be invited to the ticket (ignoring already assigned ones)
+type | String | Optional. Ticket Type ID or Ticket Type Name. If provided, preset data will be retrieved from this type. Fallback: "Other" (no type assigned).
+creation_date | String or Datetime | Optional. Date or String with a custom creation date of ticket (YYYY-MM-DD HH:MM)
+
+### Return Codes:
+
+```
+201: Created
+403: Forbidden
+422: Unprocessable Entity
+```
+
+<aside class="success">
+Remember — use your own Authorization header
 </aside>
