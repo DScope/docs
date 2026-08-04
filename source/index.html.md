@@ -567,7 +567,7 @@ company_code | String | Code of the company
 company_name | Date | Name of the Company
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 ## Create a Location
@@ -674,7 +674,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -782,7 +782,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1011,7 +1011,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1092,7 +1092,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1168,7 +1168,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1244,7 +1244,7 @@ Code  | Description
 422   | Wrong parameters, check documentation
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -1386,7 +1386,7 @@ The response includes:
 | length | Integer | Number of active list objects |
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 # Task Assigns
@@ -1452,7 +1452,7 @@ gap | Integer | Hours to perform task
 code | String | Code to identify the task
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 ## Get Task Assign by ID
@@ -1815,7 +1815,7 @@ form_code | String | Code of the form
 user | String | Name of the user
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 # Webhooks
@@ -2009,7 +2009,7 @@ task_form_question | String | Question from the linked form answer (null if no f
 ```
 
 <aside class="success">
-Remember — use your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 
@@ -2102,7 +2102,7 @@ task_form_question | String | Question from the linked form answer (null if no f
 ```
 
 <aside class="success">
-Remember — use your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 ## Get last 5 tickets
@@ -2132,7 +2132,7 @@ JSON.parse(response)
 ```
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 ## Get Ticket Types
@@ -2182,7 +2182,7 @@ search | String | Optional. Name to search
 ```
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 
 ## Create Ticket
@@ -2218,5 +2218,5 @@ creation_date | String or Datetime | Optional. Date or String with a custom crea
 ```
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
