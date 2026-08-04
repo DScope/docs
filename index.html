@@ -335,6 +335,15 @@
                   <li>
                     <a href="#get-ticket" class="toc-h2 toc-link" data-title="get-ticket">Get Ticket</a>
                   </li>
+                  <li>
+                    <a href="#get-last-5-tickets" class="toc-h2 toc-link" data-title="get-last-5-tickets">Get last 5 tickets</a>
+                  </li>
+                  <li>
+                    <a href="#get-ticket-types" class="toc-h2 toc-link" data-title="get-ticket-types">Get Ticket Types</a>
+                  </li>
+                  <li>
+                    <a href="#create-ticket" class="toc-h2 toc-link" data-title="create-ticket">Create Ticket</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -342,7 +351,7 @@
           </li>
       </div>
         <ul class="toc-footer">
-            <li><a href='https://www.mydatascope.com/webhooks'>Sign Up for a Developer Key</a></li>
+            <li><a href='https://app.mydatascope.com/integrations'>Sign Up for a Developer Key</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
@@ -352,8 +361,15 @@
 <p>Welcome to the DataScope API! You can use our API to access DataScope API endpoints, which can get information collected from the DataScope platform and App.</p>
 
 <p>We have language bindings in Shell and Ruby! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
+
+<p>Last Update Date: 29-Jul-2026
+Last Updates:
+- Documented the three Ticket endpoints that were missing here: last tickets, ticket types and ticket creation (29-Jul-2026)
+- Added Answers V5 (Beta), its custom fields and the Airbyte Cloud connector manifest (29-Jul-2026)
+- Updated the developer portal links to https://app.mydatascope.com/integrations (29-Jul-2026)
+- Added Findings and Task Assigns endpoints, and List and List Object CRUD (Apr-2026)</p>
 <h1 id='authentication'>Authentication</h1>
-<p>DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our <a href="https://www.mydatascope.com/webhooks">developer portal</a>.</p>
+<p>DataScope uses API keys to allow access to the API. You can register a new DataScope API key at our <a href="https://app.mydatascope.com/integrations">developer portal</a>.</p>
 
 <p><img src="https://i.imgur.com/M4awUbe.jpg" title="Logo Title Text 1" alt="alt text" /></p>
 
@@ -1335,7 +1351,7 @@ If you edit the manifest and the sync starts behaving oddly, re-import the publi
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h2 id='create-a-location'>Create a Location</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -1495,7 +1511,7 @@ Remember — user your own header Authorization
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h2 id='update-a-location'>Update a Location</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -1655,7 +1671,7 @@ Remember — user your own header Authorization
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h1 id='lists'>Lists</h1><h2 id='get-all-list-elements'>Get All List elements</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -1967,7 +1983,7 @@ Remember — user your own header Authorization
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h2 id='update-a-list-element'>Update a List Element</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -2072,7 +2088,7 @@ Remember — user your own header Authorization
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h2 id='create-a-empty-list'>Create a empty List</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -2168,7 +2184,7 @@ Remember — user your own header Authorization
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h2 id='update-a-list'>Update a List</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -2264,7 +2280,7 @@ Remember — user your own header Authorization
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h2 id='bulk-update-list-elements'>Bulk Update List Elements</h2>
 <p>This endpoint allows bulk updating of metadata list objects, with soft deletion of objects not in the incoming list. If an object with an existing code is provided, it will be updated. If a new code is used, the object will be created.</p>
@@ -2482,7 +2498,7 @@ Remember — user your own header Authorization
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h1 id='task-assigns'>Task Assigns</h1><h2 id='create-task-assign'>Create Task Assign</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -2598,7 +2614,7 @@ Remember — user your own header Authorization
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h2 id='get-task-assign-by-id'>Get Task Assign by ID</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/task_assigns/4821"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
@@ -3297,7 +3313,7 @@ Remember — use your own Authorization header
 </tbody></table>
 
 <aside class="success">
-Remember — user your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h1 id='webhooks'>Webhooks</h1>
 <p>Sometimes people call webhooks reverse APIs, but perhaps more accurately a webhook lets you skip a step. With most APIs there’s a request followed by a response. No request is required for a webhook, it just sends the data when it’s available.</p>
@@ -3306,7 +3322,7 @@ Remember — user your own header Authorization
 
 <p>DataScope Webhook notifications are sent in an HTTP POST request, and their contents (containing the response data) are in JSON format.</p>
 <h2 id='configuration'>Configuration</h2>
-<p>To configure the webhook you need to go to the Integrations section and then Webhooks and click on <a href="https://mydatascope.com/webhooks/new">New Webhook</a>.</p>
+<p>To configure the webhook you need to go to the Integrations section and then Webhooks and click on <a href="https://app.mydatascope.com/integrations">New Webhook</a>.</p>
 
 <p><img src="https://data-scope.s3-us-west-2.amazonaws.com/images/other/Captura+de+pantalla+2020-09-08+a+la(s)+13.23.28.png" title="New Webhook" alt="New Webhook" /></p>
 <h2 id='output'>Output</h2>
@@ -3621,7 +3637,7 @@ TIP: It will only start sending information for the new forms done after the int
 422: Unprocessable Entity (invalid date range or range exceeds 90 days)
 </code></pre>
 <aside class="success">
-Remember — use your own header Authorization
+Remember — use your own Authorization header
 </aside>
 <h2 id='get-ticket'>Get Ticket</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/findings/get/Krdz3aFoWZ4ZVgpuAart"</span>
   -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
@@ -3785,7 +3801,154 @@ Remember — use your own header Authorization
 403: Forbidden
 </code></pre>
 <aside class="success">
-Remember — use your own header Authorization
+Remember — use your own Authorization header
+</aside>
+<h2 id='get-last-5-tickets'>Get last 5 tickets</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/last_findings"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/last_findings'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><h3 id='http-request-22'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/last_findings</code></p>
+<h3 id='return-codes-10'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+403: Forbidden
+</code></pre>
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+<h2 id='get-ticket-types'>Get Ticket Types</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/findings/types"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/findings/types'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">search: </span><span class="s1">'Finding T'</span><span class="p">}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:
+<code>json
+[  
+   {  
+      &quot;id&quot;:&quot;3rRET34tg3f27g6hHfsE&quot;,
+      &quot;name&quot;:&quot;Finding Type 1&quot;,
+   },
+   {
+     &quot;id&quot;: &quot;fe23fd32x43Dsa3D6y9T&quot;,
+     &quot;name&quot;:&quot;Finding Type 2&quot;,
+   }
+]
+</code></p>
+</blockquote>
+<h3 id='http-request-23'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/findings/types</code></p>
+<h3 id='input-parameter-7'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>search</td>
+<td>String</td>
+<td>Optional. Name to search</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-11'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+403: Forbidden
+</code></pre>
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+<h2 id='create-ticket'>Create Ticket</h2>
+<p>This endpoint create a ticket</p>
+<h3 id='http-request-24'>HTTP Request</h3>
+<p><code>POST https://www.mydatascope.com/api/external/findings/create</code></p>
+<h3 id='input-parameter-8'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>author_email</td>
+<td>String</td>
+<td>Ticket&#39;s author email. Fallback: Owner of the API Key</td>
+</tr>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Required. Name of the Ticket</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>Required. Description of the location</td>
+</tr>
+<tr>
+<td>expiration_date</td>
+<td>String or Datetime</td>
+<td>Required. Date or String with the date to expire the ticket (YYYY-MM-DD HH:MM)</td>
+</tr>
+<tr>
+<td>status</td>
+<td>String</td>
+<td>Status of ticket. Fallback: <code>open</code>. Options: <code>[open, in_progress, paused, closed]</code></td>
+</tr>
+<tr>
+<td>priority</td>
+<td>String</td>
+<td>Status of ticket. Fallback: <code>medium</code>. Options: <code>[low, medium, high, critical]</code></td>
+</tr>
+<tr>
+<td>location_id</td>
+<td>Integer</td>
+<td>Optional. ID of the location</td>
+</tr>
+<tr>
+<td>location_name</td>
+<td>Integer</td>
+<td>Optional. Name of the location in case of unrecognized <code>location_id</code></td>
+</tr>
+<tr>
+<td>assignees</td>
+<td>Array of Integers or Strings</td>
+<td>Required. MobileUser IDs or emails of users to be assigned to the ticket</td>
+</tr>
+<tr>
+<td>invitees</td>
+<td>Array of Integers or Strings</td>
+<td>Optional. MobileUser IDs or emails of users to be invited to the ticket (ignoring already assigned ones)</td>
+</tr>
+<tr>
+<td>type</td>
+<td>String</td>
+<td>Optional. Ticket Type ID or Ticket Type Name. If provided, preset data will be retrieved from this type. Fallback: &quot;Other&quot; (no type assigned).</td>
+</tr>
+<tr>
+<td>creation_date</td>
+<td>String or Datetime</td>
+<td>Optional. Date or String with a custom creation date of ticket (YYYY-MM-DD HH:MM)</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-12'>Return Codes:</h3><pre class="highlight plaintext"><code>201: Created
+403: Forbidden
+422: Unprocessable Entity
+</code></pre>
+<aside class="success">
+Remember — use your own Authorization header
 </aside>
 <h1 id='errors'>Errors</h1>
 <p>The DataScope API uses the following error codes:</p>
