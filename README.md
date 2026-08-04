@@ -1,3 +1,35 @@
+# DataScope API Documentation
+
+Public API reference for DataScope, published at **https://dscope.github.io/docs/**.
+
+All the content lives in one file: [`source/index.html.md`](source/index.html.md). The site is built with Slate, whose original README follows below.
+
+## Open your pull requests against `main`, not `master`
+
+This repository keeps two long-lived branches, and the defaults work against you:
+
+| Branch | Role |
+| --- | --- |
+| **`main`** | **The branch the site is built from.** `.github/workflows/deploy.yml` triggers on pushes here and publishes to `gh-pages` |
+| `master` | GitHub's configured default branch, so a new pull request targets it automatically. Nothing merged here reaches the live site |
+
+Because `master` is the default, a pull request opened without changing the base lands on the branch that does not publish. That is exactly how the two drifted: documentation accumulated on both sides for months, and each ended up missing endpoints the other had.
+
+**Set the base branch to `main` when you open a pull request.** If you already opened one against `master`, you can retarget it from the PR page without losing the review.
+
+The two branches were reconciled in July 2026, porting to `main` everything that existed only on `master`. If you find documentation present on one branch and absent from the other, they have drifted again and need another pass.
+
+### Working on the docs
+
+```bash
+bundle install
+bundle exec middleman server   # http://localhost:4567
+```
+
+The build runs on Ruby 2.3 to 2.6 in CI. Newer Rubies will not install the pinned dependencies.
+
+---
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/lord/img/master/logo-slate.png" alt="Slate: API Documentation Generator" width="226">
   <br>
