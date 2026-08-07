@@ -215,7 +215,17 @@ definitions:
       datetime: "{{ config['start_date'] }}"
       datetime_format: "%Y-%m-%dT%H:%M:%SZ"
     step: "P30D"
-    cursor_granularity: "P1D"
+    # PT1S, no P1D. La regla de Airbyte es que cursor_granularity sea el
+    # incremento más chico que expresa `datetime_format`: para
+    # "%Y-%m-%dT%H:%M:%SZ" corresponde PT1S, y P1D solo para "%Y-%m-%d".
+    #
+    # Importa porque el fin de cada ventana se calcula como
+    # `inicio + step - cursor_granularity`, y el inicio de la siguiente como
+    # `fin + cursor_granularity`. Con P1D las ventanas quedaban
+    # [día 1 00:00, día 30 00:00] y luego [día 31 00:00, ...]: el día 30
+    # completo no lo pedía nadie, y como la sincronización incremental nunca
+    # vuelve atrás, esas filas se perdían para siempre y en silencio.
+    cursor_granularity: "PT1S"
     lookback_window: "P1D"
     start_time_option:
       type: RequestOption
@@ -240,7 +250,17 @@ definitions:
       datetime: "{{ config['start_date'] }}"
       datetime_format: "%Y-%m-%dT%H:%M:%SZ"
     step: "P30D"
-    cursor_granularity: "P1D"
+    # PT1S, no P1D. La regla de Airbyte es que cursor_granularity sea el
+    # incremento más chico que expresa `datetime_format`: para
+    # "%Y-%m-%dT%H:%M:%SZ" corresponde PT1S, y P1D solo para "%Y-%m-%d".
+    #
+    # Importa porque el fin de cada ventana se calcula como
+    # `inicio + step - cursor_granularity`, y el inicio de la siguiente como
+    # `fin + cursor_granularity`. Con P1D las ventanas quedaban
+    # [día 1 00:00, día 30 00:00] y luego [día 31 00:00, ...]: el día 30
+    # completo no lo pedía nadie, y como la sincronización incremental nunca
+    # vuelve atrás, esas filas se perdían para siempre y en silencio.
+    cursor_granularity: "PT1S"
     lookback_window: "P1D"
     start_time_option:
       type: RequestOption
