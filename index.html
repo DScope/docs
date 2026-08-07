@@ -226,6 +226,17 @@
             <a href="#authentication" class="toc-h1 toc-link" data-title="authentication">Authentication</a>
           </li>
           <li>
+            <a href="#data-export" class="toc-h1 toc-link" data-title="data-export">Data Export</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#choosing-a-method" class="toc-h2 toc-link" data-title="choosing-a-method">Choosing a method</a>
+                  </li>
+                  <li>
+                    <a href="#airbyte-cloud-connectors" class="toc-h2 toc-link" data-title="airbyte-cloud-connectors">Airbyte Cloud connectors</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
             <a href="#answers" class="toc-h1 toc-link" data-title="answers">Answers</a>
               <ul class="toc-list-h2">
                   <li>
@@ -239,6 +250,14 @@
                   </li>
                   <li>
                     <a href="#change-answer" class="toc-h2 toc-link" data-title="change-answer">Change Answer</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#signatures" class="toc-h1 toc-link" data-title="signatures">Signatures</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#get-signature-requests" class="toc-h2 toc-link" data-title="get-signature-requests">Get Signature Requests</a>
                   </li>
               </ul>
           </li>
@@ -321,9 +340,6 @@
                   <li>
                     <a href="#output" class="toc-h2 toc-link" data-title="output">Output</a>
                   </li>
-                  <li>
-                    <a href="#webhooks-or-the-answers-api" class="toc-h2 toc-link" data-title="webhooks-or-the-answers-api">Webhooks or the Answers API</a>
-                  </li>
               </ul>
           </li>
           <li>
@@ -377,6 +393,250 @@
 
 <aside class="notice">
 You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
+</aside>
+<h1 id='data-export'>Data Export</h1>
+<p>If your goal is a copy of your DataScope data somewhere else, start here rather than with the endpoint reference below.</p>
+<h2 id='choosing-a-method'>Choosing a method</h2>
+<p>There are three ways to move data out, and they answer different questions.</p>
+
+<table><thead>
+<tr>
+<th>Method</th>
+<th>Direction</th>
+<th>Fits when</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><a href="#webhooks">Webhooks</a></td>
+<td>DataScope pushes, your endpoint reacts</td>
+<td>Something has to happen the moment a form arrives</td>
+</tr>
+<tr>
+<td>The REST endpoints</td>
+<td>You pull, on your own schedule</td>
+<td>You are building a custom integration, or you need a specific slice on demand</td>
+</tr>
+<tr>
+<td><a href="#airbyte-cloud-connectors">Airbyte Cloud connectors</a></td>
+<td>You pull, Airbyte runs it</td>
+<td>The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you</td>
+</tr>
+</tbody></table>
+
+<p>A <strong>webhook</strong> fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable <strong>Send modifications</strong> on the webhook.</p>
+
+<p>The <strong><a href="#get-all-answers-v5-beta">Answers V5 endpoint</a></strong> fits when you need a queryable copy of your data, a table in BigQuery, Snowflake or Postgres that stays current. You pull on a schedule rather than receive pushes, and you get three things in exchange:</p>
+
+<table><thead>
+<tr>
+<th>What the API adds</th>
+<th>How</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Access to everything, not only what comes next</td>
+<td>A webhook starts sending at the moment you configure it and cannot replay what your endpoint missed while it was down. The API takes a <code>start_date</code>, so a first sync backfills history and any later sync can re-read a window with <code>date_modified=true</code></td>
+</tr>
+<tr>
+<td>A schema you can model</td>
+<td><code>answers_data_in_array</code> returns the answers inside a nested array rather than as top-level keys, so the response shape stays the same regardless of the form or how many questions it has. That is what makes a relational destination practical</td>
+</tr>
+<tr>
+<td>Control over the payload</td>
+<td><code>custom_fields</code> selects exactly which fields you receive, so you can start minimal and add only what your model needs. <code>version</code> reproduces the response shape of any earlier API version if you are migrating from one</td>
+</tr>
+</tbody></table>
+
+<p>If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the connectors below cover all of it.</p>
+
+<p>Using both is normal. A webhook for the immediate reaction, a connector for the warehouse copy.</p>
+<h2 id='airbyte-cloud-connectors'>Airbyte Cloud connectors</h2>
+<p>DataScope publishes ready to use low-code connector manifests for Airbyte. Each one is plain YAML: import it in the Connector Builder, fill in your token and a start date, and Airbyte handles the paging, the incremental state and the deduplication.</p>
+
+<p>There are two, and they are separate sources on purpose:</p>
+
+<table><thead>
+<tr>
+<th>Connector</th>
+<th>Streams</th>
+<th>Covers</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><a href="#answers-connector">Answers</a></td>
+<td><code>form_answers</code>, <code>answers</code>, <code>answer_metadata_comments</code></td>
+<td>Form submissions and their answers</td>
+</tr>
+<tr>
+<td><a href="#signatures-connector">Signatures</a></td>
+<td><code>signature_requests</code>, <code>signature_signers</code></td>
+<td>Signature requests and who signed them</td>
+</tr>
+</tbody></table>
+
+<p>They read different endpoints, with different cursors and different pagination contracts, so one source cannot serve both. Keeping them apart also means that syncing answers does not carry signer personal data into your warehouse unless you ask for it. Import only the one you need.</p>
+
+<aside class="notice">
+Both manifests carry a <code>Last updated</code> date in the header comment. Compare it against your imported copy to tell whether you are running the current version.
+</aside>
+<h3 id='answers-connector'>Answers connector</h3>
+<p><a href="#get-all-answers-v5-beta">Get All Answers V5</a> with the pagination and the incremental state already wired:</p>
+
+<p><a href="https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml">Download the manifest (YAML)</a></p>
+
+<p>It defines three related streams that you can join in your warehouse:</p>
+
+<table><thead>
+<tr>
+<th>Stream</th>
+<th>One row per</th>
+<th>Primary key</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>form_answers</td>
+<td>Form answer (one submission)</td>
+<td><code>form_answer_id</code></td>
+</tr>
+<tr>
+<td>answers</td>
+<td>Answer (one question and its value)</td>
+<td><code>form_answer_id</code>, <code>real_question_id</code>, <code>subform_index</code>, <code>answer_row_key</code></td>
+</tr>
+<tr>
+<td>answer_metadata_comments</td>
+<td>Checklist comment (text or photo)</td>
+<td>the four above plus <code>data_type</code> and <code>data_index</code></td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+In the <code>answers</code> and <code>answer_metadata_comments</code> streams, <code>subform_index</code> arrives as <code>-1</code> when the question does not live inside a Group of Repeatable Fields, where the API itself returns <code>null</code>. The manifest normalizes it because Airbyte removes null-valued keys from records, and a primary key cannot reference a field that is missing. Both streams use the same convention, so joining them on <code>(form_answer_id, real_question_id, subform_index, answer_row_key)</code> works without coalescing. <code>-1</code> never collides with a real row 0: a given question is either always inside a repeatable group or never, so the two values cannot both occur for the same <code>real_question_id</code>.
+</aside>
+
+<p>To install it: in Airbyte Cloud go to Settings, Sources, &quot;Build a connector&quot;, then use the &quot;...&quot; menu and &quot;Import YAML&quot;. Configure your API token and a start date, optionally restrict it to specific forms with <code>form_id</code>, publish the connector and create the connection with Sync mode &quot;Incremental | Dedup&quot;.</p>
+
+<aside class="warning">
+Testing a stream shows "Detected schema and declared schema are different", with an <b>Overwrite declared schema</b> button. Do not press it, and do not press <b>Merge properties</b> either. There is no dismiss button: leaving the notice alone is the correct action. It stays as an indicator on the Schema tab but blocks nothing, because the schema declared in the manifest is what runs.
+</aside>
+
+<aside class="notice">
+Why overwriting breaks things: Airbyte drops any field that is <code>null</code> across every sampled record, since it cannot infer a type from nulls alone, and several fields here are legitimately null on a quiet account. One of them, <code>subform_index</code>, is part of the <code>answer_metadata_comments</code> primary key, so overwriting leaves that key pointing at a field that no longer exists and the stream fails with "Path [] does not have field <code>subform_index</code> in the schema". Everything else the Builder reports is its own normalization: it rewrites <code>$schema</code>, reorders type unions, collapses <code>integer</code> into <code>number</code>, and drops <code>format</code>.
+</aside>
+<h3 id='signatures-connector'>Signatures connector</h3>
+<p><a href="https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_signatures_source_manifest.yaml">Download the manifest (YAML)</a></p>
+
+<p>It reads <a href="#get-signature-requests">Get Signature Requests</a> and builds two streams out of the same response:</p>
+
+<table><thead>
+<tr>
+<th>Stream</th>
+<th>One row per</th>
+<th>Primary key</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>signature_requests</td>
+<td>Signature request on a form answer</td>
+<td><code>form_signature_request_id</code></td>
+</tr>
+<tr>
+<td>signature_signers</td>
+<td>Signer inside a request</td>
+<td><code>user_form_signature_request_id</code></td>
+</tr>
+</tbody></table>
+
+<p>Join them on <code>form_signature_request_id</code>. Both carry <code>form_answer_id</code>, so either one joins to the <code>form_answers</code> stream of the answers connector.</p>
+
+<p>To install it, follow the same steps as above. It asks for your API token and a start date, plus an optional <code>signature_custom_fields</code> to switch on the field groups described in <a href="#get-signature-requests">Get Signature Requests</a>. It does not take <code>form_id</code>: the endpoint has no per-form filter.</p>
+
+<aside class="notice">
+A cancelled request is not dropped from the export. It keeps arriving with <code>status</code> set to <code>deleted</code> and a <code>deleted_at</code> timestamp. That matters for an incremental sync, which never observes a disappearance: without the explicit status your warehouse would keep showing a cancelled request as awaiting signature forever.
+</aside>
+
+<aside class="notice">
+Selecting both streams walks the endpoint twice per sync. Airbyte syncs each stream independently and the declarative connector cannot share one response between two streams, so the cost is two passes rather than one. If you only need request-level data, select just <code>signature_requests</code> and deselect its <code>signers</code> field.
+</aside>
+
+<aside class="warning">
+The <code>signer_identity</code> group writes names, national ID numbers and personal email addresses into your destination, and they stay there. Turn it on only if your warehouse is an appropriate place for that data.
+</aside>
+<h3 id='customizing-a-manifest'>Customizing a manifest</h3>
+<p>Either manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of <code>custom_fields</code> are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.</p>
+
+<p>The tables below name the answers manifest, and the same rules hold for the signatures one. Its load-bearing parts are the two primary keys, the <code>since</code> cursor built from <code>(updated_at, form_signature_request_id)</code>, and the extractor paths that flatten <code>signers</code> into its own stream.</p>
+
+<p><strong>Safe to change</strong></p>
+
+<table><thead>
+<tr>
+<th>What</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Stream names</td>
+<td><code>form_answers</code>, <code>answers</code> and <code>answer_metadata_comments</code> become table names in your destination. Rename them to match your own conventions</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>200 is the endpoint maximum, so you can only lower it. Lower values mean more requests for the same data</td>
+</tr>
+<tr>
+<td>Optional <code>custom_fields</code></td>
+<td>Add any field from the Custom Fields table above. When you add one, add it to that stream&#39;s schema too, so the destination types the column instead of guessing</td>
+</tr>
+<tr>
+<td><code>form_id</code></td>
+<td>A configuration field, meant to be set per source. Answers manifest only, the signatures endpoint has no per-form filter</td>
+</tr>
+<tr>
+<td><code>signature_custom_fields</code></td>
+<td>A configuration field on the signatures manifest, meant to be set per source</td>
+</tr>
+</tbody></table>
+
+<p><strong>Change with care</strong></p>
+
+<table><thead>
+<tr>
+<th>What</th>
+<th>What breaks</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>order_date</code>, or the sort direction</td>
+<td>Incremental sync depends on ascending <code>updated_at</code>. Descending puts the newest record on the first page, the cursor jumps to it, and everything behind it is never synced again</td>
+</tr>
+<tr>
+<td><code>primary_key</code> on any stream</td>
+<td>These tuples are what make deduplication correct across edits. Shortening one collapses rows that are actually distinct; adding a mutable field creates a new row on every edit</td>
+</tr>
+<tr>
+<td><code>cursor_field</code>, or the <code>incremental_sync</code> blocks</td>
+<td>The child streams inherit the parent form answer&#39;s <code>updated_at</code>. Pointing them somewhere else stalls the sync state</td>
+</tr>
+<tr>
+<td>Extractor <code>field_path</code></td>
+<td>The wildcard shape is exact. A wrong path returns zero records with no error, which looks like an empty account</td>
+</tr>
+<tr>
+<td>The structural <code>custom_fields</code></td>
+<td><code>answers_data_in_array</code>, <code>answers_extra_data</code>, <code>answers_row_key</code>, <code>answers_form_answer_updated_at</code> and <code>answers_metadata_comments_array</code> feed the primary keys and the cursors. Removing one breaks whatever depended on it</td>
+</tr>
+<tr>
+<td>Adding <code>limit</code> to <code>request_parameters</code></td>
+<td>The paginator already injects it, and duplicating it fails the sync with a request collision</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Rename streams before the first sync if you can. Airbyte treats a renamed stream as a new one, so renaming later creates a fresh table in your destination and re-syncs the history into it, leaving the previous table behind.
+</aside>
+
+<aside class="warning">
+If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
 </aside>
 <h1 id='answers'>Answers</h1><h2 id='get-all-answers'>Get All Answers</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -1067,119 +1327,9 @@ Send <code>date_modified=true</code> and <code>order_date=true</code> together w
 <td>Company code of the location. Only for Locations</td>
 </tr>
 </tbody></table>
-<h3 id='airbyte-cloud-connector'>Airbyte Cloud connector</h3>
-<p>If your destination is a data warehouse, you do not need to write the pagination and incremental logic yourself. DataScope publishes a ready to use low-code connector manifest for Airbyte:</p>
-
-<p><a href="https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml">Download the manifest (YAML)</a></p>
-
-<p>It defines three related streams that you can join in your warehouse:</p>
-
-<table><thead>
-<tr>
-<th>Stream</th>
-<th>One row per</th>
-<th>Primary key</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>form_answers</td>
-<td>Form answer (one submission)</td>
-<td><code>form_answer_id</code></td>
-</tr>
-<tr>
-<td>answers</td>
-<td>Answer (one question and its value)</td>
-<td><code>form_answer_id</code>, <code>real_question_id</code>, <code>subform_index</code>, <code>answer_row_key</code></td>
-</tr>
-<tr>
-<td>answer_metadata_comments</td>
-<td>Checklist comment (text or photo)</td>
-<td>the four above plus <code>data_type</code> and <code>data_index</code></td>
-</tr>
-</tbody></table>
 
 <aside class="notice">
-In the <code>answers</code> and <code>answer_metadata_comments</code> streams, <code>subform_index</code> arrives as <code>-1</code> when the question does not live inside a Group of Repeatable Fields, where the API itself returns <code>null</code>. The manifest normalizes it because Airbyte removes null-valued keys from records, and a primary key cannot reference a field that is missing. Both streams use the same convention, so joining them on <code>(form_answer_id, real_question_id, subform_index, answer_row_key)</code> works without coalescing. <code>-1</code> never collides with a real row 0: a given question is either always inside a repeatable group or never, so the two values cannot both occur for the same <code>real_question_id</code>.
-</aside>
-
-<p>To install it: in Airbyte Cloud go to Settings, Sources, &quot;Build a connector&quot;, then use the &quot;...&quot; menu and &quot;Import YAML&quot;. Configure your API token and a start date, optionally restrict it to specific forms with <code>form_id</code>, publish the connector and create the connection with Sync mode &quot;Incremental | Dedup&quot;.</p>
-
-<aside class="warning">
-Testing a stream shows "Detected schema and declared schema are different", with an <b>Overwrite declared schema</b> button. Do not press it, and do not press <b>Merge properties</b> either. There is no dismiss button: leaving the notice alone is the correct action. It stays as an indicator on the Schema tab but blocks nothing, because the schema declared in the manifest is what runs.
-</aside>
-
-<aside class="notice">
-Why overwriting breaks things: Airbyte drops any field that is <code>null</code> across every sampled record, since it cannot infer a type from nulls alone, and several fields here are legitimately null on a quiet account. One of them, <code>subform_index</code>, is part of the <code>answer_metadata_comments</code> primary key, so overwriting leaves that key pointing at a field that no longer exists and the stream fails with "Path [] does not have field <code>subform_index</code> in the schema". Everything else the Builder reports is its own normalization: it rewrites <code>$schema</code>, reorders type unions, collapses <code>integer</code> into <code>number</code>, and drops <code>format</code>.
-</aside>
-<h3 id='customizing-the-manifest'>Customizing the manifest</h3>
-<p>The manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of <code>custom_fields</code> are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.</p>
-
-<p><strong>Safe to change</strong></p>
-
-<table><thead>
-<tr>
-<th>What</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Stream names</td>
-<td><code>form_answers</code>, <code>answers</code> and <code>answer_metadata_comments</code> become table names in your destination. Rename them to match your own conventions</td>
-</tr>
-<tr>
-<td><code>page_size</code></td>
-<td>200 is the endpoint maximum, so you can only lower it. Lower values mean more requests for the same data</td>
-</tr>
-<tr>
-<td>Optional <code>custom_fields</code></td>
-<td>Add any field from the Custom Fields table above. When you add one, add it to that stream&#39;s schema too, so the destination types the column instead of guessing</td>
-</tr>
-<tr>
-<td><code>form_id</code></td>
-<td>A configuration field, meant to be set per source</td>
-</tr>
-</tbody></table>
-
-<p><strong>Change with care</strong></p>
-
-<table><thead>
-<tr>
-<th>What</th>
-<th>What breaks</th>
-</tr>
-</thead><tbody>
-<tr>
-<td><code>order_date</code>, or the sort direction</td>
-<td>Incremental sync depends on ascending <code>updated_at</code>. Descending puts the newest record on the first page, the cursor jumps to it, and everything behind it is never synced again</td>
-</tr>
-<tr>
-<td><code>primary_key</code> on any stream</td>
-<td>These tuples are what make deduplication correct across edits. Shortening one collapses rows that are actually distinct; adding a mutable field creates a new row on every edit</td>
-</tr>
-<tr>
-<td><code>cursor_field</code>, or the <code>incremental_sync</code> blocks</td>
-<td>The child streams inherit the parent form answer&#39;s <code>updated_at</code>. Pointing them somewhere else stalls the sync state</td>
-</tr>
-<tr>
-<td>Extractor <code>field_path</code></td>
-<td>The wildcard shape is exact. A wrong path returns zero records with no error, which looks like an empty account</td>
-</tr>
-<tr>
-<td>The structural <code>custom_fields</code></td>
-<td><code>answers_data_in_array</code>, <code>answers_extra_data</code>, <code>answers_row_key</code>, <code>answers_form_answer_updated_at</code> and <code>answers_metadata_comments_array</code> feed the primary keys and the cursors. Removing one breaks whatever depended on it</td>
-</tr>
-<tr>
-<td>Adding <code>limit</code> to <code>request_parameters</code></td>
-<td>The paginator already injects it, and duplicating it fails the sync with a request collision</td>
-</tr>
-</tbody></table>
-
-<aside class="notice">
-Rename streams before the first sync if you can. Airbyte treats a renamed stream as a new one, so renaming later creates a fresh table in your destination and re-syncs the history into it, leaving the previous table behind.
-</aside>
-
-<aside class="warning">
-If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
+If your destination is a data warehouse, you do not need to implement the paging and the incremental logic yourself. The <a href="#answers-connector">Answers connector</a> wires this endpoint into Airbyte Cloud for you.
 </aside>
 <h2 id='change-answer'>Change Answer</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -1236,6 +1386,384 @@ If you edit the manifest and the sync starts behaving oddly, re-import the publi
 <td>Number to specify the subform index (Starting from 1). Leave blank if question it&#39;s not inside subform*.</td>
 </tr>
 </tbody></table>
+<h1 id='signatures'>Signatures</h1><h2 id='get-signature-requests'>Get Signature Requests</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/signatures/list'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+ <span class="ss">:params</span> <span class="o">=&gt;</span> <span class="p">{</span>
+   <span class="ss">:start</span> <span class="o">=&gt;</span> <span class="s1">'2026-01-01'</span><span class="p">,</span>
+   <span class="ss">:limit</span> <span class="o">=&gt;</span> <span class="mi">200</span><span class="p">,</span>
+   <span class="ss">:custom_fields</span> <span class="o">=&gt;</span> <span class="s1">'signer_identity,documents'</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/signatures/list?start=2026-01-01&amp;limit=200&amp;custom_fields=signer_identity,documents"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre>
+<blockquote>
+<p>The response wraps the rows in an object, together with the cursor for the next page:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+   </span><span class="s2">"signature_requests"</span><span class="p">:[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+         </span><span class="s2">"form_signature_request_id"</span><span class="p">:</span><span class="mi">48210</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"form_answer_id"</span><span class="p">:</span><span class="mi">257189</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"status"</span><span class="p">:</span><span class="s2">"pending"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"deleted_at"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"required"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"sequential"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"sequence_step"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"required_signatures_count"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"reject_reason"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"rejected_by_external"</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"created_at"</span><span class="p">:</span><span class="s2">"2026-07-16T16:52:05Z"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"closed_at"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="s2">"2026-07-18T09:14:22Z"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"signer_ids"</span><span class="p">:[</span><span class="mi">90411</span><span class="p">,</span><span class="w"> </span><span class="mi">90412</span><span class="p">],</span><span class="w">
+         </span><span class="s2">"signers"</span><span class="p">:[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+               </span><span class="s2">"user_form_signature_request_id"</span><span class="p">:</span><span class="mi">90411</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"form_signature_request_id"</span><span class="p">:</span><span class="mi">48210</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"form_answer_id"</span><span class="p">:</span><span class="mi">257189</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"form_signature_request_updated_at"</span><span class="p">:</span><span class="s2">"2026-07-18T09:14:22Z"</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"signed"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"external_user"</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"sequence_order"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"cancelled_by_quorum"</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"rejected"</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"created_at"</span><span class="p">:</span><span class="s2">"2026-07-16T16:52:05Z"</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="s2">"2026-07-17T11:03:41Z"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+               </span><span class="s2">"user_form_signature_request_id"</span><span class="p">:</span><span class="mi">90412</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"form_signature_request_id"</span><span class="p">:</span><span class="mi">48210</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"form_answer_id"</span><span class="p">:</span><span class="mi">257189</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"form_signature_request_updated_at"</span><span class="p">:</span><span class="s2">"2026-07-18T09:14:22Z"</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"signed"</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"external_user"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"sequence_order"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"cancelled_by_quorum"</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"rejected"</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"created_at"</span><span class="p">:</span><span class="s2">"2026-07-16T16:52:05Z"</span><span class="p">,</span><span class="w">
+               </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="s2">"2026-07-16T16:52:05Z"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+         </span><span class="p">]</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">],</span><span class="w">
+   </span><span class="s2">"next_cursor"</span><span class="p">:</span><span class="s2">"2026-07-18T09:14:22Z|48210"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Returns the signature requests of your account with their signers nested, ordered by <code>updated_at</code> ascending and paginated with a keyset cursor. It is built for incremental sync: walk from the beginning once, then keep sending back the cursor you received.</p>
+
+<p>This is what answers &quot;which of the five signers is still missing&quot;, over time. Each signer keeps a stable identity across syncs, unlike the positional columns of the spreadsheet integration.</p>
+
+<p>If your destination is a data warehouse, you do not need to implement any of the pagination below: the <a href="#signatures-connector">Signatures connector</a> does it for you.</p>
+
+<aside class="warning">
+The user whose token you use needs export permission in DataScope, the same permission the Answers endpoints require. Ask your account administrator to confirm it before setting up a recurring integration.
+</aside>
+<h3 id='http-request-5'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/signatures/list</code></p>
+<h3 id='query-parameters-5'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>start</td>
+<td>String</td>
+<td>blank</td>
+<td>Only requests modified from this moment on. ISO 8601. There is no default window: leaving it out walks your whole history, which is what a first sync wants</td>
+</tr>
+<tr>
+<td>end</td>
+<td>String</td>
+<td>blank</td>
+<td>Only requests modified up to this moment. ISO 8601. Defaults to now, excluding the second in progress</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>Integer</td>
+<td>200</td>
+<td>Rows per page. 200 is also the maximum, so you can only lower it</td>
+</tr>
+<tr>
+<td>since</td>
+<td>String</td>
+<td>blank</td>
+<td>Cursor for the next page. Pass back the <code>next_cursor</code> you received</td>
+</tr>
+<tr>
+<td>custom_fields</td>
+<td>String</td>
+<td>blank</td>
+<td>Comma separated list of optional field groups. See below</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+<code>start</code> and <code>end</code> only accept ISO 8601. A format like <code>08/01/2026</code> is rejected with a 400 rather than interpreted, because day-first and month-first cannot be told apart and guessing would silently return data from the wrong month with a 200.
+</aside>
+<h3 id='pagination'>Pagination</h3>
+<p>The cursor is the pair <code>(updated_at, form_signature_request_id)</code>, serialized as <code>&lt;ISO8601&gt;|&lt;id&gt;</code>. Read <code>next_cursor</code> from the response and send it back as <code>since</code> to get the following page. When a page comes back with fewer rows than <code>limit</code>, you have reached the end.</p>
+
+<p>It is a pair rather than a timestamp alone for a concrete reason: <code>updated_at</code> has one-second resolution, and a bulk signature writes a whole batch of rows within the same second. A cursor carrying only the timestamp, whose page boundary falls inside such a batch, would skip the rest of it permanently. Adding the id makes the ordering total.</p>
+
+<aside class="warning">
+A cursor whose timestamp is in the future is rejected with a 400. It can only come from clock skew or a corrupted token, and it would otherwise make every later page come back empty, which reads as "fully caught up".
+</aside>
+<h3 id='response'>Response</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>signature_requests</td>
+<td>The page of requests, each with its signers nested</td>
+</tr>
+<tr>
+<td>next_cursor</td>
+<td>Cursor for the next page, or <code>null</code> when the page is empty</td>
+</tr>
+</tbody></table>
+<h3 id='custom-fields-2'>Custom Fields</h3>
+<p>Both groups are opt-in because each has a real cost when you do not want it.</p>
+
+<table><thead>
+<tr>
+<th>Value</th>
+<th>Adds</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>signer_identity</td>
+<td>Identity of each signer (name, national ID, emails, company, role, country) and of whoever requested the signatures. This is personal data, and it lands in your destination permanently</td>
+</tr>
+<tr>
+<td>documents</td>
+<td>The signed PDF link, when that PDF was generated, and a link to the answer</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+An unrecognized value returns a 400 listing the accepted ones, instead of omitting the field silently. A silent omission would answer 200 with the field missing, which reads as "that field does not exist" and turns a typo into a long debugging session.
+</aside>
+<h3 id='request-fields'>Request Fields</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>form_signature_request_id</td>
+<td>ID of the signature request. Primary key</td>
+</tr>
+<tr>
+<td>form_answer_id</td>
+<td>The answer being signed. Join key against the Answers endpoints</td>
+</tr>
+<tr>
+<td>status</td>
+<td><code>pending</code>, <code>completed</code>, <code>rejected</code>, or <code>deleted</code> for a cancelled request</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>When the request was cancelled. Only present on a <code>deleted</code> request</td>
+</tr>
+<tr>
+<td>required</td>
+<td>Whether signing is mandatory for this answer</td>
+</tr>
+<tr>
+<td>sequential</td>
+<td>Whether signers have to sign in order</td>
+</tr>
+<tr>
+<td>sequence_step</td>
+<td>Current step, on a sequential request</td>
+</tr>
+<tr>
+<td>required_signatures_count</td>
+<td>Signatures needed to close the request. Already resolved: it accounts for a total quorum, a per-step quorum, and the case with no quorum, where it equals the number of signers</td>
+</tr>
+<tr>
+<td>reject_reason</td>
+<td>Free text reason, when the request was rejected</td>
+</tr>
+<tr>
+<td>rejected_by_external</td>
+<td>Whether the rejection came from an external signer</td>
+</tr>
+<tr>
+<td>signer_ids</td>
+<td>The authoritative list of signer IDs for this request</td>
+</tr>
+<tr>
+<td>signers</td>
+<td>The signers, described below</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>When the request was created</td>
+</tr>
+<tr>
+<td>closed_at</td>
+<td>When the request was completed or rejected</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>Last modification. This is the cursor field</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Use <code>signer_ids</code> to retire signers. A signer removed while editing the request is deleted outright rather than flagged, so diffing your stored rows against this list is the only way to notice it is gone.
+</aside>
+<h3 id='signer-fields'>Signer Fields</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>user_form_signature_request_id</td>
+<td>ID of the signer row. Primary key</td>
+</tr>
+<tr>
+<td>form_signature_request_id</td>
+<td>Parent request</td>
+</tr>
+<tr>
+<td>form_answer_id</td>
+<td>Denormalized from the parent, so the join key is on the row itself</td>
+</tr>
+<tr>
+<td>form_signature_request_updated_at</td>
+<td>The parent&#39;s <code>updated_at</code>. Present because the cursor is built from the request, so a signers-only consumer can still page</td>
+</tr>
+<tr>
+<td>signed</td>
+<td>Whether this signer signed</td>
+</tr>
+<tr>
+<td>external_user</td>
+<td>Whether the signer is external, rather than a DataScope user</td>
+</tr>
+<tr>
+<td>sequence_order</td>
+<td>Position, on a sequential request</td>
+</tr>
+<tr>
+<td>cancelled_by_quorum</td>
+<td>True when this signer&#39;s turn became moot because the request already reached its quorum</td>
+</tr>
+<tr>
+<td>rejected</td>
+<td>True on the signer who rejected. Always present, no need for <code>signer_identity</code></td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>When the signer was added</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>Last modification. On a signer who signed, this is the moment of the signature</td>
+</tr>
+</tbody></table>
+<h3 id='signer-identity-fields'>Signer Identity Fields</h3>
+<p>Only with <code>signer_identity</code>.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>full_name</td>
+<td>Signer&#39;s name. Falls back to the DataScope user&#39;s name when the signer has no signature configuration yet</td>
+</tr>
+<tr>
+<td>rut</td>
+<td>National ID number, when recorded</td>
+</tr>
+<tr>
+<td>personal_email</td>
+<td>Personal email, falling back to the DataScope user&#39;s address</td>
+</tr>
+<tr>
+<td>company_email</td>
+<td>The DataScope user&#39;s address</td>
+</tr>
+<tr>
+<td>company_name</td>
+<td>Company recorded in the signature configuration</td>
+</tr>
+<tr>
+<td>role</td>
+<td>Role recorded in the signature configuration</td>
+</tr>
+<tr>
+<td>country</td>
+<td>Country recorded in the signature configuration</td>
+</tr>
+<tr>
+<td>mobile_user_id</td>
+<td>The DataScope user, when the signer is internal</td>
+</tr>
+<tr>
+<td>requester_mobile_user_id</td>
+<td>On the request: who asked for the signatures</td>
+</tr>
+<tr>
+<td>requester_full_name</td>
+<td>On the request: that person&#39;s name</td>
+</tr>
+<tr>
+<td>requester_email</td>
+<td>On the request: that person&#39;s email</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+A signer who has not signed yet may have no signature configuration at all, since it is created at the moment of signing. That is why the name and the personal email fall back to the DataScope user: without the fallback these come back empty for exactly the signers you most want to chase.
+</aside>
+<h3 id='document-fields'>Document Fields</h3>
+<p>Only with <code>documents</code>.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>pdf_url</td>
+<td>Link to the signed PDF</td>
+</tr>
+<tr>
+<td>pdf_generated_at</td>
+<td>When that PDF was generated</td>
+</tr>
+<tr>
+<td>answer_view_url</td>
+<td>Link to the answer in DataScope</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+The PDF is regenerated asynchronously as signatures come in, so <code>pdf_url</code> can point at a version that predates the newest signature. Compare <code>pdf_generated_at</code> against the request's <code>updated_at</code> to detect it.
+</aside>
 <h1 id='locations'>Locations</h1><h2 id='get-all-locations'>Get All Locations</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
@@ -1271,7 +1799,7 @@ If you edit the manifest and the sync starts behaving oddly, re-import the publi
 
 </span></code></pre>
 <p>This endpoint retrieves all locations</p>
-<h3 id='http-request-5'>HTTP Request</h3>
+<h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='output-parameter-3'>Output Parameter</h3>
 <table><thead>
@@ -1416,7 +1944,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint create a location</p>
-<h3 id='http-request-6'>HTTP Request</h3>
+<h3 id='http-request-7'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='input-parameter'>Input Parameter</h3>
 <table><thead>
@@ -1576,7 +2104,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint updates a location</p>
-<h3 id='http-request-7'>HTTP Request</h3>
+<h3 id='http-request-8'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='input-parameter-2'>Input Parameter</h3>
 <table><thead>
@@ -1716,9 +2244,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-8'>HTTP Request</h3>
+<h3 id='http-request-9'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_objects</code></p>
-<h3 id='query-parameters-5'>Query Parameters</h3>
+<h3 id='query-parameters-6'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1802,9 +2330,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves a specific element of the list</p>
-<h3 id='http-request-9'>HTTP Request</h3>
+<h3 id='http-request-10'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_object</code></p>
-<h3 id='query-parameters-6'>Query Parameters</h3>
+<h3 id='query-parameters-7'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1907,7 +2435,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint creates a list element</p>
-<h3 id='http-request-10'>HTTP Request</h3>
+<h3 id='http-request-11'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_object</code></p>
 <h3 id='query-params'>Query params:</h3>
 <table><thead>
@@ -2028,7 +2556,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint updates a list object</p>
-<h3 id='http-request-11'>HTTP Request</h3>
+<h3 id='http-request-12'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_object/{id}</code></p>
 <h3 id='input-parameter-4'>Input Parameter</h3>
 <table><thead>
@@ -2129,7 +2657,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint creates a empty list</p>
-<h3 id='http-request-12'>HTTP Request</h3>
+<h3 id='http-request-13'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_types</code></p>
 <h3 id='input-parameter-5'>Input Parameter</h3>
 <table><thead>
@@ -2225,7 +2753,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint updates a list</p>
-<h3 id='http-request-13'>HTTP Request</h3>
+<h3 id='http-request-14'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_types/{id}</code></p>
 <h3 id='input-parameter-6'>Input Parameter</h3>
 <table><thead>
@@ -2363,7 +2891,7 @@ Remember — use your own Authorization header
   </span><span class="s2">"list_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='http-request-14'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-15'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_objects/bulk_update</code></p>
 <h3 id='input-parameters'>Input Parameters</h3>
 <table><thead>
@@ -2453,7 +2981,7 @@ Remember — use your own Authorization header
 <td>Internal Server Error</td>
 </tr>
 </tbody></table>
-<h3 id='response'>Response</h3>
+<h3 id='response-2'>Response</h3>
 <p>The response includes:</p>
 
 <table><thead>
@@ -2524,9 +3052,9 @@ Remember — use your own Authorization header
    </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 
-</span></code></pre><h3 id='http-request-15'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-16'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/assign_task</code></p>
-<h3 id='query-parameters-7'>Query Parameters</h3>
+<h3 id='query-parameters-8'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2663,7 +3191,7 @@ Remember — use your own Authorization header
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves the full detail of a single task assignment by its internal ID. Returns the same fields as the list endpoint. Returns 404 if the assignment does not belong to the authenticated account.</p>
-<h3 id='http-request-16'>HTTP Request</h3>
+<h3 id='http-request-17'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/task_assigns/:id</code></p>
 <h3 id='path-parameters'>Path Parameters</h3>
 <table><thead>
@@ -2904,7 +3432,7 @@ Remember — use your own Authorization header
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a paginated list of task assignments for the authenticated account. The response fields match the platform&#39;s Excel export plus the internal <code>id</code>, enabling automated integrations without manual downloads. The <code>total</code> field reflects the number of task assignments matching the applied filters — without filters, it returns the count of all historical tasks in the account.</p>
-<h3 id='http-request-17'>HTTP Request</h3>
+<h3 id='http-request-18'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/task_assigns</code></p>
 <h3 id='input-parameters-2'>Input Parameters</h3>
 <table><thead>
@@ -3151,9 +3679,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-18'>HTTP Request</h3>
+<h3 id='http-request-19'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/notifications</code></p>
-<h3 id='query-parameters-8'>Query Parameters</h3>
+<h3 id='query-parameters-9'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -3249,9 +3777,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-19'>HTTP Request</h3>
+<h3 id='http-request-20'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/files</code></p>
-<h3 id='query-parameters-9'>Query Parameters</h3>
+<h3 id='query-parameters-10'>Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -3345,36 +3873,10 @@ Remember — use your own Authorization header
 <aside class="notice">
 TIP: It will only start sending information for the new forms done after the integration.
 </aside>
-<h2 id='webhooks-or-the-answers-api'>Webhooks or the Answers API</h2>
-<p>Both move data out of DataScope, and they answer different questions.</p>
 
-<p>A <strong>webhook</strong> fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable <strong>Send modifications</strong> on the webhook.</p>
-
-<p>The <strong><a href="#get-all-answers-v5-beta">Answers V5 endpoint</a></strong> fits when you need a queryable copy of your data, a table in BigQuery, Snowflake or Postgres that stays current. You pull on a schedule rather than receive pushes, and you get three things in exchange:</p>
-
-<table><thead>
-<tr>
-<th>What the API adds</th>
-<th>How</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Access to everything, not only what comes next</td>
-<td>A webhook starts sending at the moment you configure it, per the tip above, and cannot replay what your endpoint missed while it was down. The API takes a <code>start_date</code>, so a first sync backfills history and any later sync can re-read a window with <code>date_modified=true</code></td>
-</tr>
-<tr>
-<td>A schema you can model</td>
-<td><code>answers_data_in_array</code> returns the answers inside a nested array rather than as top-level keys, so the response shape stays the same regardless of the form or how many questions it has. That is what makes a relational destination practical</td>
-</tr>
-<tr>
-<td>Control over the payload</td>
-<td><code>custom_fields</code> selects exactly which fields you receive, so you can start minimal and add only what your model needs. <code>version</code> reproduces the response shape of any earlier API version if you are migrating from one</td>
-</tr>
-</tbody></table>
-
-<p>If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the <a href="#airbyte-cloud-connector">Airbyte Cloud connector</a> covers all of it.</p>
-
-<p>Using both is normal. A webhook for the immediate reaction, the connector for the warehouse copy.</p>
+<aside class="notice">
+That tip is the main reason a webhook alone is not enough for a warehouse: it cannot replay what it never sent. <a href="#choosing-a-method">Choosing a method</a> compares webhooks against the pull-based options.
+</aside>
 <h1 id='tickets-fka-issues'>Tickets (FKA Issues)</h1><h2 id='get-tickets-by-period'>Get Tickets by Period</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/findings/list?start=01-01-2026&amp;end=31-01-2026"</span>
   -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
 </code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
@@ -3429,7 +3931,7 @@ TIP: It will only start sending information for the new forms done after the int
 </span><span class="p">]</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a list of Tickets filtered by creation date period.</p>
-<h3 id='http-request-20'>HTTP Request</h3>
+<h3 id='http-request-21'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/findings/list</code></p>
 <h3 id='input-parameters-3'>Input Parameters</h3>
 <table><thead>
@@ -3472,7 +3974,7 @@ TIP: It will only start sending information for the new forms done after the int
 </tbody></table>
 
 <p>The maximum allowed date range is <strong>90 days</strong>. Requests with a wider range will return <code>422 Unprocessable Entity</code>.</p>
-<h3 id='pagination'>Pagination</h3>
+<h3 id='pagination-2'>Pagination</h3>
 <p>Results are paginated using <code>limit</code> and <code>offset</code>. <code>limit</code> controls how many results are returned, and <code>offset</code> controls how many to skip from the beginning.</p>
 
 <p>For example, if there are 400 tickets in the period:</p>
@@ -3674,7 +4176,7 @@ Remember — use your own Authorization header
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a single Ticket by its Firestore document ID.</p>
-<h3 id='http-request-21'>HTTP Request</h3>
+<h3 id='http-request-22'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/findings/get/:id</code></p>
 <h3 id='url-parameter'>URL Parameter</h3>
 <table><thead>
@@ -3811,7 +4313,7 @@ Remember — use your own Authorization header
 <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-</code></pre><h3 id='http-request-22'>HTTP Request</h3>
+</code></pre><h3 id='http-request-23'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/last_findings</code></p>
 <h3 id='return-codes-10'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
 403: Forbidden
@@ -3846,7 +4348,7 @@ Remember — use your own Authorization header
 ]
 </code></p>
 </blockquote>
-<h3 id='http-request-23'>HTTP Request</h3>
+<h3 id='http-request-24'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/findings/types</code></p>
 <h3 id='input-parameter-7'>Input Parameter</h3>
 <table><thead>
@@ -3870,7 +4372,7 @@ Remember — use your own Authorization header
 </aside>
 <h2 id='create-ticket'>Create Ticket</h2>
 <p>This endpoint create a ticket</p>
-<h3 id='http-request-24'>HTTP Request</h3>
+<h3 id='http-request-25'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/findings/create</code></p>
 <h3 id='input-parameter-8'>Input Parameter</h3>
 <table><thead>
@@ -3949,6 +4451,14 @@ Remember — use your own Authorization header
 Remember — use your own Authorization header
 </aside>
 <h1 id='changelog'>Changelog</h1>
+<p><strong>07-Aug-2026</strong></p>
+
+<ul>
+<li>Added <a href="#get-signature-requests">Get Signature Requests</a> and its <a href="#signatures-connector">Airbyte Cloud connector</a>, with streams for signature requests and for individual signers</li>
+<li>Grouped everything about getting data out into a new <a href="#data-export">Data Export</a> section near the top, including the <a href="#choosing-a-method">comparison between webhooks and the pull-based options</a> that used to sit inside Webhooks</li>
+<li>Split the Airbyte manifest in two, one per source. The answers manifest keeps its URL, so an existing connector is unaffected</li>
+</ul>
+
 <p><strong>04-Aug-2026</strong></p>
 
 <ul>
@@ -3960,7 +4470,7 @@ Remember — use your own Authorization header
 <p><strong>30-Jul-2026</strong></p>
 
 <ul>
-<li>Added <a href="#get-all-answers-v5-beta">Answers V5 (Beta)</a>, its <code>custom_fields</code>, and the <a href="#airbyte-cloud-connector">Airbyte Cloud connector manifest</a></li>
+<li>Added <a href="#get-all-answers-v5-beta">Answers V5 (Beta)</a>, its <code>custom_fields</code>, and the <a href="#answers-connector">Airbyte Cloud connector manifest</a></li>
 </ul>
 
 <p><strong>Apr-2026</strong></p>

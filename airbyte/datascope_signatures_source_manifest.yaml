@@ -1,0 +1,473 @@
+# =============================================================================
+# DataScope Firmas - Airbyte Low-Code (Declarative) Source Connector
+# =============================================================================
+# Created:       2026-08-07
+# Last updated:  2026-08-07  (primera versión: streams signature_requests y
+#                             signature_signers)
+#
+# Actualizar `Last updated` en cada cambio funcional del manifest (nuevos
+# streams, cambios de PK/cursor, custom_fields, ajustes de extractor).
+# Los cambios puramente cosméticos (comentarios, whitespace) no cuentan.
+# La fecha permite a quien replica el manifest saber si tiene la versión
+# actual comparándola con la última publicada por DataScope.
+# =============================================================================
+# Las firmas viven en un endpoint propio y no en el de respuestas. El motivo es
+# el cursor: un cambio de firma no modifica la respuesta del formulario, así que
+# un cursor sobre la fecha de modificación de la respuesta nunca vería una firma
+# nueva.
+# =============================================================================
+# Este manifest cubre SOLO firmas. Las respuestas de formularios tienen su
+# propio manifest (`datascope_source_manifest.yaml`), y son dos fuentes
+# separadas a propósito:
+#
+#   - Distinto endpoint, distinto contrato de paginación y distinto cursor.
+#   - Los campos de identidad de los firmantes (nombre, documento, correos)
+#     son datos personales. Manteniéndolos en una fuente aparte, quien
+#     sincroniza respuestas no arrastra datos personales a su warehouse sin
+#     haberlo decidido.
+#   - Se pueden sincronizar con distinta frecuencia y hacia distinto destino.
+#
+# No hay que importar los dos si solo interesa uno.
+# =============================================================================
+# Apunta a producción (https://www.mydatascope.com). La URL es fija, no es un
+# campo configurable.
+#
+# Cómo usarlo:
+#   1. En Airbyte Cloud: Settings -> Sources -> "Build a connector".
+#   2. Menú "..." -> "Import YAML" y selecciona este archivo.
+#   3. En "Testing values" (o al configurar la source): ingresa `api_token`
+#      (el token de tu usuario de DataScope) y `start_date` en ISO 8601.
+#   4. Publica el conector y crea la conexión con Sync mode = "Incremental | Dedup".
+#
+# Si Airbyte Cloud rechaza el import con un error genérico, probablemente sea
+# la versión declarada en `version:`. Comparar con la versión que muestra el
+# Connector Builder en la esquina del proyecto y ajustar (o comentar la línea
+# para usar el default del deployment).
+# =============================================================================
+# NO ACEPTAR EL "SCHEMA DETECTADO" QUE PROPONE EL CONNECTOR BUILDER
+# =============================================================================
+# Al testear un stream, el Builder compara los schemas declarados acá con lo
+# que infiere de la muestra de respuestas y muestra el aviso "Detected schema
+# and declared schema are different", con dos botones: "Overwrite declared
+# schema" y "Merge properties".
+#
+# No hay que apretar ninguno. No existe un botón de "descartar": ignorar el
+# aviso ES la acción correcta. El warning queda como indicador en la pestaña
+# Schema, pero no bloquea el test ni la sincronización, porque en runtime se
+# usa el schema declarado en este archivo.
+#
+# El botón peligroso es "Overwrite declared schema".
+#
+# El motivo: Airbyte DESCARTA DEL REGISTRO las claves con valor null, y sobre
+# ese registro ya recortado infiere el schema. Acá hay varios campos que son
+# legítimamente null según el estado de la cuenta: `closed_at` y `deleted_at`
+# mientras la solicitud sigue abierta, `reject_reason` y `rejected_by_external`
+# si nadie rechazó, `sequence_step` y `sequence_order` en solicitudes sin orden
+# secuencial. Aceptar el schema detectado los borra de la declaración.
+#
+# Los campos de los grupos opcionales (`signer_identity`, `documents`) no
+# aparecen en la muestra si esos grupos no están activos: el endpoint los omite
+# por completo, no los envía en null. Quedan declarados igual, para que activar
+# el grupo más adelante no requiera tocar el schema.
+#
+# Las diferencias que el Builder va a seguir mostrando son ruido de su propia
+# normalización y se pueden ignorar: reescribe `$schema`, reordena
+# `["null","string"]`, colapsa `integer` en `number` (no distingue int de float
+# al inferir desde JSON), descarta `format: date-time`, y agrega un bloque
+# `required` derivado de la PK y el cursor.
+# =============================================================================
+
+version: "5.10.2"
+
+type: DeclarativeSource
+
+check:
+  type: CheckStream
+  stream_names:
+    - signature_requests
+    - signature_signers
+
+definitions:
+  # ---- Autenticación: Authorization: Bearer <api_token> ----------------------
+  authenticator:
+    type: BearerAuthenticator
+    api_token: "{{ config['api_token'] }}"
+
+  # ---- Requester compartido --------------------------------------------------
+  # Un solo request devuelve las solicitudes de firma con sus firmantes
+  # anidados, y de esa misma respuesta salen los dos streams.
+  requester_signatures:
+    type: HttpRequester
+    # URL fija de producción, igual que en el manifest de respuestas. No es un
+    # campo configurable: no hay caso de uso real para apuntarlo a otra parte y
+    # sí un modo de falla, porque si el campo queda vacío al configurar la
+    # source el test del stream falla con un error de URL inválida que no dice
+    # cuál es el campo faltante.
+    url_base: "https://www.mydatascope.com"
+    path: "/api/external/signatures/list"
+    http_method: GET
+    authenticator:
+      $ref: "#/definitions/authenticator"
+    request_parameters:
+      # Grupos opcionales de campos. Vacío por default: los datos de identidad
+      # de los firmantes (nombre, documento, correos) quedan fuera del payload
+      # salvo que se pidan explícitamente.
+      #
+      # Un valor no reconocido devuelve 400 indicando los aceptados, en lugar
+      # de omitir el campo en silencio.
+      custom_fields: "{{ config.get('signature_custom_fields') or '' }}"
+      # NOTA: `limit` no va acá — lo inyecta el paginator. Duplicarlo hace
+      # fallar el sync por colisión de parámetros.
+
+  # ---- Paginación keyset sobre (updated_at, form_signature_request_id) ------
+  # Mismo contrato que el endpoint de respuestas: `since=<ISO8601>|<id>`.
+  #
+  # No es OFFSET/LIMIT por una razón concreta del dominio:
+  # `form_signature_requests.updated_at` tiene granularidad de un segundo, y
+  # una firma masiva estampa lotes enteros de filas con el mismo timestamp. Un
+  # cursor de solo timestamp cuyo borde de página cae dentro de un lote pierde
+  # el resto de forma permanente. El par `(updated_at, id)` es orden total
+  # porque `id` es único.
+  #
+  # El par del cursor es siempre el de la SOLICITUD, incluso en el stream de
+  # firmantes: la paginación la define el endpoint, no la fila. Por eso cada
+  # fila de firmante repite `form_signature_request_updated_at`.
+  paginator_signature_requests:
+    type: DefaultPaginator
+    page_size_option:
+      type: RequestOption
+      field_name: "limit"
+      inject_into: "request_parameter"
+    page_token_option:
+      type: RequestOption
+      field_name: "since"
+      inject_into: "request_parameter"
+    pagination_strategy:
+      type: CursorPagination
+      page_size: 200
+      cursor_value: "{{ last_record['updated_at'] }}|{{ last_record['form_signature_request_id'] }}"
+      stop_condition: "{{ last_page_size < 200 }}"
+
+  paginator_signature_signers:
+    type: DefaultPaginator
+    page_size_option:
+      type: RequestOption
+      field_name: "limit"
+      inject_into: "request_parameter"
+    page_token_option:
+      type: RequestOption
+      field_name: "since"
+      inject_into: "request_parameter"
+    pagination_strategy:
+      type: CursorPagination
+      page_size: 200
+      cursor_value: "{{ last_record['form_signature_request_updated_at'] }}|{{ last_record['form_signature_request_id'] }}"
+      stop_condition: "{{ last_page_size < 200 }}"
+
+  # ---- Selectores ------------------------------------------------------------
+  # A diferencia del endpoint de respuestas, acá la raíz del cuerpo es un
+  # objeto (`signature_requests` + `next_cursor`), no un array. Por eso el path
+  # arranca con la clave y no necesita `**`.
+  record_selector_signature_requests:
+    type: RecordSelector
+    extractor:
+      type: DpathExtractor
+      field_path: ["signature_requests", "*"]
+
+  # El `*` final itera el array `signers` a filas individuales. Sin él, el
+  # extractor devuelve el array completo como un solo valor.
+  record_selector_signature_signers:
+    type: RecordSelector
+    extractor:
+      type: DpathExtractor
+      field_path: ["signature_requests", "*", "signers", "*"]
+
+  retriever_signature_requests:
+    type: SimpleRetriever
+    requester:
+      $ref: "#/definitions/requester_signatures"
+    record_selector:
+      $ref: "#/definitions/record_selector_signature_requests"
+    paginator:
+      $ref: "#/definitions/paginator_signature_requests"
+
+  retriever_signature_signers:
+    type: SimpleRetriever
+    requester:
+      $ref: "#/definitions/requester_signatures"
+    record_selector:
+      $ref: "#/definitions/record_selector_signature_signers"
+    paginator:
+      $ref: "#/definitions/paginator_signature_signers"
+
+  # ---- Cursores incrementales -----------------------------------------------
+  incremental_cursor_signature_requests:
+    type: DatetimeBasedCursor
+    cursor_field: "updated_at"
+    datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+    cursor_datetime_formats:
+      - "%Y-%m-%dT%H:%M:%SZ"
+      - "%Y-%m-%dT%H:%M:%S%z"
+      - "%Y-%m-%dT%H:%M:%S.%fZ"
+      - "%Y-%m-%dT%H:%M:%S.%f%z"
+    start_datetime:
+      type: MinMaxDatetime
+      datetime: "{{ config['start_date'] }}"
+      datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+    step: "P30D"
+    cursor_granularity: "P1D"
+    lookback_window: "P1D"
+    start_time_option:
+      type: RequestOption
+      field_name: "start"
+      inject_into: "request_parameter"
+    end_time_option:
+      type: RequestOption
+      field_name: "end"
+      inject_into: "request_parameter"
+
+  incremental_cursor_signature_signers:
+    type: DatetimeBasedCursor
+    cursor_field: "form_signature_request_updated_at"
+    datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+    cursor_datetime_formats:
+      - "%Y-%m-%dT%H:%M:%SZ"
+      - "%Y-%m-%dT%H:%M:%S%z"
+      - "%Y-%m-%dT%H:%M:%S.%fZ"
+      - "%Y-%m-%dT%H:%M:%S.%f%z"
+    start_datetime:
+      type: MinMaxDatetime
+      datetime: "{{ config['start_date'] }}"
+      datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+    step: "P30D"
+    cursor_granularity: "P1D"
+    lookback_window: "P1D"
+    start_time_option:
+      type: RequestOption
+      field_name: "start"
+      inject_into: "request_parameter"
+    end_time_option:
+      type: RequestOption
+      field_name: "end"
+      inject_into: "request_parameter"
+
+streams:
+  # ---------------------------------------------------------------------------
+  # Stream 1: `signature_requests` — una fila por solicitud de firma.
+  #
+  # Una solicitud cancelada no desaparece del export: el endpoint la sigue
+  # emitiendo con `status: "deleted"` y `deleted_at`. Sin eso, la fila quedaría
+  # congelada como pendiente en el destino para siempre, porque una
+  # sincronización incremental nunca observa una desaparición.
+  #
+  # `signer_ids` trae la lista autoritativa de firmantes de la solicitud. Un
+  # firmante que se quita al editar se borra físicamente, así que comparar
+  # contra esta lista es la forma de detectar y retirar esas filas.
+  # ---------------------------------------------------------------------------
+  - type: DeclarativeStream
+    name: signature_requests
+    primary_key: "form_signature_request_id"
+    retriever:
+      $ref: "#/definitions/retriever_signature_requests"
+    incremental_sync:
+      $ref: "#/definitions/incremental_cursor_signature_requests"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        $schema: "http://json-schema.org/draft-07/schema#"
+        type: object
+        additionalProperties: true
+        properties:
+          form_signature_request_id:
+            type: ["null", "integer"]
+          form_answer_id:
+            type: ["null", "integer"]
+          status:
+            type: ["null", "string"]
+          required:
+            type: ["null", "boolean"]
+          sequential:
+            type: ["null", "boolean"]
+          sequence_step:
+            type: ["null", "integer"]
+          # Cantidad de firmas necesarias para cerrar la solicitud. Ya viene
+          # resuelta: contempla quórum total, quórum por paso y el caso sin
+          # quórum (donde equivale al total de firmantes).
+          required_signatures_count:
+            type: ["null", "integer"]
+          reject_reason:
+            type: ["null", "string"]
+          rejected_by_external:
+            type: ["null", "boolean"]
+          signer_ids:
+            type: ["null", "array"]
+            items:
+              type: ["null", "integer"]
+          # El array anidado del que sale el stream `signature_signers`. Se
+          # declara acá porque el endpoint lo emite en cada fila y el destino
+          # lo recibe igual; el esquema de cada item está en ese stream y no se
+          # repite. Quien solo quiera las solicitudes puede deseleccionar este
+          # campo en la configuración del conector.
+          signers:
+            type: ["null", "array"]
+            items:
+              type: object
+              additionalProperties: true
+          created_at:
+            type: ["null", "string"]
+            format: date-time
+          closed_at:
+            type: ["null", "string"]
+            format: date-time
+          deleted_at:
+            type: ["null", "string"]
+            format: date-time
+          # Cursor field del stream.
+          updated_at:
+            type: ["null", "string"]
+            format: date-time
+          # Con el grupo `signer_identity` activo.
+          requester_mobile_user_id:
+            type: ["null", "integer"]
+          requester_full_name:
+            type: ["null", "string"]
+          requester_email:
+            type: ["null", "string"]
+          # Con el grupo `documents` activo. El PDF se regenera de forma
+          # asíncrona en cada firma, así que el enlace puede corresponder a una
+          # versión anterior; `pdf_generated_at` es lo que permite detectarlo.
+          pdf_url:
+            type: ["null", "string"]
+          pdf_generated_at:
+            type: ["null", "string"]
+            format: date-time
+          answer_view_url:
+            type: ["null", "string"]
+
+  # ---------------------------------------------------------------------------
+  # Stream 2: `signature_signers` — una fila por firmante de cada solicitud.
+  #
+  # Sale del array `signers` anidado en la misma respuesta que alimenta
+  # `signature_requests`.
+  #
+  # COSTO: Airbyte sincroniza cada stream por separado, así que este recorre la
+  # paginación completa del endpoint por segunda vez. No hay forma de compartir
+  # la respuesta entre dos streams en el CDK declarativo, de modo que el costo
+  # es dos recorridos por sync, no uno. Se asume a conciencia: la alternativa
+  # sería un endpoint aparte para firmantes, que necesitaría su propio cursor
+  # sobre una tabla sin columna de cuenta.
+  #
+  # Esto es lo que responde "¿quién de los cinco firmantes falta?" a lo largo
+  # del tiempo: cada firmante tiene identidad estable, a diferencia de las
+  # columnas por posición de la integración con hojas de cálculo.
+  #
+  # En un firmante que ya firmó, `updated_at` es el momento de la firma.
+  # ---------------------------------------------------------------------------
+  - type: DeclarativeStream
+    name: signature_signers
+    primary_key: "user_form_signature_request_id"
+    retriever:
+      $ref: "#/definitions/retriever_signature_signers"
+    incremental_sync:
+      $ref: "#/definitions/incremental_cursor_signature_signers"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        $schema: "http://json-schema.org/draft-07/schema#"
+        type: object
+        additionalProperties: true
+        properties:
+          user_form_signature_request_id:
+            type: ["null", "integer"]
+          form_signature_request_id:
+            type: ["null", "integer"]
+          form_answer_id:
+            type: ["null", "integer"]
+          signed:
+            type: ["null", "boolean"]
+          external_user:
+            type: ["null", "boolean"]
+          sequence_order:
+            type: ["null", "integer"]
+          # Verdadero cuando el turno del firmante quedó sin efecto porque la
+          # solicitud ya alcanzó su quórum.
+          cancelled_by_quorum:
+            type: ["null", "boolean"]
+          # Verdadero en el firmante que rechazó la solicitud. Viene siempre,
+          # sin necesidad de activar el grupo de identidad.
+          rejected:
+            type: ["null", "boolean"]
+          created_at:
+            type: ["null", "string"]
+            format: date-time
+          # En un firmante que firmó, este es el momento de la firma.
+          updated_at:
+            type: ["null", "string"]
+            format: date-time
+          # Cursor field — hereda de la solicitud padre, porque la paginación la
+          # define el endpoint sobre la solicitud y no sobre el firmante.
+          form_signature_request_updated_at:
+            type: ["null", "string"]
+            format: date-time
+          # Con el grupo `signer_identity` activo.
+          full_name:
+            type: ["null", "string"]
+          rut:
+            type: ["null", "string"]
+          personal_email:
+            type: ["null", "string"]
+          company_email:
+            type: ["null", "string"]
+          company_name:
+            type: ["null", "string"]
+          role:
+            type: ["null", "string"]
+          country:
+            type: ["null", "string"]
+          mobile_user_id:
+            type: ["null", "integer"]
+
+# =============================================================================
+# Spec: parámetros que pide Airbyte al configurar la fuente
+# =============================================================================
+spec:
+  type: Spec
+  connection_specification:
+    $schema: "http://json-schema.org/draft-07/schema#"
+    type: object
+    required:
+      - api_token
+      - start_date
+    additionalProperties: true
+    properties:
+      api_token:
+        type: string
+        title: API Token
+        description: >-
+          Token de la API de DataScope asociado al usuario que va a sincronizar.
+          Se envía como "Authorization: Bearer <token>".
+        airbyte_secret: true
+        order: 0
+      start_date:
+        type: string
+        title: Start date
+        description: Fecha desde la cual sincronizar (por updated_at). Formato ISO 8601 UTC.
+        format: date-time
+        examples:
+          - "2024-01-01T00:00:00Z"
+        order: 1
+      signature_custom_fields:
+        type: string
+        title: Campos extra de firmas
+        description: >-
+          Opcional. Grupos de campos adicionales, separados por comas.
+          "signer_identity" agrega nombre, documento, correos, empresa y cargo
+          de cada firmante, más quién solicitó las firmas. "documents" agrega el
+          enlace al PDF, la fecha de generación de ese PDF y el enlace a la
+          respuesta. Dejar vacío para no incluir ninguno de los dos. Un valor no
+          reconocido devuelve un error indicando los aceptados, en lugar de
+          omitir el campo en silencio.
+        examples:
+          - "signer_identity"
+          - "signer_identity,documents"
+        order: 2
