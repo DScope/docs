@@ -41,6 +41,141 @@ DataScope expects for the API key to be included in all API requests to the serv
 You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 </aside>
 
+# Data Export
+
+If your goal is a copy of your DataScope data somewhere else, start here rather than with the endpoint reference below.
+
+## Choosing a method
+
+There are three ways to move data out, and they answer different questions.
+
+Method | Direction | Fits when
+------ | --------- | ---------
+[Webhooks](#webhooks) | DataScope pushes, your endpoint reacts | Something has to happen the moment a form arrives
+The REST endpoints | You pull, on your own schedule | You are building a custom integration, or you need a specific slice on demand
+[Airbyte Cloud connectors](#airbyte-cloud-connectors) | You pull, Airbyte runs it | The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you
+
+A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable **Send modifications** on the webhook.
+
+The **[Answers V5 endpoint](#get-all-answers-v5-beta)** fits when you need a queryable copy of your data, a table in BigQuery, Snowflake or Postgres that stays current. You pull on a schedule rather than receive pushes, and you get three things in exchange:
+
+What the API adds | How
+----------------- | ---
+Access to everything, not only what comes next | A webhook starts sending at the moment you configure it and cannot replay what your endpoint missed while it was down. The API takes a `start_date`, so a first sync backfills history and any later sync can re-read a window with `date_modified=true`
+A schema you can model | `answers_data_in_array` returns the answers inside a nested array rather than as top-level keys, so the response shape stays the same regardless of the form or how many questions it has. That is what makes a relational destination practical
+Control over the payload | `custom_fields` selects exactly which fields you receive, so you can start minimal and add only what your model needs. `version` reproduces the response shape of any earlier API version if you are migrating from one
+
+If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the connectors below cover all of it.
+
+Using both is normal. A webhook for the immediate reaction, a connector for the warehouse copy.
+
+## Airbyte Cloud connectors
+
+DataScope publishes ready to use low-code connector manifests for Airbyte. Each one is plain YAML: import it in the Connector Builder, fill in your token and a start date, and Airbyte handles the paging, the incremental state and the deduplication.
+
+There are two, and they are separate sources on purpose:
+
+Connector | Streams | Covers
+--------- | ------- | ------
+[Answers](#answers-connector) | `form_answers`, `answers`, `answer_metadata_comments` | Form submissions and their answers
+[Signatures](#signatures-connector) | `signature_requests`, `signature_signers` | Signature requests and who signed them
+
+They read different endpoints, with different cursors and different pagination contracts, so one source cannot serve both. Keeping them apart also means that syncing answers does not carry signer personal data into your warehouse unless you ask for it. Import only the one you need.
+
+<aside class="notice">
+Both manifests carry a <code>Last updated</code> date in the header comment. Compare it against your imported copy to tell whether you are running the current version.
+</aside>
+
+### Answers connector
+
+[Get All Answers V5](#get-all-answers-v5-beta) with the pagination and the incremental state already wired:
+
+[Download the manifest (YAML)](https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml)
+
+It defines three related streams that you can join in your warehouse:
+
+Stream | One row per | Primary key
+------ | ----------- | -----------
+form_answers | Form answer (one submission) | `form_answer_id`
+answers | Answer (one question and its value) | `form_answer_id`, `real_question_id`, `subform_index`, `answer_row_key`
+answer_metadata_comments | Checklist comment (text or photo) | the four above plus `data_type` and `data_index`
+
+<aside class="notice">
+In the <code>answers</code> and <code>answer_metadata_comments</code> streams, <code>subform_index</code> arrives as <code>-1</code> when the question does not live inside a Group of Repeatable Fields, where the API itself returns <code>null</code>. The manifest normalizes it because Airbyte removes null-valued keys from records, and a primary key cannot reference a field that is missing. Both streams use the same convention, so joining them on <code>(form_answer_id, real_question_id, subform_index, answer_row_key)</code> works without coalescing. <code>-1</code> never collides with a real row 0: a given question is either always inside a repeatable group or never, so the two values cannot both occur for the same <code>real_question_id</code>.
+</aside>
+
+To install it: in Airbyte Cloud go to Settings, Sources, "Build a connector", then use the "..." menu and "Import YAML". Configure your API token and a start date, optionally restrict it to specific forms with `form_id`, publish the connector and create the connection with Sync mode "Incremental | Dedup".
+
+<aside class="warning">
+Testing a stream shows "Detected schema and declared schema are different", with an <b>Overwrite declared schema</b> button. Do not press it, and do not press <b>Merge properties</b> either. There is no dismiss button: leaving the notice alone is the correct action. It stays as an indicator on the Schema tab but blocks nothing, because the schema declared in the manifest is what runs.
+</aside>
+
+<aside class="notice">
+Why overwriting breaks things: Airbyte drops any field that is <code>null</code> across every sampled record, since it cannot infer a type from nulls alone, and several fields here are legitimately null on a quiet account. One of them, <code>subform_index</code>, is part of the <code>answer_metadata_comments</code> primary key, so overwriting leaves that key pointing at a field that no longer exists and the stream fails with "Path [] does not have field <code>subform_index</code> in the schema". Everything else the Builder reports is its own normalization: it rewrites <code>$schema</code>, reorders type unions, collapses <code>integer</code> into <code>number</code>, and drops <code>format</code>.
+</aside>
+
+### Signatures connector
+
+[Download the manifest (YAML)](https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_signatures_source_manifest.yaml)
+
+It reads [Get Signature Requests](#get-signature-requests) and builds two streams out of the same response:
+
+Stream | One row per | Primary key
+------ | ----------- | -----------
+signature_requests | Signature request on a form answer | `form_signature_request_id`
+signature_signers | Signer inside a request | `user_form_signature_request_id`
+
+Join them on `form_signature_request_id`. Both carry `form_answer_id`, so either one joins to the `form_answers` stream of the answers connector.
+
+To install it, follow the same steps as above. It asks for your API token and a start date, plus an optional `signature_custom_fields` to switch on the field groups described in [Get Signature Requests](#get-signature-requests). It does not take `form_id`: the endpoint has no per-form filter.
+
+<aside class="notice">
+A cancelled request is not dropped from the export. It keeps arriving with <code>status</code> set to <code>deleted</code> and a <code>deleted_at</code> timestamp. That matters for an incremental sync, which never observes a disappearance: without the explicit status your warehouse would keep showing a cancelled request as awaiting signature forever.
+</aside>
+
+<aside class="notice">
+Selecting both streams walks the endpoint twice per sync. Airbyte syncs each stream independently and the declarative connector cannot share one response between two streams, so the cost is two passes rather than one. If you only need request-level data, select just <code>signature_requests</code> and deselect its <code>signers</code> field.
+</aside>
+
+<aside class="warning">
+The <code>signer_identity</code> group writes names, national ID numbers and personal email addresses into your destination, and they stay there. Turn it on only if your warehouse is an appropriate place for that data.
+</aside>
+
+### Customizing a manifest
+
+Either manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of `custom_fields` are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.
+
+The tables below name the answers manifest, and the same rules hold for the signatures one. Its load-bearing parts are the two primary keys, the `since` cursor built from `(updated_at, form_signature_request_id)`, and the extractor paths that flatten `signers` into its own stream.
+
+**Safe to change**
+
+What | Notes
+---- | -----
+Stream names | `form_answers`, `answers` and `answer_metadata_comments` become table names in your destination. Rename them to match your own conventions
+`page_size` | 200 is the endpoint maximum, so you can only lower it. Lower values mean more requests for the same data
+Optional `custom_fields` | Add any field from the Custom Fields table above. When you add one, add it to that stream's schema too, so the destination types the column instead of guessing
+`form_id` | A configuration field, meant to be set per source. Answers manifest only, the signatures endpoint has no per-form filter
+`signature_custom_fields` | A configuration field on the signatures manifest, meant to be set per source
+
+**Change with care**
+
+What | What breaks
+---- | -----------
+`order_date`, or the sort direction | Incremental sync depends on ascending `updated_at`. Descending puts the newest record on the first page, the cursor jumps to it, and everything behind it is never synced again
+`primary_key` on any stream | These tuples are what make deduplication correct across edits. Shortening one collapses rows that are actually distinct; adding a mutable field creates a new row on every edit
+`cursor_field`, or the `incremental_sync` blocks | The child streams inherit the parent form answer's `updated_at`. Pointing them somewhere else stalls the sync state
+Extractor `field_path` | The wildcard shape is exact. A wrong path returns zero records with no error, which looks like an empty account
+The structural `custom_fields` | `answers_data_in_array`, `answers_extra_data`, `answers_row_key`, `answers_form_answer_updated_at` and `answers_metadata_comments_array` feed the primary keys and the cursors. Removing one breaks whatever depended on it
+Adding `limit` to `request_parameters` | The paginator already injects it, and duplicating it fails the sync with a request collision
+
+<aside class="notice">
+Rename streams before the first sync if you can. Airbyte treats a renamed stream as a new one, so renaming later creates a fresh table in your destination and re-syncs the history into it, leaving the previous table behind.
+</aside>
+
+<aside class="warning">
+If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
+</aside>
+
 # Answers
 
 ## Get All Answers
@@ -383,64 +518,8 @@ assign_location_company_email | Company email of the location. Only for Location
 assign_location_company_name | Company name of the location. Only for Locations
 assign_location_company_code | Company code of the location. Only for Locations
 
-### Airbyte Cloud connector
-
-If your destination is a data warehouse, you do not need to write the pagination and incremental logic yourself. DataScope publishes a ready to use low-code connector manifest for Airbyte:
-
-[Download the manifest (YAML)](https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml)
-
-It defines three related streams that you can join in your warehouse:
-
-Stream | One row per | Primary key
------- | ----------- | -----------
-form_answers | Form answer (one submission) | `form_answer_id`
-answers | Answer (one question and its value) | `form_answer_id`, `real_question_id`, `subform_index`, `answer_row_key`
-answer_metadata_comments | Checklist comment (text or photo) | the four above plus `data_type` and `data_index`
-
 <aside class="notice">
-In the <code>answers</code> and <code>answer_metadata_comments</code> streams, <code>subform_index</code> arrives as <code>-1</code> when the question does not live inside a Group of Repeatable Fields, where the API itself returns <code>null</code>. The manifest normalizes it because Airbyte removes null-valued keys from records, and a primary key cannot reference a field that is missing. Both streams use the same convention, so joining them on <code>(form_answer_id, real_question_id, subform_index, answer_row_key)</code> works without coalescing. <code>-1</code> never collides with a real row 0: a given question is either always inside a repeatable group or never, so the two values cannot both occur for the same <code>real_question_id</code>.
-</aside>
-
-To install it: in Airbyte Cloud go to Settings, Sources, "Build a connector", then use the "..." menu and "Import YAML". Configure your API token and a start date, optionally restrict it to specific forms with `form_id`, publish the connector and create the connection with Sync mode "Incremental | Dedup".
-
-<aside class="warning">
-Testing a stream shows "Detected schema and declared schema are different", with an <b>Overwrite declared schema</b> button. Do not press it, and do not press <b>Merge properties</b> either. There is no dismiss button: leaving the notice alone is the correct action. It stays as an indicator on the Schema tab but blocks nothing, because the schema declared in the manifest is what runs.
-</aside>
-
-<aside class="notice">
-Why overwriting breaks things: Airbyte drops any field that is <code>null</code> across every sampled record, since it cannot infer a type from nulls alone, and several fields here are legitimately null on a quiet account. One of them, <code>subform_index</code>, is part of the <code>answer_metadata_comments</code> primary key, so overwriting leaves that key pointing at a field that no longer exists and the stream fails with "Path [] does not have field <code>subform_index</code> in the schema". Everything else the Builder reports is its own normalization: it rewrites <code>$schema</code>, reorders type unions, collapses <code>integer</code> into <code>number</code>, and drops <code>format</code>.
-</aside>
-
-### Customizing the manifest
-
-The manifest is a starting point, not a black box. It is plain YAML and you can edit it in the Connector Builder before publishing. Some parts are cosmetic, but others are load-bearing: the primary keys, the cursor fields, the extractor paths and a handful of `custom_fields` are what keep the incremental sync and the deduplication correct. Changing those without knowing what they do tends to produce silent problems rather than errors, usually duplicated rows, missing rows, or a stream that returns nothing at all.
-
-**Safe to change**
-
-What | Notes
----- | -----
-Stream names | `form_answers`, `answers` and `answer_metadata_comments` become table names in your destination. Rename them to match your own conventions
-`page_size` | 200 is the endpoint maximum, so you can only lower it. Lower values mean more requests for the same data
-Optional `custom_fields` | Add any field from the Custom Fields table above. When you add one, add it to that stream's schema too, so the destination types the column instead of guessing
-`form_id` | A configuration field, meant to be set per source
-
-**Change with care**
-
-What | What breaks
----- | -----------
-`order_date`, or the sort direction | Incremental sync depends on ascending `updated_at`. Descending puts the newest record on the first page, the cursor jumps to it, and everything behind it is never synced again
-`primary_key` on any stream | These tuples are what make deduplication correct across edits. Shortening one collapses rows that are actually distinct; adding a mutable field creates a new row on every edit
-`cursor_field`, or the `incremental_sync` blocks | The child streams inherit the parent form answer's `updated_at`. Pointing them somewhere else stalls the sync state
-Extractor `field_path` | The wildcard shape is exact. A wrong path returns zero records with no error, which looks like an empty account
-The structural `custom_fields` | `answers_data_in_array`, `answers_extra_data`, `answers_row_key`, `answers_form_answer_updated_at` and `answers_metadata_comments_array` feed the primary keys and the cursors. Removing one breaks whatever depended on it
-Adding `limit` to `request_parameters` | The paginator already injects it, and duplicating it fails the sync with a request collision
-
-<aside class="notice">
-Rename streams before the first sync if you can. Airbyte treats a renamed stream as a new one, so renaming later creates a fresh table in your destination and re-syncs the history into it, leaving the previous table behind.
-</aside>
-
-<aside class="warning">
-If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
+If your destination is a data warehouse, you do not need to implement the paging and the incremental logic yourself. The <a href="#answers-connector">Answers connector</a> wires this endpoint into Airbyte Cloud for you.
 </aside>
 
 ## Change Answer
@@ -492,6 +571,219 @@ question_name | Name of the question to change
 question_value | Value of the question to change
 subform_index | Number to specify the subform index (Starting from 1). Leave blank if question it's not inside subform*.
 
+
+# Signatures
+
+## Get Signature Requests
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/signatures/list'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+ :params => {
+   :start => '2026-01-01',
+   :limit => 200,
+   :custom_fields => 'signer_identity,documents'
+ }
+}
+JSON.parse(response)
+```
+
+```shell
+curl "https://www.mydatascope.com/api/external/signatures/list?start=2026-01-01&limit=200&custom_fields=signer_identity,documents"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+> The response wraps the rows in an object, together with the cursor for the next page:
+
+```json
+{
+   "signature_requests":[
+      {
+         "form_signature_request_id":48210,
+         "form_answer_id":257189,
+         "status":"pending",
+         "deleted_at":null,
+         "required":true,
+         "sequential":true,
+         "sequence_step":1,
+         "required_signatures_count":2,
+         "reject_reason":null,
+         "rejected_by_external":false,
+         "created_at":"2026-07-16T16:52:05Z",
+         "closed_at":null,
+         "updated_at":"2026-07-18T09:14:22Z",
+         "signer_ids":[90411, 90412],
+         "signers":[
+            {
+               "user_form_signature_request_id":90411,
+               "form_signature_request_id":48210,
+               "form_answer_id":257189,
+               "form_signature_request_updated_at":"2026-07-18T09:14:22Z",
+               "signed":true,
+               "external_user":false,
+               "sequence_order":1,
+               "cancelled_by_quorum":false,
+               "rejected":false,
+               "created_at":"2026-07-16T16:52:05Z",
+               "updated_at":"2026-07-17T11:03:41Z"
+            },
+            {
+               "user_form_signature_request_id":90412,
+               "form_signature_request_id":48210,
+               "form_answer_id":257189,
+               "form_signature_request_updated_at":"2026-07-18T09:14:22Z",
+               "signed":false,
+               "external_user":true,
+               "sequence_order":2,
+               "cancelled_by_quorum":false,
+               "rejected":false,
+               "created_at":"2026-07-16T16:52:05Z",
+               "updated_at":"2026-07-16T16:52:05Z"
+            }
+         ]
+      }
+   ],
+   "next_cursor":"2026-07-18T09:14:22Z|48210"
+}
+```
+
+Returns the signature requests of your account with their signers nested, ordered by `updated_at` ascending and paginated with a keyset cursor. It is built for incremental sync: walk from the beginning once, then keep sending back the cursor you received.
+
+This is what answers "which of the five signers is still missing", over time. Each signer keeps a stable identity across syncs, unlike the positional columns of the spreadsheet integration.
+
+If your destination is a data warehouse, you do not need to implement any of the pagination below: the [Signatures connector](#signatures-connector) does it for you.
+
+<aside class="warning">
+The user whose token you use needs export permission in DataScope, the same permission the Answers endpoints require. Ask your account administrator to confirm it before setting up a recurring integration.
+</aside>
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/signatures/list`
+
+### Query Parameters
+
+Parameter | Type | Default | Description
+--------- | ---- | ------- | -----------
+start | String | blank | Only requests modified from this moment on. ISO 8601. There is no default window: leaving it out walks your whole history, which is what a first sync wants
+end | String | blank | Only requests modified up to this moment. ISO 8601. Defaults to now, excluding the second in progress
+limit | Integer | 200 | Rows per page. 200 is also the maximum, so you can only lower it
+since | String | blank | Cursor for the next page. Pass back the `next_cursor` you received
+custom_fields | String | blank | Comma separated list of optional field groups. See below
+
+<aside class="notice">
+<code>start</code> and <code>end</code> only accept ISO 8601. A format like <code>08/01/2026</code> is rejected with a 400 rather than interpreted, because day-first and month-first cannot be told apart and guessing would silently return data from the wrong month with a 200.
+</aside>
+
+### Pagination
+
+The cursor is the pair `(updated_at, form_signature_request_id)`, serialized as `<ISO8601>|<id>`. Read `next_cursor` from the response and send it back as `since` to get the following page. When a page comes back with fewer rows than `limit`, you have reached the end.
+
+It is a pair rather than a timestamp alone for a concrete reason: `updated_at` has one-second resolution, and a bulk signature writes a whole batch of rows within the same second. A cursor carrying only the timestamp, whose page boundary falls inside such a batch, would skip the rest of it permanently. Adding the id makes the ordering total.
+
+<aside class="warning">
+A cursor whose timestamp is in the future is rejected with a 400. It can only come from clock skew or a corrupted token, and it would otherwise make every later page come back empty, which reads as "fully caught up".
+</aside>
+
+### Response
+
+Field | Description
+----- | -----------
+signature_requests | The page of requests, each with its signers nested
+next_cursor | Cursor for the next page, or `null` when the page is empty
+
+### Custom Fields
+
+Both groups are opt-in because each has a real cost when you do not want it.
+
+Value | Adds
+----- | ----
+signer_identity | Identity of each signer (name, national ID, emails, company, role, country) and of whoever requested the signatures. This is personal data, and it lands in your destination permanently
+documents | The signed PDF link, when that PDF was generated, and a link to the answer
+
+<aside class="notice">
+An unrecognized value returns a 400 listing the accepted ones, instead of omitting the field silently. A silent omission would answer 200 with the field missing, which reads as "that field does not exist" and turns a typo into a long debugging session.
+</aside>
+
+### Request Fields
+
+Field | Description
+----- | -----------
+form_signature_request_id | ID of the signature request. Primary key
+form_answer_id | The answer being signed. Join key against the Answers endpoints
+status | `pending`, `completed`, `rejected`, or `deleted` for a cancelled request
+deleted_at | When the request was cancelled. Only present on a `deleted` request
+required | Whether signing is mandatory for this answer
+sequential | Whether signers have to sign in order
+sequence_step | Current step, on a sequential request
+required_signatures_count | Signatures needed to close the request. Already resolved: it accounts for a total quorum, a per-step quorum, and the case with no quorum, where it equals the number of signers
+reject_reason | Free text reason, when the request was rejected
+rejected_by_external | Whether the rejection came from an external signer
+signer_ids | The authoritative list of signer IDs for this request
+signers | The signers, described below
+created_at | When the request was created
+closed_at | When the request was completed or rejected
+updated_at | Last modification. This is the cursor field
+
+<aside class="notice">
+Use <code>signer_ids</code> to retire signers. A signer removed while editing the request is deleted outright rather than flagged, so diffing your stored rows against this list is the only way to notice it is gone.
+</aside>
+
+### Signer Fields
+
+Field | Description
+----- | -----------
+user_form_signature_request_id | ID of the signer row. Primary key
+form_signature_request_id | Parent request
+form_answer_id | Denormalized from the parent, so the join key is on the row itself
+form_signature_request_updated_at | The parent's `updated_at`. Present because the cursor is built from the request, so a signers-only consumer can still page
+signed | Whether this signer signed
+external_user | Whether the signer is external, rather than a DataScope user
+sequence_order | Position, on a sequential request
+cancelled_by_quorum | True when this signer's turn became moot because the request already reached its quorum
+rejected | True on the signer who rejected. Always present, no need for `signer_identity`
+created_at | When the signer was added
+updated_at | Last modification. On a signer who signed, this is the moment of the signature
+
+### Signer Identity Fields
+
+Only with `signer_identity`.
+
+Field | Description
+----- | -----------
+full_name | Signer's name. Falls back to the DataScope user's name when the signer has no signature configuration yet
+rut | National ID number, when recorded
+personal_email | Personal email, falling back to the DataScope user's address
+company_email | The DataScope user's address
+company_name | Company recorded in the signature configuration
+role | Role recorded in the signature configuration
+country | Country recorded in the signature configuration
+mobile_user_id | The DataScope user, when the signer is internal
+requester_mobile_user_id | On the request: who asked for the signatures
+requester_full_name | On the request: that person's name
+requester_email | On the request: that person's email
+
+<aside class="notice">
+A signer who has not signed yet may have no signature configuration at all, since it is created at the moment of signing. That is why the name and the personal email fall back to the DataScope user: without the fallback these come back empty for exactly the signers you most want to chase.
+</aside>
+
+### Document Fields
+
+Only with `documents`.
+
+Field | Description
+----- | -----------
+pdf_url | Link to the signed PDF
+pdf_generated_at | When that PDF was generated
+answer_view_url | Link to the answer in DataScope
+
+<aside class="notice">
+The PDF is regenerated asynchronously as signatures come in, so <code>pdf_url</code> can point at a version that predates the newest signature. Compare <code>pdf_generated_at</code> against the request's <code>updated_at</code> to detect it.
+</aside>
 
 # Locations
 
@@ -1852,24 +2144,9 @@ To configure the webhook you need to go to the Integrations section and then Web
 TIP: It will only start sending information for the new forms done after the integration.
 </aside>
 
-## Webhooks or the Answers API
-
-Both move data out of DataScope, and they answer different questions.
-
-A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable **Send modifications** on the webhook.
-
-The **[Answers V5 endpoint](#get-all-answers-v5-beta)** fits when you need a queryable copy of your data, a table in BigQuery, Snowflake or Postgres that stays current. You pull on a schedule rather than receive pushes, and you get three things in exchange:
-
-What the API adds | How
------------------ | ---
-Access to everything, not only what comes next | A webhook starts sending at the moment you configure it, per the tip above, and cannot replay what your endpoint missed while it was down. The API takes a `start_date`, so a first sync backfills history and any later sync can re-read a window with `date_modified=true`
-A schema you can model | `answers_data_in_array` returns the answers inside a nested array rather than as top-level keys, so the response shape stays the same regardless of the form or how many questions it has. That is what makes a relational destination practical
-Control over the payload | `custom_fields` selects exactly which fields you receive, so you can start minimal and add only what your model needs. `version` reproduces the response shape of any earlier API version if you are migrating from one
-
-If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the [Airbyte Cloud connector](#airbyte-cloud-connector) covers all of it.
-
-Using both is normal. A webhook for the immediate reaction, the connector for the warehouse copy.
-
+<aside class="notice">
+That tip is the main reason a webhook alone is not enough for a warehouse: it cannot replay what it never sent. <a href="#choosing-a-method">Choosing a method</a> compares webhooks against the pull-based options.
+</aside>
 
 # Tickets (FKA Issues)
 
@@ -2218,6 +2495,12 @@ Remember — use your own Authorization header
 
 # Changelog
 
+**07-Aug-2026**
+
+- Added [Get Signature Requests](#get-signature-requests) and its [Airbyte Cloud connector](#signatures-connector), with streams for signature requests and for individual signers
+- Grouped everything about getting data out into a new [Data Export](#data-export) section near the top, including the [comparison between webhooks and the pull-based options](#choosing-a-method) that used to sit inside Webhooks
+- Split the Airbyte manifest in two, one per source. The answers manifest keeps its URL, so an existing connector is unaffected
+
 **04-Aug-2026**
 
 - Documented three Ticket endpoints that were missing from this reference: last tickets, ticket types and ticket creation
@@ -2226,7 +2509,7 @@ Remember — use your own Authorization header
 
 **30-Jul-2026**
 
-- Added [Answers V5 (Beta)](#get-all-answers-v5-beta), its `custom_fields`, and the [Airbyte Cloud connector manifest](#airbyte-cloud-connector)
+- Added [Answers V5 (Beta)](#get-all-answers-v5-beta), its `custom_fields`, and the [Airbyte Cloud connector manifest](#answers-connector)
 
 **Apr-2026**
 

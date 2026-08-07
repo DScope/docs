@@ -1,16 +1,20 @@
 # =============================================================================
-# DataScope - Airbyte Low-Code (Declarative) Source Connector
+# DataScope Respuestas - Airbyte Low-Code (Declarative) Source Connector
 # =============================================================================
 # Created:       2026-07-23
-# Last updated:  2026-07-29  (base_url hardcodeado a produccion; campos
-#                             faltantes en los schemas; subform_index
-#                             normalizado a -1 via AddFields)
+# Last updated:  2026-08-07  (los streams de firmas se movieron a su propio
+#                             manifest, datascope_signatures_source_manifest.yaml)
 #
 # Actualizar `Last updated` en cada cambio funcional del manifest (nuevos
 # streams, cambios de PK/cursor, custom_fields, ajustes de extractor).
 # Los cambios puramente cosméticos (comentarios, whitespace) no cuentan.
 # La fecha permite a quien replica el manifest saber si tiene la versión
 # actual comparándola con la última publicada por DataScope.
+# =============================================================================
+# Este manifest cubre SOLO respuestas de formularios. Las firmas tienen su
+# propio manifest (`datascope_signatures_source_manifest.yaml`), porque usan
+# otro endpoint, otro cursor, y sus campos de identidad son datos personales
+# que no conviene arrastrar a un warehouse sin haberlo decidido.
 # =============================================================================
 # Apunta a producción (https://www.mydatascope.com). La URL es fija, no es un
 # campo configurable.
@@ -709,8 +713,8 @@ spec:
         type: string
         title: API Token
         description: >-
-          Token de la API de DataScope (User.token). Se envía como
-          "Authorization: Bearer <token>".
+          Token de la API de DataScope asociado al usuario que va a sincronizar.
+          Se envía como "Authorization: Bearer <token>".
         airbyte_secret: true
         order: 0
       start_date:
