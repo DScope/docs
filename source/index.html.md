@@ -176,6 +176,44 @@ Rename streams before the first sync if you can. Airbyte treats a renamed stream
 If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
 </aside>
 
+### Rate limiting
+
+> Uncomment the `api_budget` block that ships in the manifest to cap the request rate:
+
+```yaml
+api_budget:
+  type: HTTPAPIBudget
+  status_codes_for_ratelimit_hit: [429]
+  policies:
+    - type: MovingWindowCallRatePolicy
+      rates:
+        - limit: 2
+          interval: "PT1S"
+      matchers:
+        - method: GET
+          url_base: "https://www.mydatascope.com"
+          url_path_pattern: "^/api/external/"
+```
+
+The manifests as published do not cap their request rate, and out of the box they do not need to. Airbyte requests a stream's pages one at a time, waiting for each response before asking for the next, so page latency already spaces the calls out.
+
+Two situations change that, and both manifests ship a commented `api_budget` block for them:
+
+When | Why
+---- | ---
+Several streams syncing in parallel | Each stream opens its own sequence of requests, so two streams at once are two simultaneous requests
+Both connectors running at the same time | The answers and the signatures connector each make their own calls
+
+The part worth knowing before you tune anything: **the limit is counted per source IP, not per token.** Everything leaving the same Airbyte deployment shares one budget, even when each source is configured with a different token.
+
+<aside class="warning">
+An <code>api_budget</code> applies to the source that declares it, and Airbyte does not share it across sources. If you run the answers and the signatures connector concurrently, split the rate between them or stagger their schedules, otherwise two sources each capped at 2 per second still add up to 4.
+</aside>
+
+<aside class="notice">
+A rejected request answers 429 with an HTML body and no <code>Retry-After</code> header, so a wait strategy that reads timing from headers has nothing to read. Prefer a fixed rate like the one above, or a constant backoff.
+</aside>
+
 # Answers
 
 ## Get All Answers
