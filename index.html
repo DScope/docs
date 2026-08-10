@@ -638,6 +638,52 @@ Rename streams before the first sync if you can. Airbyte treats a renamed stream
 <aside class="warning">
 If you edit the manifest and the sync starts behaving oddly, re-import the published version and reapply your changes one at a time. Comparing against a known good copy is faster than debugging a modified manifest from scratch.
 </aside>
+<h3 id='rate-limiting'>Rate limiting</h3>
+<blockquote>
+<p>Uncomment the <code>api_budget</code> block that ships in the manifest to cap the request rate:</p>
+</blockquote>
+<pre class="highlight yaml tab-yaml"><code><span class="na">api_budget</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">HTTPAPIBudget</span>
+  <span class="na">status_codes_for_ratelimit_hit</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">429</span><span class="pi">]</span>
+  <span class="na">policies</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">MovingWindowCallRatePolicy</span>
+      <span class="na">rates</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">limit</span><span class="pi">:</span> <span class="s">2</span>
+          <span class="na">interval</span><span class="pi">:</span> <span class="s2">"</span><span class="s">PT1S"</span>
+      <span class="na">matchers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">method</span><span class="pi">:</span> <span class="s">GET</span>
+          <span class="na">url_base</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://www.mydatascope.com"</span>
+          <span class="na">url_path_pattern</span><span class="pi">:</span> <span class="s2">"</span><span class="s">^/api/external/"</span>
+</code></pre>
+<p>The manifests as published do not cap their request rate, and out of the box they do not need to. Airbyte requests a stream&#39;s pages one at a time, waiting for each response before asking for the next, so page latency already spaces the calls out.</p>
+
+<p>Two situations change that, and both manifests ship a commented <code>api_budget</code> block for them:</p>
+
+<table><thead>
+<tr>
+<th>When</th>
+<th>Why</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Several streams syncing in parallel</td>
+<td>Each stream opens its own sequence of requests, so two streams at once are two simultaneous requests</td>
+</tr>
+<tr>
+<td>Both connectors running at the same time</td>
+<td>The answers and the signatures connector each make their own calls</td>
+</tr>
+</tbody></table>
+
+<p>The part worth knowing before you tune anything: <strong>the limit is counted per source IP, not per token.</strong> Everything leaving the same Airbyte deployment shares one budget, even when each source is configured with a different token.</p>
+
+<aside class="warning">
+An <code>api_budget</code> applies to the source that declares it, and Airbyte does not share it across sources. If you run the answers and the signatures connector concurrently, split the rate between them or stagger their schedules, otherwise two sources each capped at 2 per second still add up to 4.
+</aside>
+
+<aside class="notice">
+A rejected request answers 429 with an HTML body and no <code>Retry-After</code> header, so a wait strategy that reads timing from headers has nothing to read. Prefer a fixed rate like the one above, or a constant backoff.
+</aside>
 <h1 id='answers'>Answers</h1><h2 id='get-all-answers'>Get All Answers</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 

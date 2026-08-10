@@ -77,6 +77,56 @@ check:
     - answers
     - answer_metadata_comments
 
+# =============================================================================
+# LIMITAR LA CANTIDAD DE REQUESTS (opcional, viene desactivado)
+# =============================================================================
+# Con la configuración de este archivo no hace falta tocar nada: Airbyte pide
+# las páginas de un stream de a una, esperando la respuesta antes de pedir la
+# siguiente, así que la latencia de cada página ya espacia los requests.
+#
+# Conviene declararlo en dos situaciones:
+#
+#   1. Varios streams sincronizando en paralelo. Cada stream abre su propia
+#      secuencia de requests, así que dos streams a la vez son dos requests
+#      simultáneos.
+#   2. Los dos conectores de DataScope (respuestas y firmas) corriendo al mismo
+#      tiempo.
+#
+# El punto que hace falta tener presente: la API cuenta el límite POR IP DE
+# ORIGEN, no por token. Todo el tráfico que sale del mismo despliegue de Airbyte
+# comparte el mismo presupuesto, incluso si cada source usa un token distinto.
+#
+# Y el presupuesto declarado acá aplica a ESTE source solamente. Airbyte no lo
+# comparte entre sources, así que si los dos conectores corren a la vez hay que
+# repartir la tasa entre ambos (por ejemplo 1 por segundo en cada uno) o
+# programarlos en horarios distintos.
+#
+# 2 requests por segundo es un techo seguro. Para activarlo, descomentar el
+# bloque de abajo. `MovingWindowCallRatePolicy` hace que el conector espacie las
+# llamadas por su cuenta, en lugar de reaccionar recién después de un rechazo.
+#
+# NOTA: la respuesta de rechazo (HTTP 429) no trae encabezado `Retry-After`, y
+# su cuerpo es HTML y no JSON. Por eso conviene una tasa fija como esta: una
+# estrategia de espera que lea encabezados no tiene de dónde sacar el tiempo.
+#
+# Si al importar el archivo el Connector Builder no reconoce `api_budget`, es
+# porque la versión declarada arriba en `version:` es anterior a esa función.
+# Subir esa versión, o dejar el bloque comentado.
+#
+# api_budget:
+#   type: HTTPAPIBudget
+#   status_codes_for_ratelimit_hit: [429]
+#   policies:
+#     - type: MovingWindowCallRatePolicy
+#       rates:
+#         - limit: 2
+#           interval: "PT1S"
+#       matchers:
+#         - method: GET
+#           url_base: "https://www.mydatascope.com"
+#           url_path_pattern: "^/api/external/v5/answers"
+# =============================================================================
+
 definitions:
   # ---- Autenticación: Authorization: Bearer <api_token> ----------------------
   authenticator:
