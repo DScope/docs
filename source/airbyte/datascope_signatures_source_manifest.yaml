@@ -37,7 +37,9 @@
 #   2. Menú "..." -> "Import YAML" y selecciona este archivo.
 #   3. En "Testing values" (o al configurar la source): ingresa `api_token`
 #      (el token de tu usuario de DataScope) y `start_date` en ISO 8601.
-#   4. Publica el conector y crea la conexión con Sync mode = "Incremental | Dedup".
+#   4. Publica el conector y crea la conexión con Sync mode =
+#      "Incremental | Append + Deduped". En versiones anteriores de Airbyte
+#      esa misma opción se llamaba "Incremental | Dedup".
 #
 # Si Airbyte Cloud rechaza el import con un error genérico, probablemente sea
 # la versión declarada en `version:`. Comparar con la versión que muestra el
