@@ -108,11 +108,13 @@ check:
 #
 # Y el presupuesto declarado acá aplica a ESTE source solamente. Airbyte no lo
 # comparte entre sources, así que si los dos conectores corren a la vez hay que
-# repartir la tasa entre ambos (por ejemplo 1 por segundo en cada uno) o
+# bajar la tasa en cada uno para que la suma siga siendo conservadora, o
 # programarlos en horarios distintos.
 #
-# 2 requests por segundo es un techo seguro. Para activarlo, descomentar el
-# bloque de abajo. `MovingWindowCallRatePolicy` hace que el conector espacie las
+# 1 request por segundo deja margen. Es a propósito más conservador que el
+# techo real: quedarse justo en el límite lo termina cruzando igual, porque los
+# requests no caen perfectamente espaciados dentro de cada segundo. Para
+# activarlo, descomentar el bloque de abajo. `MovingWindowCallRatePolicy` hace que el conector espacie las
 # llamadas por su cuenta, en lugar de reaccionar recién después de un rechazo.
 #
 # NOTA: la respuesta de rechazo (HTTP 429) no trae encabezado `Retry-After`, y
@@ -129,7 +131,7 @@ check:
 #   policies:
 #     - type: MovingWindowCallRatePolicy
 #       rates:
-#         - limit: 2
+#         - limit: 1
 #           interval: "PT1S"
 #       matchers:
 #         - method: GET
@@ -166,7 +168,7 @@ definitions:
       # Un valor no reconocido devuelve 400 indicando los aceptados, en lugar
       # de omitir el campo en silencio.
       custom_fields: "{{ config.get('signature_custom_fields') or '' }}"
-      # NOTA: `limit` no va acá — lo inyecta el paginator. Duplicarlo hace
+      # NOTA: `limit` no va acá, lo inyecta el paginator. Duplicarlo hace
       # fallar el sync por colisión de parámetros.
 
   # ---- Paginación keyset sobre (updated_at, form_signature_request_id) ------
@@ -323,7 +325,7 @@ definitions:
 
 streams:
   # ---------------------------------------------------------------------------
-  # Stream 1: `signature_requests` — una fila por solicitud de firma.
+  # Stream 1: `signature_requests`. Una fila por solicitud de firma.
   #
   # Una solicitud cancelada no desaparece del export: el endpoint la sigue
   # emitiendo con `status: "deleted"` y `deleted_at`. Sin eso, la fila quedaría
@@ -415,7 +417,7 @@ streams:
             type: ["null", "string"]
 
   # ---------------------------------------------------------------------------
-  # Stream 2: `signature_signers` — una fila por firmante de cada solicitud.
+  # Stream 2: `signature_signers`. Una fila por firmante de cada solicitud.
   #
   # Sale del array `signers` anidado en la misma respuesta que alimenta
   # `signature_requests`.
@@ -474,7 +476,7 @@ streams:
           updated_at:
             type: ["null", "string"]
             format: date-time
-          # Cursor field — hereda de la solicitud padre, porque la paginación la
+          # Cursor field. Hereda de la solicitud padre, porque la paginación la
           # define el endpoint sobre la solicitud y no sobre el firmante.
           form_signature_request_updated_at:
             type: ["null", "string"]

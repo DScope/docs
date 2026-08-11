@@ -187,7 +187,7 @@ api_budget:
   policies:
     - type: MovingWindowCallRatePolicy
       rates:
-        - limit: 2
+        - limit: 1
           interval: "PT1S"
       matchers:
         - method: GET
@@ -206,8 +206,10 @@ Both connectors running at the same time | The answers and the signatures connec
 
 The part worth knowing before you tune anything: **the limit is counted per source IP, not per token.** Everything leaving the same Airbyte deployment shares one budget, even when each source is configured with a different token.
 
+The value in the block is deliberately conservative rather than set to the actual ceiling. Sitting exactly on a limit crosses it anyway, because requests do not arrive evenly spaced inside a second.
+
 <aside class="warning">
-An <code>api_budget</code> applies to the source that declares it, and Airbyte does not share it across sources. If you run the answers and the signatures connector concurrently, split the rate between them or stagger their schedules, otherwise two sources each capped at 2 per second still add up to 4.
+An <code>api_budget</code> applies to the source that declares it, and Airbyte does not share it across sources. Two sources each capped at a given rate add up to twice that rate against the same IP, so if you run the answers and the signatures connector concurrently, lower the rate on each or stagger their schedules.
 </aside>
 
 <aside class="notice">
