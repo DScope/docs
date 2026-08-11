@@ -16,6 +16,26 @@
 # otro endpoint, otro cursor, y sus campos de identidad son datos personales
 # que no conviene arrastrar a un warehouse sin haberlo decidido.
 # =============================================================================
+# SI YA HABÍA UNA VERSIÓN ANTERIOR DE ESTE ARCHIVO EN USO
+# =============================================================================
+# Esta versión difiere de las anteriores en dos cosas, que conviene conocer
+# antes de reemplazarla:
+#
+#   - Los streams de firmas (`signature_requests`, `signature_signers`) ya no
+#     están acá. Pasaron al manifest de firmas.
+#   - El campo de configuración `base_url` ya no existe. La URL de producción
+#     viene fija en el archivo.
+#
+# Nada de esto afecta a un conector que ya esté publicado y sincronizando: ese
+# conector sigue corriendo con la versión que se importó en su momento. Este
+# archivo lo reemplaza solo cuando se vuelve a importar, y volver a importar es
+# una decisión de quien administra la conexión.
+#
+# Al reimportar, si se venían sincronizando firmas desde este conector, hay que
+# importar además el manifest de firmas y crear su conexión.
+#
+# La versión vigente es siempre la publicada en la documentación de DataScope.
+# =============================================================================
 # Apunta a producción (https://www.mydatascope.com). La URL es fija, no es un
 # campo configurable.
 #
@@ -98,11 +118,13 @@ check:
 #
 # Y el presupuesto declarado acá aplica a ESTE source solamente. Airbyte no lo
 # comparte entre sources, así que si los dos conectores corren a la vez hay que
-# repartir la tasa entre ambos (por ejemplo 1 por segundo en cada uno) o
+# bajar la tasa en cada uno para que la suma siga siendo conservadora, o
 # programarlos en horarios distintos.
 #
-# 2 requests por segundo es un techo seguro. Para activarlo, descomentar el
-# bloque de abajo. `MovingWindowCallRatePolicy` hace que el conector espacie las
+# 1 request por segundo deja margen. Es a propósito más conservador que el
+# techo real: quedarse justo en el límite lo termina cruzando igual, porque los
+# requests no caen perfectamente espaciados dentro de cada segundo. Para
+# activarlo, descomentar el bloque de abajo. `MovingWindowCallRatePolicy` hace que el conector espacie las
 # llamadas por su cuenta, en lugar de reaccionar recién después de un rechazo.
 #
 # NOTA: la respuesta de rechazo (HTTP 429) no trae encabezado `Retry-After`, y
@@ -119,7 +141,7 @@ check:
 #   policies:
 #     - type: MovingWindowCallRatePolicy
 #       rates:
-#         - limit: 2
+#         - limit: 1
 #           interval: "PT1S"
 #       matchers:
 #         - method: GET
@@ -372,6 +394,17 @@ definitions:
       datetime_format: "%Y-%m-%dT%H:%M:%SZ"
     # El endpoint acota la ventana a 90 días; usamos pasos de 30 días.
     step: "P30D"
+    # P1D acá es correcto, aunque el `datetime_format` declare hora. La regla
+    # general de Airbyte (granularidad = el incremento más chico del formato,
+    # o sea PT1S) existe para que el fin de una ventana y el inicio de la
+    # siguiente no dejen un hueco. Este endpoint interpreta los límites por
+    # día: expande el fin al último instante del día recibido. Eso absorbe un
+    # fin de ventana con granularidad de día, así que las ventanas igual
+    # quedan pegadas.
+    #
+    # El manifest de firmas sí usa PT1S, porque ese endpoint compara
+    # timestamps exactos y no tiene esa expansión. No igualar los dos valores
+    # sin revisar cómo interpreta los límites cada endpoint.
     cursor_granularity: "P1D"
     # Re-consulta 1 día para no perder registros; modo Dedup en destino evita duplicados.
     lookback_window: "P1D"
@@ -403,6 +436,17 @@ definitions:
       datetime: "{{ config['start_date'] }}"
       datetime_format: "%Y-%m-%dT%H:%M:%SZ"
     step: "P30D"
+    # P1D acá es correcto, aunque el `datetime_format` declare hora. La regla
+    # general de Airbyte (granularidad = el incremento más chico del formato,
+    # o sea PT1S) existe para que el fin de una ventana y el inicio de la
+    # siguiente no dejen un hueco. Este endpoint interpreta los límites por
+    # día: expande el fin al último instante del día recibido. Eso absorbe un
+    # fin de ventana con granularidad de día, así que las ventanas igual
+    # quedan pegadas.
+    #
+    # El manifest de firmas sí usa PT1S, porque ese endpoint compara
+    # timestamps exactos y no tiene esa expansión. No igualar los dos valores
+    # sin revisar cómo interpreta los límites cada endpoint.
     cursor_granularity: "P1D"
     lookback_window: "P1D"
     start_time_option:

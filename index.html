@@ -648,7 +648,7 @@ If you edit the manifest and the sync starts behaving oddly, re-import the publi
   <span class="na">policies</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">MovingWindowCallRatePolicy</span>
       <span class="na">rates</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">limit</span><span class="pi">:</span> <span class="s">2</span>
+        <span class="pi">-</span> <span class="na">limit</span><span class="pi">:</span> <span class="s">1</span>
           <span class="na">interval</span><span class="pi">:</span> <span class="s2">"</span><span class="s">PT1S"</span>
       <span class="na">matchers</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="na">method</span><span class="pi">:</span> <span class="s">GET</span>
@@ -677,8 +677,10 @@ If you edit the manifest and the sync starts behaving oddly, re-import the publi
 
 <p>The part worth knowing before you tune anything: <strong>the limit is counted per source IP, not per token.</strong> Everything leaving the same Airbyte deployment shares one budget, even when each source is configured with a different token.</p>
 
+<p>The value in the block is deliberately conservative rather than set to the actual ceiling. Sitting exactly on a limit crosses it anyway, because requests do not arrive evenly spaced inside a second.</p>
+
 <aside class="warning">
-An <code>api_budget</code> applies to the source that declares it, and Airbyte does not share it across sources. If you run the answers and the signatures connector concurrently, split the rate between them or stagger their schedules, otherwise two sources each capped at 2 per second still add up to 4.
+An <code>api_budget</code> applies to the source that declares it, and Airbyte does not share it across sources. Two sources each capped at a given rate add up to twice that rate against the same IP, so if you run the answers and the signatures connector concurrently, lower the rate on each or stagger their schedules.
 </aside>
 
 <aside class="notice">
