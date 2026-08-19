@@ -2188,6 +2188,18 @@ TIP: It will only start sending information for the new forms done after the int
 That tip is the main reason a webhook alone is not enough for a warehouse: it cannot replay what it never sent. <a href="#choosing-a-method">Choosing a method</a> compares webhooks against the pull-based options.
 </aside>
 
+# Microsoft Power Automate
+
+DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, findings and signature events, delivered as dynamic content instead of raw webhook JSON.
+
+<aside class="notice">
+We have had ongoing trouble keeping the connector published in the official Power Automate connector gallery in sync with the latest version. Until that is resolved, the fastest way to connect is to build the custom connector yourself from the definition file below.
+</aside>
+
+[Download the connector definition (JSON)](https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json)
+
+Follow the [step-by-step guide](https://github.com/DScope/docs/blob/main/source/power_automate/power_automate_connector_guide.md) to import it and create your first connection. A Spanish version is linked from the top of that guide.
+
 # Tickets (FKA Issues)
 
 ## Get Tickets by Period
