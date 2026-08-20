@@ -1,0 +1,396 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Conectar o DataScope com o Power Automate</title>
+
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .cd {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <link href="../stylesheets/screen.css" rel="stylesheet" media="screen" />
+    <link href="../stylesheets/print.css" rel="stylesheet" media="print" />
+      <script src="../javascripts/all_nosearch.js"></script>
+  </head>
+
+  <body class="power_automate power_automate_connector_guide_pt" data-languages="[]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="../images/navbar.png" alt="Navbar" />
+      </span>
+    </a>
+    <div class="toc-wrapper">
+      <img src="../images/logo.png" class="logo" alt="Logo" />
+      <div id="toc" class="toc-list-h1">
+          <li>
+            <a href="#conectar-o-datascope-com-o-power-automate" class="toc-h1 toc-link" data-title="conectar-o-datascope-com-o-power-automate">Conectar o DataScope com o Power Automate</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#antes-de-comecar" class="toc-h2 toc-link" data-title="antes-de-comecar">Antes de começar</a>
+                  </li>
+                  <li>
+                    <a href="#passo-1-criar-o-conector" class="toc-h2 toc-link" data-title="passo-1-criar-o-conector">Passo 1: criar o conector</a>
+                  </li>
+                  <li>
+                    <a href="#passo-2-revisar-a-configuracao-geral" class="toc-h2 toc-link" data-title="passo-2-revisar-a-configuracao-geral">Passo 2: revisar a configuração geral</a>
+                  </li>
+                  <li>
+                    <a href="#passo-3-configurar-a-autenticacao" class="toc-h2 toc-link" data-title="passo-3-configurar-a-autenticacao">Passo 3: configurar a autenticação</a>
+                  </li>
+                  <li>
+                    <a href="#passo-4-criar-a-conexao" class="toc-h2 toc-link" data-title="passo-4-criar-a-conexao">Passo 4: criar a conexão</a>
+                  </li>
+                  <li>
+                    <a href="#o-que-voce-pode-automatizar" class="toc-h2 toc-link" data-title="o-que-voce-pode-automatizar">O que você pode automatizar</a>
+                  </li>
+                  <li>
+                    <a href="#consideracoes-importantes" class="toc-h2 toc-link" data-title="consideracoes-importantes">Considerações importantes</a>
+                  </li>
+                  <li>
+                    <a href="#se-algo-nao-funcionar" class="toc-h2 toc-link" data-title="se-algo-nao-funcionar">Se algo não funcionar</a>
+                  </li>
+              </ul>
+          </li>
+      </div>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='conectar-o-datascope-com-o-power-automate'>Conectar o DataScope com o Power Automate</h1>
+<blockquote>
+<p>Prefere ler isso em espanhol ou inglês? <a href="connector_guide_es.html">Versão em espanhol</a> | <a href="connector_guide_en.html">English version</a>.</p>
+</blockquote>
+
+<p>Este guia explica como habilitar a integração do DataScope no Power Automate
+para automatizar sua operação em campo: disparar fluxos quando um formulário
+é preenchido, quando um documento é gerado, quando uma tarefa é atribuída ou
+quando uma constatação é registrada.</p>
+<h2 id='antes-de-comecar'>Antes de começar</h2>
+<p>Você precisa de:</p>
+
+<ul>
+<li>Uma licença do Power Automate que habilite conectores personalizados. Se não
+tiver certeza, consulte o administrador do seu tenant da Microsoft.</li>
+<li>Permissão para criar conectores no ambiente do Power Automate em que você
+vai trabalhar.</li>
+<li>Sua API Key do DataScope. Você a obtém em <strong>app.mydatascope.com/integrations</strong>,
+na seção Integrações da sua conta.</li>
+<li>O arquivo <code>apiDefinition.swagger.json</code> fornecido junto com este guia.</li>
+</ul>
+<h2 id='passo-1-criar-o-conector'>Passo 1: criar o conector</h2>
+<ol>
+<li>Acesse <a href="https://make.powerautomate.com">make.powerautomate.com</a> e faça
+login.</li>
+<li>Selecione o ambiente onde deseja criar o conector, no canto superior
+direito.</li>
+<li>No menu lateral, abra <strong>Mais</strong> e depois <strong>Descobrir tudo</strong>.</li>
+<li>Selecione <strong>Conectores personalizados</strong>.</li>
+<li>Clique em <strong>Novo conector</strong> e escolha <strong>Importar um arquivo OpenAPI</strong>.</li>
+<li>Digite um nome para o conector, por exemplo DataScope, selecione o
+arquivo <code>apiDefinition.swagger.json</code> e continue.</li>
+</ol>
+<h2 id='passo-2-revisar-a-configuracao-geral'>Passo 2: revisar a configuração geral</h2>
+<p>O arquivo já traz configurados o host, o caminho base e a descrição, então
+não é necessário alterar nada nesta tela.</p>
+
+<p>Se quiser que o conector exiba o logo do DataScope, faça o upload no campo de
+ícone e defina a cor de fundo. Isso é opcional e afeta apenas a aparência.</p>
+<h2 id='passo-3-configurar-a-autenticacao'>Passo 3: configurar a autenticação</h2>
+<p>O arquivo já declara o tipo de autenticação. Verifique se a tela de segurança
+mostra:</p>
+
+<ul>
+<li>Tipo de autenticação: <strong>Chave de API</strong></li>
+<li>Nome do parâmetro: <strong>Authorization</strong></li>
+<li>Localização: <strong>Cabeçalho</strong></li>
+</ul>
+
+<p>Continue até o final do assistente e selecione <strong>Criar conector</strong>.</p>
+<h2 id='passo-4-criar-a-conexao'>Passo 4: criar a conexão</h2>
+<p>Ao usar o conector pela primeira vez em um fluxo, o Power Automate solicitará
+uma conexão. Cole ali sua API Key do DataScope.</p>
+
+<p>Cada usuário que criar fluxos precisa criar sua própria conexão com a API Key
+da sua conta.</p>
+<h2 id='o-que-voce-pode-automatizar'>O que você pode automatizar</h2>
+<p>O conector oferece os seguintes disparadores:</p>
+
+<table><thead>
+<tr>
+<th>Disparador</th>
+<th>É acionado quando</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Nova resposta</td>
+<td>Uma resposta de formulário é enviada</td>
+</tr>
+<tr>
+<td>Novo PDF</td>
+<td>Um documento PDF é gerado</td>
+</tr>
+<tr>
+<td>Mudança de status</td>
+<td>Uma resposta de formulário muda de status</td>
+</tr>
+<tr>
+<td>Nova tarefa atribuída</td>
+<td>Uma tarefa é atribuída</td>
+</tr>
+<tr>
+<td>Nova constatação</td>
+<td>Uma constatação é registrada</td>
+</tr>
+<tr>
+<td>Mudança de status de constatação</td>
+<td>Uma constatação muda de status</td>
+</tr>
+<tr>
+<td>Assinatura concluída</td>
+<td>A assinatura de um documento é concluída</td>
+</tr>
+<tr>
+<td>Assinatura rejeitada</td>
+<td>Uma solicitação de assinatura é rejeitada</td>
+</tr>
+<tr>
+<td>Assinatura atualizada</td>
+<td>As assinaturas de um documento são atualizadas</td>
+</tr>
+</tbody></table>
+
+<p>Cada disparador entrega os dados do evento como conteúdo dinâmico, prontos
+para usar nas próximas etapas do fluxo sem precisar processar o JSON
+manualmente.</p>
+<h2 id='consideracoes-importantes'>Considerações importantes</h2>
+<ul>
+<li><strong>Uma conexão ativa por formulário.</strong> Os disparadores associados a um
+formulário admitem apenas uma conexão ativa por vez. Se precisar de vários
+fluxos sobre o mesmo formulário, encadeie-os a partir de um único
+disparador.</li>
+<li><strong>Os disparadores de constatações operam no nível da conta.</strong> Admitem
+apenas uma conexão ativa por conta.</li>
+<li><strong>Os campos disponíveis variam conforme sua configuração.</strong> Alguns dados,
+como os de planejamento ou os campos estendidos de tarefas, aparecem
+somente se essas funcionalidades estiverem habilitadas na sua conta.</li>
+<li><strong>O conector funciona no ambiente em que foi criado.</strong> Se você trabalha com
+vários ambientes, repita a importação em cada um.</li>
+<li><strong>O disparador &quot;Nova resposta&quot; não se limpa sozinho.</strong> Se você desativar ou
+excluir um flow que usa o disparador &quot;Nova resposta&quot; (<code>hooks_flow</code>), a
+assinatura não é removida automaticamente do lado do DataScope. Para
+interrompê-lo por completo, também é necessário acessar
+<a href="https://app.mydatascope.com/integrations">app.mydatascope.com/integrations</a>
+e excluir a conexão correspondente ali. Os demais disparadores
+(formulários, PDFs, tarefas, constatações, assinaturas) se limpam
+automaticamente ao desativar o flow no Power Automate.</li>
+</ul>
+<h2 id='se-algo-nao-funcionar'>Se algo não funcionar</h2>
+<ul>
+<li><strong>A conexão falha ao ser criada:</strong> verifique se a API Key está completa e
+sem espaços no início ou no final.</li>
+<li><strong>O fluxo não é disparado:</strong> confirme que não existe outra conexão ativa
+sobre o mesmo formulário e revise o histórico de execuções do fluxo no
+Power Automate.</li>
+<li><strong>Os campos esperados não aparecem:</strong> alguns campos dependem da
+configuração da sua conta. Escreva para o suporte e nós verificamos com
+você.</li>
+</ul>
+
+<p>Para qualquer dúvida, escreva para o suporte e nós te acompanhamos na
+configuração.</p>
+
+      </div>
+      <div class="dark-box">
+      </div>
+    </div>
+  </body>
+</html>
