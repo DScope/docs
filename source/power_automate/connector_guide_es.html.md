@@ -9,7 +9,7 @@ title: Conectar DataScope con Power Automate
 Esta guía explica cómo habilitar la integración de DataScope en Power Automate
 para automatizar tu operación en terreno: disparar flujos cuando se completa un
 formulario, cuando se genera un documento, cuando se asigna una tarea o cuando
-se registra un hallazgo.
+se registra un ticket.
 
 ## Antes de empezar
 
@@ -88,8 +88,8 @@ El conector entrega los siguientes disparadores:
 | Nuevo PDF | Se genera un documento PDF |
 | Cambio de estado | Una respuesta de formulario cambia de estado |
 | Nueva tarea asignada | Se asigna una tarea |
-| Nuevo hallazgo | Se registra un hallazgo |
-| Cambio de estado de hallazgo | Un hallazgo cambia de estado |
+| Nuevo ticket | Se registra un ticket |
+| Cambio de estado de ticket | Un ticket cambia de estado |
 | Firma completada | Se completa la firma de un documento |
 | Firma rechazada | Se rechaza una solicitud de firma |
 | Firma actualizada | Se actualizan las firmas de un documento |
@@ -103,7 +103,7 @@ manualmente.
 - **Una conexión activa por formulario.** Los disparadores asociados a un
   formulario admiten una sola conexión activa a la vez. Si necesitas varios
   flujos sobre el mismo formulario, encadénalos desde un único disparador.
-- **Los disparadores de hallazgos operan a nivel de cuenta.** Admiten una sola
+- **Los disparadores de tickets operan a nivel de cuenta.** Admiten una sola
   conexión activa por cuenta.
 - **Los campos disponibles varían según tu configuración.** Algunos datos, como
   los de planificación o los campos extendidos de tareas, aparecen solo si esas
@@ -116,7 +116,7 @@ manualmente.
   detenerlo por completo, también debes ir a
   [app.mydatascope.com/integrations](https://app.mydatascope.com/integrations)
   y eliminar ahí la conexión correspondiente. El resto de los disparadores
-  (formularios, PDFs, tareas, hallazgos, firmas) sí se limpian automáticamente
+  (formularios, PDFs, tareas, tickets, firmas) sí se limpian automáticamente
   al apagar el flow en Power Automate.
 
 ## Si algo no funciona
