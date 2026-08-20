@@ -54,7 +54,7 @@ Method | Direction | Fits when
 [Webhooks](#webhooks) | DataScope pushes, your endpoint reacts | Something has to happen the moment a form arrives
 The REST endpoints | You pull, on your own schedule | You are building a custom integration, or you need a specific slice on demand
 [Airbyte Cloud connectors](#airbyte-cloud-connectors) | You pull, Airbyte runs it | The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you
-Zapier | DataScope pushes, Zapier reacts | You want the same webhook push as a no-code connector, without building your own receiving endpoint
+[Zapier](https://zapier.com/apps/datascope-forms/integrations) | DataScope pushes, Zapier reacts | You want the same webhook push as a no-code connector, without building your own receiving endpoint
 [Microsoft Power Automate](#microsoft-power-automate) | DataScope pushes, Power Automate reacts | Same idea, wired into a Power Automate flow with the event data exposed as dynamic content
 
 A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable **Send modifications** on the webhook.
