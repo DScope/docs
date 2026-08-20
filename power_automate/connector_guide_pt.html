@@ -257,6 +257,10 @@
 para automatizar sua operação em campo: disparar fluxos quando um formulário
 é preenchido, quando um documento é gerado, quando uma tarefa é atribuída ou
 quando uma não conformidade é registrada.</p>
+
+<aside class="notice">
+Você pode encontrar o DataScope listado na galeria oficial de conectores do Power Automate (<a href="https://preview.flow.microsoft.com/en-us/connectors/shared_datascopeforms/datascope-forms/" target="_blank" rel="noopener noreferrer">preview.flow.microsoft.com</a>, documentado em <a href="https://learn.microsoft.com/en-us/connectors/datascopeforms/" target="_blank" rel="noopener noreferrer">learn.microsoft.com</a>). Essa versão está desatualizada, por isso este guia mostra como construir o custom connector você mesmo.
+</aside>
 <h2 id='antes-de-comecar'>Antes de começar</h2>
 <p>Você precisa de:</p>
 
@@ -265,9 +269,9 @@ quando uma não conformidade é registrada.</p>
 tiver certeza, consulte o administrador do seu tenant da Microsoft.</li>
 <li>Permissão para criar conectores no ambiente do Power Automate em que você
 vai trabalhar.</li>
-<li>Sua API Key do DataScope. Você a obtém em <strong>app.mydatascope.com/integrations</strong>,
+<li>Sua API Key do DataScope. Você a obtém em <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>,
 na seção Integrações da sua conta.</li>
-<li>O arquivo <code>apiDefinition.swagger.json</code> fornecido junto com este guia.</li>
+<li>O arquivo <a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer"><code>apiDefinition.swagger.json</code></a> fornecido junto com este guia.</li>
 </ul>
 <h2 id='passo-1-criar-o-conector'>Passo 1: criar o conector</h2>
 <ol>
@@ -307,7 +311,7 @@ uma conexão. Cole ali sua API Key do DataScope.</p>
 <p>Cada usuário que criar fluxos precisa criar sua própria conexão com a API Key
 da sua conta.</p>
 <h2 id='atualizar-para-uma-versao-mais-nova-do-conector'>Atualizar para uma versão mais nova do conector</h2>
-<p>Quando publicamos uma versão nova do <code>apiDefinition.swagger.json</code> (por exemplo, para adicionar um disparador ou corrigir um campo), você não precisa criar um conector novo — você atualiza o que já existe:</p>
+<p>Quando publicamos uma versão nova do <a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer"><code>apiDefinition.swagger.json</code></a> (por exemplo, para adicionar um disparador ou corrigir um campo), você não precisa criar um conector novo — você atualiza o que já existe:</p>
 
 <ol>
 <li>Em <a href="https://make.powerautomate.com">make.powerautomate.com</a>, vá em <strong>Dados &gt; Conectores personalizados</strong>.</li>
@@ -390,7 +394,7 @@ vários ambientes, repita a importação em cada um.</li>
 excluir um flow que usa o disparador &quot;Nova resposta&quot; (<code>hooks_flow</code>), a
 assinatura não é removida automaticamente do lado do DataScope. Para
 interrompê-lo por completo, também é necessário acessar
-<a href="https://app.mydatascope.com/integrations">app.mydatascope.com/integrations</a>
+<a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
 e excluir a conexão correspondente ali. Os demais disparadores
 (formulários, PDFs, tarefas, não conformidades, assinaturas) se limpam
 automaticamente ao desativar o flow no Power Automate.</li>
