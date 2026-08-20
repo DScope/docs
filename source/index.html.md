@@ -2200,7 +2200,7 @@ We have had ongoing trouble keeping the connector published in the official Powe
 
 [Download the connector definition (JSON)](https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json)
 
-Follow the [step-by-step guide](https://github.com/DScope/docs/blob/main/source/power_automate/power_automate_connector_guide.md) to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
+Follow the [step-by-step guide](https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_en.md) to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
 
 # Tickets (FKA Issues)
 
