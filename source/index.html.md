@@ -71,6 +71,18 @@ If the destination is a data warehouse, you do not have to write the receiver, t
 
 Using both is normal. A webhook for the immediate reaction, a connector for the warehouse copy.
 
+## Microsoft Power Automate [Beta]
+
+DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, findings and signature events, delivered as dynamic content instead of raw webhook JSON.
+
+<aside class="notice">
+We have had ongoing trouble keeping the connector published in the official Power Automate connector gallery in sync with the latest version. Until that is resolved, the fastest way to connect is to build the custom connector yourself from the definition file below.
+</aside>
+
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer">Download the connector definition (JSON)</a>
+
+Follow the <a href="power_automate/connector_guide_en.html" target="_blank" rel="noopener noreferrer">step-by-step guide</a> to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
+
 ## Airbyte Cloud connectors
 
 DataScope publishes ready to use low-code connector manifests for Airbyte. Each one is plain YAML: import it in the Connector Builder, fill in your token and a start date, and Airbyte handles the paging, the incremental state and the deduplication.
@@ -217,18 +229,6 @@ An <code>api_budget</code> applies to the source that declares it, and Airbyte d
 <aside class="notice">
 A rejected request answers 429 with an HTML body and no <code>Retry-After</code> header, so a wait strategy that reads timing from headers has nothing to read. Prefer a fixed rate like the one above, or a constant backoff.
 </aside>
-
-## Microsoft Power Automate [Beta]
-
-DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, findings and signature events, delivered as dynamic content instead of raw webhook JSON.
-
-<aside class="notice">
-We have had ongoing trouble keeping the connector published in the official Power Automate connector gallery in sync with the latest version. Until that is resolved, the fastest way to connect is to build the custom connector yourself from the definition file below.
-</aside>
-
-<a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer">Download the connector definition (JSON)</a>
-
-Follow the <a href="power_automate/connector_guide_en.html" target="_blank" rel="noopener noreferrer">step-by-step guide</a> to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
 
 # Answers
 

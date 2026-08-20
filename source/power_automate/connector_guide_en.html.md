@@ -33,16 +33,17 @@ You need:
 4. Select **Custom connectors**.
 5. Click **New connector** and choose **Import an OpenAPI file**.
 6. Enter a name for the connector, for example DataScope, select the
-   `apiDefinition.swagger.json` file and continue.
+   <a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer"><code>apiDefinition.swagger.json</code></a> file and continue.
 
 ## Step 2: review the general configuration
 
 The file already sets the host, the base path and the description, so you
 don't need to change anything on this screen.
 
-If you want the connector to display the DataScope logo, upload it in the
-icon field and set the background color. This is optional and only affects
-appearance.
+If you want the connector to display the DataScope logo, download the
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/datascope_icon.png" target="_blank" rel="noopener noreferrer">DataScope icon (PNG)</a>
+and upload it in the icon field, then set the background color. This is
+optional and only affects appearance.
 
 ## Step 3: configure authentication
 
@@ -62,6 +63,21 @@ for a connection. Paste your DataScope API Key there.
 
 Each user who builds flows needs to create their own connection with their
 account's API Key.
+
+## Updating to a newer version of the connector
+
+When we publish a new version of `apiDefinition.swagger.json` (for example, to add a trigger or fix a field), you don't need to create a new connector — you update the existing one:
+
+1. In [make.powerautomate.com](https://make.powerautomate.com), go to **Data > Custom connectors**.
+2. Open the DataScope connector, then open its **Swagger editor** (or re-import the file from the **General** tab, depending on the version of the maker portal you're on).
+3. Replace the definition with the new file, and select **Update connector**.
+
+A few things worth knowing before you do this:
+
+- **This updates the connector for everyone in the environment**, not just for you — it isn't scoped to a single flow.
+- **Already-configured triggers keep working as long as their underlying operation didn't change.** New triggers become available to add to flows; existing ones aren't automatically added to or removed from flows that already use them.
+- **Re-check the icon, background color and authentication settings after updating.** Microsoft's own documentation doesn't explicitly confirm whether re-importing a file always preserves those, so treat them as "verify, don't assume" rather than guaranteed to survive the update.
+- **If a flow's trigger stops behaving as expected after an update, remove and re-add that trigger's connection** in the affected flow. Microsoft's own guidance for updating a custom connector's definition recommends this as the way to make sure a flow picks up the change cleanly.
 
 ## What you can automate
 
