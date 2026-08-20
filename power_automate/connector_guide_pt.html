@@ -256,7 +256,7 @@
 <p>Este guia explica como habilitar a integração do DataScope no Power Automate
 para automatizar sua operação em campo: disparar fluxos quando um formulário
 é preenchido, quando um documento é gerado, quando uma tarefa é atribuída ou
-quando uma constatação é registrada.</p>
+quando uma não conformidade é registrada.</p>
 <h2 id='antes-de-comecar'>Antes de começar</h2>
 <p>Você precisa de:</p>
 
@@ -349,12 +349,12 @@ da sua conta.</p>
 <td>Uma tarefa é atribuída</td>
 </tr>
 <tr>
-<td>Nova constatação</td>
-<td>Uma constatação é registrada</td>
+<td>Nova não conformidade</td>
+<td>Uma não conformidade é registrada</td>
 </tr>
 <tr>
-<td>Mudança de status de constatação</td>
-<td>Uma constatação muda de status</td>
+<td>Mudança de status de não conformidade</td>
+<td>Uma não conformidade muda de status</td>
 </tr>
 <tr>
 <td>Assinatura concluída</td>
@@ -379,7 +379,7 @@ manualmente.</p>
 formulário admitem apenas uma conexão ativa por vez. Se precisar de vários
 fluxos sobre o mesmo formulário, encadeie-os a partir de um único
 disparador.</li>
-<li><strong>Os disparadores de constatações operam no nível da conta.</strong> Admitem
+<li><strong>Os disparadores de não conformidades operam no nível da conta.</strong> Admitem
 apenas uma conexão ativa por conta.</li>
 <li><strong>Os campos disponíveis variam conforme sua configuração.</strong> Alguns dados,
 como os de planejamento ou os campos estendidos de tarefas, aparecem
@@ -392,7 +392,7 @@ assinatura não é removida automaticamente do lado do DataScope. Para
 interrompê-lo por completo, também é necessário acessar
 <a href="https://app.mydatascope.com/integrations">app.mydatascope.com/integrations</a>
 e excluir a conexão correspondente ali. Os demais disparadores
-(formulários, PDFs, tarefas, constatações, assinaturas) se limpam
+(formulários, PDFs, tarefas, não conformidades, assinaturas) se limpam
 automaticamente ao desativar o flow no Power Automate.</li>
 </ul>
 <h2 id='se-algo-nao-funcionar'>Se algo não funcionar</h2>

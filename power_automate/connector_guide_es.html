@@ -256,7 +256,7 @@
 <p>Esta guía explica cómo habilitar la integración de DataScope en Power Automate
 para automatizar tu operación en terreno: disparar flujos cuando se completa un
 formulario, cuando se genera un documento, cuando se asigna una tarea o cuando
-se registra un hallazgo.</p>
+se registra un ticket.</p>
 <h2 id='antes-de-empezar'>Antes de empezar</h2>
 <p>Necesitas:</p>
 
@@ -348,12 +348,12 @@ de su cuenta.</p>
 <td>Se asigna una tarea</td>
 </tr>
 <tr>
-<td>Nuevo hallazgo</td>
-<td>Se registra un hallazgo</td>
+<td>Nuevo ticket</td>
+<td>Se registra un ticket</td>
 </tr>
 <tr>
-<td>Cambio de estado de hallazgo</td>
-<td>Un hallazgo cambia de estado</td>
+<td>Cambio de estado de ticket</td>
+<td>Un ticket cambia de estado</td>
 </tr>
 <tr>
 <td>Firma completada</td>
@@ -377,7 +377,7 @@ manualmente.</p>
 <li><strong>Una conexión activa por formulario.</strong> Los disparadores asociados a un
 formulario admiten una sola conexión activa a la vez. Si necesitas varios
 flujos sobre el mismo formulario, encadénalos desde un único disparador.</li>
-<li><strong>Los disparadores de hallazgos operan a nivel de cuenta.</strong> Admiten una sola
+<li><strong>Los disparadores de tickets operan a nivel de cuenta.</strong> Admiten una sola
 conexión activa por cuenta.</li>
 <li><strong>Los campos disponibles varían según tu configuración.</strong> Algunos datos, como
 los de planificación o los campos extendidos de tareas, aparecen solo si esas
@@ -390,7 +390,7 @@ suscripción no se elimina automáticamente del lado de DataScope. Para
 detenerlo por completo, también debes ir a
 <a href="https://app.mydatascope.com/integrations">app.mydatascope.com/integrations</a>
 y eliminar ahí la conexión correspondiente. El resto de los disparadores
-(formularios, PDFs, tareas, hallazgos, firmas) sí se limpian automáticamente
+(formularios, PDFs, tareas, tickets, firmas) sí se limpian automáticamente
 al apagar el flow en Power Automate.</li>
 </ul>
 <h2 id='si-algo-no-funciona'>Si algo no funciona</h2>

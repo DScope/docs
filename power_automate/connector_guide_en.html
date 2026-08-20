@@ -255,7 +255,7 @@
 
 <p>This guide explains how to enable the DataScope integration in Power Automate
 to automate your field operation: trigger flows when a form is completed,
-when a document is generated, when a task is assigned, or when a finding is
+when a document is generated, when a task is assigned, or when an issue is
 registered.</p>
 <h2 id='before-you-start'>Before you start</h2>
 <p>You need:</p>
@@ -349,12 +349,12 @@ account&#39;s API Key.</p>
 <td>A task is assigned</td>
 </tr>
 <tr>
-<td>New finding</td>
-<td>A finding is registered</td>
+<td>New issue</td>
+<td>An issue is registered</td>
 </tr>
 <tr>
-<td>Finding status changed</td>
-<td>A finding changes status</td>
+<td>Issue status changed</td>
+<td>An issue changes status</td>
 </tr>
 <tr>
 <td>Completed signature</td>
@@ -377,7 +377,7 @@ following steps of the flow without having to parse the JSON manually.</p>
 <li><strong>One active connection per form.</strong> Triggers associated with a form support
 only one active connection at a time. If you need several flows on the
 same form, chain them from a single trigger.</li>
-<li><strong>Finding triggers operate at the account level.</strong> They support only one
+<li><strong>Issue triggers operate at the account level.</strong> They support only one
 active connection per account.</li>
 <li><strong>Available fields vary by configuration.</strong> Some data, such as planning
 fields or extended task fields, only appears when those features are
@@ -390,7 +390,7 @@ subscription is not automatically removed on DataScope&#39;s side. To fully
 stop it, you also need to go to
 <a href="https://app.mydatascope.com/integrations">app.mydatascope.com/integrations</a>
 and delete the connection there. Every other trigger (forms, PDFs, tasks,
-findings, signatures) does clean up automatically when the flow is turned
+issues, signatures) does clean up automatically when the flow is turned
 off in Power Automate.</li>
 </ul>
 <h2 id='if-something-doesn-39-t-work'>If something doesn&#39;t work</h2>
