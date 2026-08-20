@@ -686,8 +686,8 @@
               "description": "Indicates whether a late response is allowed. Available only when extended fields are enabled."
             },
             "mandatory": {
-              "type": "boolean",
-              "description": "Indicates whether the task is mandatory. Available only when extended fields are enabled."
+              "type": "string",
+              "description": "Who the task is mandatory for: for_nobody, for_one, or for_everyone. Available only when extended fields are enabled."
             },
             "asset_id": {
               "type": "integer",
