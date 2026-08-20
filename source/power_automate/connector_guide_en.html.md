@@ -11,6 +11,10 @@ to automate your field operation: trigger flows when a form is completed,
 when a document is generated, when a task is assigned, or when an issue is
 registered.
 
+<aside class="notice">
+You may also find DataScope listed in the official Power Automate connector gallery (<a href="https://preview.flow.microsoft.com/en-us/connectors/shared_datascopeforms/datascope-forms/" target="_blank" rel="noopener noreferrer">preview.flow.microsoft.com</a>, documented at <a href="https://learn.microsoft.com/en-us/connectors/datascopeforms/" target="_blank" rel="noopener noreferrer">learn.microsoft.com</a>). That listing is outdated, so this guide walks you through building the custom connector yourself instead.
+</aside>
+
 ## Before you start
 
 You need:
@@ -19,9 +23,9 @@ You need:
   sure, check with your Microsoft tenant administrator.
 - Permission to create connectors in the Power Automate environment you are
   working in.
-- Your DataScope API Key. You get it from **app.mydatascope.com/integrations**,
+- Your DataScope API Key. You get it from <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>,
   in the Integrations section of your account.
-- The `apiDefinition.swagger.json` file provided together with this guide.
+- The <a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer"><code>apiDefinition.swagger.json</code></a> file provided together with this guide.
 
 ## Step 1: create the connector
 
@@ -66,7 +70,7 @@ account's API Key.
 
 ## Updating to a newer version of the connector
 
-When we publish a new version of `apiDefinition.swagger.json` (for example, to add a trigger or fix a field), you don't need to create a new connector — you update the existing one:
+When we publish a new version of <a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer"><code>apiDefinition.swagger.json</code></a> (for example, to add a trigger or fix a field), you don't need to create a new connector — you update the existing one:
 
 1. In [make.powerautomate.com](https://make.powerautomate.com), go to **Data > Custom connectors**.
 2. Open the DataScope connector, then open its **Swagger editor** (or re-import the file from the **General** tab, depending on the version of the maker portal you're on).
@@ -114,7 +118,7 @@ following steps of the flow without having to parse the JSON manually.
   delete a flow that uses the "New answer" trigger (`hooks_flow`), the
   subscription is not automatically removed on DataScope's side. To fully
   stop it, you also need to go to
-  [app.mydatascope.com/integrations](https://app.mydatascope.com/integrations)
+  <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
   and delete the connection there. Every other trigger (forms, PDFs, tasks,
   issues, signatures) does clean up automatically when the flow is turned
   off in Power Automate.
