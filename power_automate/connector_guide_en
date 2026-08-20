@@ -1,0 +1,138 @@
+<h1 id='connect-datascope-with-power-automate'>Connect DataScope with Power Automate</h1>
+<blockquote>
+<p>¿Prefieres leer esto en español o portugués? <a href="https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_es.md">Ve a la guía en español</a> | <a href="https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_pt.md">Versão em português</a>.</p>
+</blockquote>
+
+<p>This guide explains how to enable the DataScope integration in Power Automate
+to automate your field operation: trigger flows when a form is completed,
+when a document is generated, when a task is assigned, or when a finding is
+registered.</p>
+<h2 id='before-you-start'>Before you start</h2>
+<p>You need:</p>
+
+<ul>
+<li>A Power Automate license that enables custom connectors. If you are not
+sure, check with your Microsoft tenant administrator.</li>
+<li>Permission to create connectors in the Power Automate environment you are
+working in.</li>
+<li>Your DataScope API Key. You get it from <strong>app.mydatascope.com/integrations</strong>,
+in the Integrations section of your account.</li>
+<li>The <code>apiDefinition.swagger.json</code> file provided together with this guide.</li>
+</ul>
+<h2 id='step-1-create-the-connector'>Step 1: create the connector</h2>
+<ol>
+<li>Go to <a href="https://make.powerautomate.com">make.powerautomate.com</a> and sign
+in.</li>
+<li>Select the environment where you want to create the connector, at the top
+right.</li>
+<li>In the side menu, open <strong>More</strong> and then <strong>Discover all</strong>.</li>
+<li>Select <strong>Custom connectors</strong>.</li>
+<li>Click <strong>New connector</strong> and choose <strong>Import an OpenAPI file</strong>.</li>
+<li>Enter a name for the connector, for example DataScope, select the
+<code>apiDefinition.swagger.json</code> file and continue.</li>
+</ol>
+<h2 id='step-2-review-the-general-configuration'>Step 2: review the general configuration</h2>
+<p>The file already sets the host, the base path and the description, so you
+don&#39;t need to change anything on this screen.</p>
+
+<p>If you want the connector to display the DataScope logo, upload it in the
+icon field and set the background color. This is optional and only affects
+appearance.</p>
+<h2 id='step-3-configure-authentication'>Step 3: configure authentication</h2>
+<p>The file already declares the authentication type. Verify that the security
+screen shows:</p>
+
+<ul>
+<li>Authentication type: <strong>API Key</strong></li>
+<li>Parameter name: <strong>Authorization</strong></li>
+<li>Location: <strong>Header</strong></li>
+</ul>
+
+<p>Continue to the end of the wizard and select <strong>Create connector</strong>.</p>
+<h2 id='step-4-create-the-connection'>Step 4: create the connection</h2>
+<p>The first time you use the connector in a flow, Power Automate will ask you
+for a connection. Paste your DataScope API Key there.</p>
+
+<p>Each user who builds flows needs to create their own connection with their
+account&#39;s API Key.</p>
+<h2 id='what-you-can-automate'>What you can automate</h2>
+<p>The connector provides the following triggers:</p>
+
+<table><thead>
+<tr>
+<th>Trigger</th>
+<th>Fires when</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>New answer</td>
+<td>A form answer is submitted</td>
+</tr>
+<tr>
+<td>New PDF</td>
+<td>A PDF document is generated</td>
+</tr>
+<tr>
+<td>Status changed</td>
+<td>A form answer changes status</td>
+</tr>
+<tr>
+<td>New assigned task</td>
+<td>A task is assigned</td>
+</tr>
+<tr>
+<td>New finding</td>
+<td>A finding is registered</td>
+</tr>
+<tr>
+<td>Finding status changed</td>
+<td>A finding changes status</td>
+</tr>
+<tr>
+<td>Completed signature</td>
+<td>A document signature is completed</td>
+</tr>
+<tr>
+<td>Rejected signature</td>
+<td>A signature request is rejected</td>
+</tr>
+<tr>
+<td>Updated signature</td>
+<td>The signatures on a document are updated</td>
+</tr>
+</tbody></table>
+
+<p>Each trigger delivers the event data as dynamic content, ready to use in the
+following steps of the flow without having to parse the JSON manually.</p>
+<h2 id='important-considerations'>Important considerations</h2>
+<ul>
+<li><strong>One active connection per form.</strong> Triggers associated with a form support
+only one active connection at a time. If you need several flows on the
+same form, chain them from a single trigger.</li>
+<li><strong>Finding triggers operate at the account level.</strong> They support only one
+active connection per account.</li>
+<li><strong>Available fields vary by configuration.</strong> Some data, such as planning
+fields or extended task fields, only appears when those features are
+enabled on your account.</li>
+<li><strong>The connector works in the environment where you created it.</strong> If you
+work with several environments, repeat the import in each one.</li>
+<li><strong>The &quot;New answer&quot; trigger doesn&#39;t clean up on its own.</strong> If you turn off or
+delete a flow that uses the &quot;New answer&quot; trigger (<code>hooks_flow</code>), the
+subscription is not automatically removed on DataScope&#39;s side. To fully
+stop it, you also need to go to
+<a href="https://app.mydatascope.com/integrations">app.mydatascope.com/integrations</a>
+and delete the connection there. Every other trigger (forms, PDFs, tasks,
+findings, signatures) does clean up automatically when the flow is turned
+off in Power Automate.</li>
+</ul>
+<h2 id='if-something-doesn-39-t-work'>If something doesn&#39;t work</h2>
+<ul>
+<li><strong>The connection fails to create:</strong> check that the API Key is complete,
+with no leading or trailing spaces.</li>
+<li><strong>The flow doesn&#39;t trigger:</strong> confirm there is no other active connection
+on the same form, and review the flow&#39;s run history in Power Automate.</li>
+<li><strong>Expected fields don&#39;t appear:</strong> some fields depend on your account&#39;s
+configuration. Reach out to support and we&#39;ll look into it with you.</li>
+</ul>
+
+<p>For any question, contact support and we&#39;ll help you with the setup.</p>

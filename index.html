@@ -343,6 +343,9 @@
               </ul>
           </li>
           <li>
+            <a href="#microsoft-power-automate" class="toc-h1 toc-link" data-title="microsoft-power-automate">Microsoft Power Automate</a>
+          </li>
+          <li>
             <a href="#tickets-fka-issues" class="toc-h1 toc-link" data-title="tickets-fka-issues">Tickets (FKA Issues)</a>
               <ul class="toc-list-h2">
                   <li>
@@ -397,7 +400,7 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 <h1 id='data-export'>Data Export</h1>
 <p>If your goal is a copy of your DataScope data somewhere else, start here rather than with the endpoint reference below.</p>
 <h2 id='choosing-a-method'>Choosing a method</h2>
-<p>There are three ways to move data out, and they answer different questions.</p>
+<p>There are several ways to move data out, and they answer different questions.</p>
 
 <table><thead>
 <tr>
@@ -420,6 +423,16 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 <td><a href="#airbyte-cloud-connectors">Airbyte Cloud connectors</a></td>
 <td>You pull, Airbyte runs it</td>
 <td>The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you</td>
+</tr>
+<tr>
+<td>Zapier</td>
+<td>DataScope pushes, Zapier reacts</td>
+<td>You want the same webhook push as a no-code connector, without building your own receiving endpoint</td>
+</tr>
+<tr>
+<td><a href="#microsoft-power-automate">Microsoft Power Automate</a></td>
+<td>DataScope pushes, Power Automate reacts</td>
+<td>Same idea, wired into a Power Automate flow with the event data exposed as dynamic content</td>
 </tr>
 </tbody></table>
 
@@ -3925,6 +3938,16 @@ TIP: It will only start sending information for the new forms done after the int
 <aside class="notice">
 That tip is the main reason a webhook alone is not enough for a warehouse: it cannot replay what it never sent. <a href="#choosing-a-method">Choosing a method</a> compares webhooks against the pull-based options.
 </aside>
+<h1 id='microsoft-power-automate'>Microsoft Power Automate</h1>
+<p>DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, findings and signature events, delivered as dynamic content instead of raw webhook JSON.</p>
+
+<aside class="notice">
+We have had ongoing trouble keeping the connector published in the official Power Automate connector gallery in sync with the latest version. Until that is resolved, the fastest way to connect is to build the custom connector yourself from the definition file below.
+</aside>
+
+<p><a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json">Download the connector definition (JSON)</a></p>
+
+<p>Follow the <a href="https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_en.md">step-by-step guide</a> to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.</p>
 <h1 id='tickets-fka-issues'>Tickets (FKA Issues)</h1><h2 id='get-tickets-by-period'>Get Tickets by Period</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/findings/list?start=01-01-2026&amp;end=31-01-2026"</span>
   -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
 </code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>

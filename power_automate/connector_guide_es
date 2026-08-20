@@ -1,0 +1,137 @@
+<h1 id='conectar-datascope-con-power-automate'>Conectar DataScope con Power Automate</h1>
+<blockquote>
+<p>Reading this in English or Portuguese? <a href="https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_en.md">Switch to the English guide</a> | <a href="https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_pt.md">Versão em português</a>.</p>
+</blockquote>
+
+<p>Esta guía explica cómo habilitar la integración de DataScope en Power Automate
+para automatizar tu operación en terreno: disparar flujos cuando se completa un
+formulario, cuando se genera un documento, cuando se asigna una tarea o cuando
+se registra un hallazgo.</p>
+<h2 id='antes-de-empezar'>Antes de empezar</h2>
+<p>Necesitas:</p>
+
+<ul>
+<li>Una licencia de Power Automate que habilite conectores personalizados. Si no
+estás seguro, consúltalo con el administrador de tu tenant de Microsoft.</li>
+<li>Permisos para crear conectores en el entorno de Power Automate donde vas a
+trabajar.</li>
+<li>Tu API Key de DataScope. La obtienes desde <strong>app.mydatascope.com/integrations</strong>,
+en la sección Integraciones de tu cuenta.</li>
+<li>El archivo <code>apiDefinition.swagger.json</code> que te entregamos junto con esta guía.</li>
+</ul>
+<h2 id='paso-1-crear-el-conector'>Paso 1: crear el conector</h2>
+<ol>
+<li>Entra a <a href="https://make.powerautomate.com">make.powerautomate.com</a> e inicia
+sesión.</li>
+<li>Selecciona el entorno donde quieres crear el conector, arriba a la derecha.</li>
+<li>En el menú lateral, abre <strong>Más</strong> y luego <strong>Descubrir todo</strong>.</li>
+<li>Selecciona <strong>Conectores personalizados</strong>.</li>
+<li>Haz clic en <strong>Nuevo conector</strong> y elige <strong>Importar un archivo de OpenAPI</strong>.</li>
+<li>Escribe un nombre para el conector, por ejemplo DataScope, selecciona el
+archivo <code>apiDefinition.swagger.json</code> y continúa.</li>
+</ol>
+<h2 id='paso-2-revisar-la-configuracion-general'>Paso 2: revisar la configuración general</h2>
+<p>El archivo ya trae configurado el host, la ruta base y la descripción, así que
+no necesitas modificar nada en esta pantalla.</p>
+
+<p>Si quieres que el conector muestre el logo de DataScope, súbelo en el campo de
+ícono y define el color de fondo. Es opcional y solo afecta la apariencia.</p>
+<h2 id='paso-3-configurar-la-autenticacion'>Paso 3: configurar la autenticación</h2>
+<p>El archivo ya declara el tipo de autenticación. Verifica que la pantalla de
+seguridad muestre:</p>
+
+<ul>
+<li>Tipo de autenticación: <strong>Clave de API</strong></li>
+<li>Nombre del parámetro: <strong>Authorization</strong></li>
+<li>Ubicación: <strong>Encabezado</strong></li>
+</ul>
+
+<p>Continúa hasta el final del asistente y selecciona <strong>Crear conector</strong>.</p>
+<h2 id='paso-4-crear-la-conexion'>Paso 4: crear la conexión</h2>
+<p>Al usar el conector por primera vez en un flujo, Power Automate te pedirá una
+conexión. Pega ahí tu API Key de DataScope.</p>
+
+<p>Cada usuario que arme flujos necesita crear su propia conexión con la API Key
+de su cuenta.</p>
+<h2 id='que-puedes-automatizar'>Qué puedes automatizar</h2>
+<p>El conector entrega los siguientes disparadores:</p>
+
+<table><thead>
+<tr>
+<th>Disparador</th>
+<th>Se activa cuando</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Nueva respuesta</td>
+<td>Se envía una respuesta de formulario</td>
+</tr>
+<tr>
+<td>Nuevo PDF</td>
+<td>Se genera un documento PDF</td>
+</tr>
+<tr>
+<td>Cambio de estado</td>
+<td>Una respuesta de formulario cambia de estado</td>
+</tr>
+<tr>
+<td>Nueva tarea asignada</td>
+<td>Se asigna una tarea</td>
+</tr>
+<tr>
+<td>Nuevo hallazgo</td>
+<td>Se registra un hallazgo</td>
+</tr>
+<tr>
+<td>Cambio de estado de hallazgo</td>
+<td>Un hallazgo cambia de estado</td>
+</tr>
+<tr>
+<td>Firma completada</td>
+<td>Se completa la firma de un documento</td>
+</tr>
+<tr>
+<td>Firma rechazada</td>
+<td>Se rechaza una solicitud de firma</td>
+</tr>
+<tr>
+<td>Firma actualizada</td>
+<td>Se actualizan las firmas de un documento</td>
+</tr>
+</tbody></table>
+
+<p>Cada disparador entrega los datos del evento como contenido dinámico, listos
+para usar en los pasos siguientes del flujo sin necesidad de procesar el JSON
+manualmente.</p>
+<h2 id='consideraciones-importantes'>Consideraciones importantes</h2>
+<ul>
+<li><strong>Una conexión activa por formulario.</strong> Los disparadores asociados a un
+formulario admiten una sola conexión activa a la vez. Si necesitas varios
+flujos sobre el mismo formulario, encadénalos desde un único disparador.</li>
+<li><strong>Los disparadores de hallazgos operan a nivel de cuenta.</strong> Admiten una sola
+conexión activa por cuenta.</li>
+<li><strong>Los campos disponibles varían según tu configuración.</strong> Algunos datos, como
+los de planificación o los campos extendidos de tareas, aparecen solo si esas
+funcionalidades están habilitadas en tu cuenta.</li>
+<li><strong>El conector funciona en el entorno donde lo creaste.</strong> Si trabajas con
+varios entornos, repite la importación en cada uno.</li>
+<li><strong>El disparador &quot;Nueva respuesta&quot; no se limpia solo al apagarlo.</strong> Si detienes
+o eliminas un flow que usa el disparador &quot;Nueva respuesta&quot; (<code>hooks_flow</code>), la
+suscripción no se elimina automáticamente del lado de DataScope. Para
+detenerlo por completo, también debes ir a
+<a href="https://app.mydatascope.com/integrations">app.mydatascope.com/integrations</a>
+y eliminar ahí la conexión correspondiente. El resto de los disparadores
+(formularios, PDFs, tareas, hallazgos, firmas) sí se limpian automáticamente
+al apagar el flow en Power Automate.</li>
+</ul>
+<h2 id='si-algo-no-funciona'>Si algo no funciona</h2>
+<ul>
+<li><strong>La conexión falla al crearse:</strong> verifica que la API Key esté completa y sin
+espacios al inicio o al final.</li>
+<li><strong>El flujo no se dispara:</strong> confirma que no exista otra conexión activa sobre
+el mismo formulario, y revisa el historial del flujo en Power Automate.</li>
+<li><strong>No aparecen los campos esperados:</strong> algunos campos dependen de la
+configuración de tu cuenta. Escríbenos y lo revisamos contigo.</li>
+</ul>
+
+<p>Para cualquier duda, escribe a soporte y te acompañamos en la configuración.</p>
