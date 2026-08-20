@@ -168,70 +168,70 @@
     },
     "/hooks/power_automate/finding_created": {
       "x-ms-notification-content": {
-        "description": "Details of the created finding.",
+        "description": "Details of the created ticket.",
         "schema": {
           "type": "object",
-          "description": "Details of the created finding.",
+          "description": "Details of the created ticket.",
           "properties": {
             "finding_id": {
               "type": "string",
-              "description": "Identifier of the finding."
+              "description": "Identifier of the ticket."
             },
             "code": {
               "type": "integer",
-              "description": "Code that identifies the finding."
+              "description": "Code that identifies the ticket."
             },
             "name": {
               "type": "string",
-              "description": "Name of the finding."
+              "description": "Name of the ticket."
             },
             "creator_id": {
               "type": "integer",
-              "description": "Identifier of the user who created the finding."
+              "description": "Identifier of the user who created the ticket."
             },
             "creator_name": {
               "type": "string",
-              "description": "Full name of the user who created the finding."
+              "description": "Full name of the user who created the ticket."
             },
             "creator_email": {
               "type": "string",
-              "description": "Email address of the user who created the finding."
+              "description": "Email address of the user who created the ticket."
             },
             "creation_date": {
               "type": "string",
-              "description": "Date and time when the finding was created, expressed in the account time zone."
+              "description": "Date and time when the ticket was created, expressed in the account time zone."
             },
             "expiration_date": {
               "type": "string",
-              "description": "Date and time when the finding expires, when one is set."
+              "description": "Date and time when the ticket expires, when one is set."
             },
             "status": {
               "type": "string",
-              "description": "Current status of the finding, in readable text."
+              "description": "Current status of the ticket, in readable text."
             },
             "description": {
               "type": "string",
-              "description": "Description of the finding."
+              "description": "Description of the ticket."
             },
             "priority": {
               "type": "string",
-              "description": "Priority of the finding, in readable text."
+              "description": "Priority of the ticket, in readable text."
             },
             "location_id": {
               "type": "integer",
-              "description": "Identifier of the location linked to the finding."
+              "description": "Identifier of the location linked to the ticket."
             },
             "location_name": {
               "type": "string",
-              "description": "Name of the location linked to the finding."
+              "description": "Name of the location linked to the ticket."
             },
             "location_code": {
               "type": "string",
-              "description": "Code of the location linked to the finding."
+              "description": "Code of the location linked to the ticket."
             },
             "location_type": {
               "type": "string",
-              "description": "Type of the location linked to the finding."
+              "description": "Type of the location linked to the ticket."
             },
             "assignees_concatenated": {
               "type": "string",
@@ -243,10 +243,10 @@
             },
             "assignees": {
               "type": "object",
-              "description": "Users assigned to the finding, indexed by position.",
+              "description": "Users assigned to the ticket, indexed by position.",
               "additionalProperties": {
                 "type": "object",
-                "description": "Information about a user linked to the finding.",
+                "description": "Information about a user linked to the ticket.",
                 "properties": {
                   "id": {
                     "type": "integer",
@@ -261,10 +261,10 @@
             },
             "invitees": {
               "type": "object",
-              "description": "Users invited to the finding, indexed by position.",
+              "description": "Users invited to the ticket, indexed by position.",
               "additionalProperties": {
                 "type": "object",
-                "description": "Information about a user linked to the finding.",
+                "description": "Information about a user linked to the ticket.",
                 "properties": {
                   "id": {
                     "type": "integer",
@@ -310,8 +310,8 @@
           }
         },
         "operationId": "FindingCreated",
-        "summary": "New finding (Findings)",
-        "description": "Triggers when a finding is created. Only one active connection per account is supported.",
+        "summary": "New ticket (Tickets)",
+        "description": "Triggers when a ticket is created. Only one active connection per account is supported.",
         "x-ms-trigger": "single",
         "parameters": [
           {
@@ -363,34 +363,34 @@
     },
     "/hooks/power_automate/finding_changed_status": {
       "x-ms-notification-content": {
-        "description": "Details of the finding whose status changed.",
+        "description": "Details of the ticket whose status changed.",
         "schema": {
           "type": "object",
-          "description": "Details of the finding whose status changed.",
+          "description": "Details of the ticket whose status changed.",
           "properties": {
             "finding_id": {
               "type": "string",
-              "description": "Identifier of the finding."
+              "description": "Identifier of the ticket."
             },
             "code": {
               "type": "integer",
-              "description": "Code that identifies the finding."
+              "description": "Code that identifies the ticket."
             },
             "name": {
               "type": "string",
-              "description": "Name of the finding."
+              "description": "Name of the ticket."
             },
             "creator_id": {
               "type": "integer",
-              "description": "Identifier of the user who created the finding."
+              "description": "Identifier of the user who created the ticket."
             },
             "creator_name": {
               "type": "string",
-              "description": "Full name of the user who created the finding."
+              "description": "Full name of the user who created the ticket."
             },
             "creator_email": {
               "type": "string",
-              "description": "Email address of the user who created the finding."
+              "description": "Email address of the user who created the ticket."
             },
             "modifier_id": {
               "type": "integer",
@@ -406,51 +406,51 @@
             },
             "creation_date": {
               "type": "string",
-              "description": "Date and time when the finding was created, expressed in the account time zone."
+              "description": "Date and time when the ticket was created, expressed in the account time zone."
             },
             "expiration_date": {
               "type": "string",
-              "description": "Date and time when the finding expires, when one is set."
+              "description": "Date and time when the ticket expires, when one is set."
             },
             "closure_date": {
               "type": "string",
-              "description": "Date and time when the finding was closed, when applicable."
+              "description": "Date and time when the ticket was closed, when applicable."
             },
             "previous_status": {
               "type": "string",
-              "description": "Status of the finding before the change, in readable text."
+              "description": "Status of the ticket before the change, in readable text."
             },
             "status": {
               "type": "string",
-              "description": "Current status of the finding, in readable text."
+              "description": "Current status of the ticket, in readable text."
             },
             "closure_message": {
               "type": "string",
-              "description": "Message registered when the finding was closed, when applicable."
+              "description": "Message registered when the ticket was closed, when applicable."
             },
             "description": {
               "type": "string",
-              "description": "Description of the finding."
+              "description": "Description of the ticket."
             },
             "priority": {
               "type": "string",
-              "description": "Priority of the finding, in readable text."
+              "description": "Priority of the ticket, in readable text."
             },
             "location_id": {
               "type": "integer",
-              "description": "Identifier of the location linked to the finding."
+              "description": "Identifier of the location linked to the ticket."
             },
             "location_name": {
               "type": "string",
-              "description": "Name of the location linked to the finding."
+              "description": "Name of the location linked to the ticket."
             },
             "location_code": {
               "type": "string",
-              "description": "Code of the location linked to the finding."
+              "description": "Code of the location linked to the ticket."
             },
             "location_type": {
               "type": "string",
-              "description": "Type of the location linked to the finding."
+              "description": "Type of the location linked to the ticket."
             },
             "assignees_concatenated": {
               "type": "string",
@@ -462,10 +462,10 @@
             },
             "assignees": {
               "type": "object",
-              "description": "Users assigned to the finding, indexed by position.",
+              "description": "Users assigned to the ticket, indexed by position.",
               "additionalProperties": {
                 "type": "object",
-                "description": "Information about a user linked to the finding.",
+                "description": "Information about a user linked to the ticket.",
                 "properties": {
                   "id": {
                     "type": "integer",
@@ -480,10 +480,10 @@
             },
             "invitees": {
               "type": "object",
-              "description": "Users invited to the finding, indexed by position.",
+              "description": "Users invited to the ticket, indexed by position.",
               "additionalProperties": {
                 "type": "object",
-                "description": "Information about a user linked to the finding.",
+                "description": "Information about a user linked to the ticket.",
                 "properties": {
                   "id": {
                     "type": "integer",
@@ -529,8 +529,8 @@
           }
         },
         "operationId": "FindingChangedStatus",
-        "summary": "Status changed (Findings)",
-        "description": "Triggers when a finding changes its status. Only one active connection per account is supported.",
+        "summary": "Status changed (Tickets)",
+        "description": "Triggers when a ticket changes its status. Only one active connection per account is supported.",
         "x-ms-trigger": "single",
         "parameters": [
           {
