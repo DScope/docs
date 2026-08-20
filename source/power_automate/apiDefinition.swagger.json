@@ -2045,6 +2045,45 @@
           }
         ]
       }
+    },
+    "/delete_hooks/{account_id}/{webhook_id}/{uuid}": {
+      "delete": {
+        "summary": "Delete webhook subscription",
+        "description": "Unsubscribes a webhook. Called automatically by the platform when a flow is turned off, updated, or deleted. Required so the platform knows this operation exists: the subscribe responses above return this same path in the Location header, but without a matching delete operation declared here, the platform never calls it.",
+        "operationId": "DeleteWebhookSubscription",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Identifier of the account that owns the subscription.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "webhook_id",
+            "in": "path",
+            "description": "Identifier of the webhook subscription.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Unique token that authorizes the deletion of this specific subscription.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription deleted successfully."
+          },
+          "400": {
+            "description": "The subscription could not be deleted."
+          }
+        }
+      }
     }
   },
   "x-ms-connector-metadata": [
