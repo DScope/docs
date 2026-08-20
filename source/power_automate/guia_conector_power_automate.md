@@ -89,6 +89,14 @@ manualmente.
   funcionalidades están habilitadas en tu cuenta.
 - **El conector funciona en el entorno donde lo creaste.** Si trabajas con
   varios entornos, repite la importación en cada uno.
+- **El disparador "Nueva respuesta" no se limpia solo al apagarlo.** Si detienes
+  o eliminas un flow que usa el disparador "Nueva respuesta" (`hooks_flow`), la
+  suscripción no se elimina automáticamente del lado de DataScope. Para
+  detenerlo por completo, también debes ir a
+  [app.mydatascope.com/integrations](https://app.mydatascope.com/integrations)
+  y eliminar ahí la conexión correspondiente. El resto de los disparadores
+  (formularios, PDFs, tareas, hallazgos, firmas) sí se limpian automáticamente
+  al apagar el flow en Power Automate.
 
 ## Si algo no funciona
 

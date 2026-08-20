@@ -90,6 +90,14 @@ following steps of the flow without having to parse the JSON manually.
   enabled on your account.
 - **The connector works in the environment where you created it.** If you
   work with several environments, repeat the import in each one.
+- **The "New answer" trigger doesn't clean up on its own.** If you turn off or
+  delete a flow that uses the "New answer" trigger (`hooks_flow`), the
+  subscription is not automatically removed on DataScope's side. To fully
+  stop it, you also need to go to
+  [app.mydatascope.com/integrations](https://app.mydatascope.com/integrations)
+  and delete the connection there. Every other trigger (forms, PDFs, tasks,
+  findings, signatures) does clean up automatically when the flow is turned
+  off in Power Automate.
 
 ## If something doesn't work
 
