@@ -1,6 +1,10 @@
+---
+title: Conectar DataScope con Power Automate
+---
+
 # Conectar DataScope con Power Automate
 
-> Reading this in English or Portuguese? [Switch to the English guide](https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_en.md) | [Versão em português](https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_pt.md).
+> Reading this in English or Portuguese? [Switch to the English guide](connector_guide_en.html) | [Versão em português](connector_guide_pt.html).
 
 Esta guía explica cómo habilitar la integración de DataScope en Power Automate
 para automatizar tu operación en terreno: disparar flujos cuando se completa un

@@ -55,7 +55,7 @@ Method | Direction | Fits when
 The REST endpoints | You pull, on your own schedule | You are building a custom integration, or you need a specific slice on demand
 [Airbyte Cloud connectors](#airbyte-cloud-connectors) | You pull, Airbyte runs it | The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you
 [Zapier](https://zapier.com/apps/datascope-forms/integrations) | DataScope pushes, Zapier reacts | You want the same webhook push as a no-code connector, without building your own receiving endpoint
-[Microsoft Power Automate](#microsoft-power-automate) | DataScope pushes, Power Automate reacts | Same idea, wired into a Power Automate flow with the event data exposed as dynamic content
+[Microsoft Power Automate](#microsoft-power-automate-beta) | DataScope pushes, Power Automate reacts | Same idea, wired into a Power Automate flow with the event data exposed as dynamic content
 
 A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable **Send modifications** on the webhook.
 
@@ -92,7 +92,7 @@ Both manifests carry a <code>Last updated</code> date in the header comment. Com
 
 [Get All Answers V5](#get-all-answers-v5-beta) with the pagination and the incremental state already wired:
 
-[Download the manifest (YAML)](https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml)
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_source_manifest.yaml" target="_blank" rel="noopener noreferrer">Download the manifest (YAML)</a>
 
 It defines three related streams that you can join in your warehouse:
 
@@ -118,7 +118,7 @@ Why overwriting breaks things: Airbyte drops any field that is <code>null</code>
 
 ### Signatures connector
 
-[Download the manifest (YAML)](https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_signatures_source_manifest.yaml)
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/airbyte/datascope_signatures_source_manifest.yaml" target="_blank" rel="noopener noreferrer">Download the manifest (YAML)</a>
 
 It reads [Get Signature Requests](#get-signature-requests) and builds two streams out of the same response:
 
@@ -217,6 +217,18 @@ An <code>api_budget</code> applies to the source that declares it, and Airbyte d
 <aside class="notice">
 A rejected request answers 429 with an HTML body and no <code>Retry-After</code> header, so a wait strategy that reads timing from headers has nothing to read. Prefer a fixed rate like the one above, or a constant backoff.
 </aside>
+
+## Microsoft Power Automate [Beta]
+
+DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, findings and signature events, delivered as dynamic content instead of raw webhook JSON.
+
+<aside class="notice">
+We have had ongoing trouble keeping the connector published in the official Power Automate connector gallery in sync with the latest version. Until that is resolved, the fastest way to connect is to build the custom connector yourself from the definition file below.
+</aside>
+
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer">Download the connector definition (JSON)</a>
+
+Follow the <a href="power_automate/connector_guide_en.html" target="_blank" rel="noopener noreferrer">step-by-step guide</a> to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
 
 # Answers
 
@@ -2189,18 +2201,6 @@ TIP: It will only start sending information for the new forms done after the int
 <aside class="notice">
 That tip is the main reason a webhook alone is not enough for a warehouse: it cannot replay what it never sent. <a href="#choosing-a-method">Choosing a method</a> compares webhooks against the pull-based options.
 </aside>
-
-# Microsoft Power Automate
-
-DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, findings and signature events, delivered as dynamic content instead of raw webhook JSON.
-
-<aside class="notice">
-We have had ongoing trouble keeping the connector published in the official Power Automate connector gallery in sync with the latest version. Until that is resolved, the fastest way to connect is to build the custom connector yourself from the definition file below.
-</aside>
-
-[Download the connector definition (JSON)](https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json)
-
-Follow the [step-by-step guide](https://github.com/DScope/docs/blob/main/source/power_automate/connector_guide_en.md) to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
 
 # Tickets (FKA Issues)
 
