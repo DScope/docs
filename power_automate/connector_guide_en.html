@@ -230,6 +230,9 @@
                     <a href="#step-4-create-the-connection" class="toc-h2 toc-link" data-title="step-4-create-the-connection">Step 4: create the connection</a>
                   </li>
                   <li>
+                    <a href="#updating-to-a-newer-version-of-the-connector" class="toc-h2 toc-link" data-title="updating-to-a-newer-version-of-the-connector">Updating to a newer version of the connector</a>
+                  </li>
+                  <li>
                     <a href="#what-you-can-automate" class="toc-h2 toc-link" data-title="what-you-can-automate">What you can automate</a>
                   </li>
                   <li>
@@ -276,15 +279,16 @@ right.</li>
 <li>Select <strong>Custom connectors</strong>.</li>
 <li>Click <strong>New connector</strong> and choose <strong>Import an OpenAPI file</strong>.</li>
 <li>Enter a name for the connector, for example DataScope, select the
-<code>apiDefinition.swagger.json</code> file and continue.</li>
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer"><code>apiDefinition.swagger.json</code></a> file and continue.</li>
 </ol>
 <h2 id='step-2-review-the-general-configuration'>Step 2: review the general configuration</h2>
 <p>The file already sets the host, the base path and the description, so you
 don&#39;t need to change anything on this screen.</p>
 
-<p>If you want the connector to display the DataScope logo, upload it in the
-icon field and set the background color. This is optional and only affects
-appearance.</p>
+<p>If you want the connector to display the DataScope logo, download the
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/datascope_icon.png" target="_blank" rel="noopener noreferrer">DataScope icon (PNG)</a>
+and upload it in the icon field, then set the background color. This is
+optional and only affects appearance.</p>
 <h2 id='step-3-configure-authentication'>Step 3: configure authentication</h2>
 <p>The file already declares the authentication type. Verify that the security
 screen shows:</p>
@@ -302,6 +306,23 @@ for a connection. Paste your DataScope API Key there.</p>
 
 <p>Each user who builds flows needs to create their own connection with their
 account&#39;s API Key.</p>
+<h2 id='updating-to-a-newer-version-of-the-connector'>Updating to a newer version of the connector</h2>
+<p>When we publish a new version of <code>apiDefinition.swagger.json</code> (for example, to add a trigger or fix a field), you don&#39;t need to create a new connector — you update the existing one:</p>
+
+<ol>
+<li>In <a href="https://make.powerautomate.com">make.powerautomate.com</a>, go to <strong>Data &gt; Custom connectors</strong>.</li>
+<li>Open the DataScope connector, then open its <strong>Swagger editor</strong> (or re-import the file from the <strong>General</strong> tab, depending on the version of the maker portal you&#39;re on).</li>
+<li>Replace the definition with the new file, and select <strong>Update connector</strong>.</li>
+</ol>
+
+<p>A few things worth knowing before you do this:</p>
+
+<ul>
+<li><strong>This updates the connector for everyone in the environment</strong>, not just for you — it isn&#39;t scoped to a single flow.</li>
+<li><strong>Already-configured triggers keep working as long as their underlying operation didn&#39;t change.</strong> New triggers become available to add to flows; existing ones aren&#39;t automatically added to or removed from flows that already use them.</li>
+<li><strong>Re-check the icon, background color and authentication settings after updating.</strong> Microsoft&#39;s own documentation doesn&#39;t explicitly confirm whether re-importing a file always preserves those, so treat them as &quot;verify, don&#39;t assume&quot; rather than guaranteed to survive the update.</li>
+<li><strong>If a flow&#39;s trigger stops behaving as expected after an update, remove and re-add that trigger&#39;s connection</strong> in the affected flow. Microsoft&#39;s own guidance for updating a custom connector&#39;s definition recommends this as the way to make sure a flow picks up the change cleanly.</li>
+</ul>
 <h2 id='what-you-can-automate'>What you can automate</h2>
 <p>The connector provides the following triggers:</p>
 

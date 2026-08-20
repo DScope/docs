@@ -230,6 +230,9 @@
                     <a href="#paso-4-crear-la-conexion" class="toc-h2 toc-link" data-title="paso-4-crear-la-conexion">Paso 4: crear la conexión</a>
                   </li>
                   <li>
+                    <a href="#actualizar-a-una-version-mas-nueva-del-conector" class="toc-h2 toc-link" data-title="actualizar-a-una-version-mas-nueva-del-conector">Actualizar a una versión más nueva del conector</a>
+                  </li>
+                  <li>
                     <a href="#que-puedes-automatizar" class="toc-h2 toc-link" data-title="que-puedes-automatizar">Qué puedes automatizar</a>
                   </li>
                   <li>
@@ -275,14 +278,16 @@ sesión.</li>
 <li>Selecciona <strong>Conectores personalizados</strong>.</li>
 <li>Haz clic en <strong>Nuevo conector</strong> y elige <strong>Importar un archivo de OpenAPI</strong>.</li>
 <li>Escribe un nombre para el conector, por ejemplo DataScope, selecciona el
-archivo <code>apiDefinition.swagger.json</code> y continúa.</li>
+archivo <a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer"><code>apiDefinition.swagger.json</code></a> y continúa.</li>
 </ol>
 <h2 id='paso-2-revisar-la-configuracion-general'>Paso 2: revisar la configuración general</h2>
 <p>El archivo ya trae configurado el host, la ruta base y la descripción, así que
 no necesitas modificar nada en esta pantalla.</p>
 
-<p>Si quieres que el conector muestre el logo de DataScope, súbelo en el campo de
-ícono y define el color de fondo. Es opcional y solo afecta la apariencia.</p>
+<p>Si quieres que el conector muestre el logo de DataScope, descarga el
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/datascope_icon.png" target="_blank" rel="noopener noreferrer">ícono de DataScope (PNG)</a>
+y súbelo en el campo de ícono, luego define el color de fondo. Es opcional y
+solo afecta la apariencia.</p>
 <h2 id='paso-3-configurar-la-autenticacion'>Paso 3: configurar la autenticación</h2>
 <p>El archivo ya declara el tipo de autenticación. Verifica que la pantalla de
 seguridad muestre:</p>
@@ -300,6 +305,23 @@ conexión. Pega ahí tu API Key de DataScope.</p>
 
 <p>Cada usuario que arme flujos necesita crear su propia conexión con la API Key
 de su cuenta.</p>
+<h2 id='actualizar-a-una-version-mas-nueva-del-conector'>Actualizar a una versión más nueva del conector</h2>
+<p>Cuando publicamos una versión nueva de <code>apiDefinition.swagger.json</code> (por ejemplo, para agregar un disparador o corregir un campo), no necesitas crear un conector nuevo — actualizas el que ya existe:</p>
+
+<ol>
+<li>En <a href="https://make.powerautomate.com">make.powerautomate.com</a>, ve a <strong>Datos &gt; Conectores personalizados</strong>.</li>
+<li>Abre el conector de DataScope, luego abre su <strong>editor de Swagger</strong> (o vuelve a importar el archivo desde la pestaña <strong>General</strong>, según la versión del portal en la que estés).</li>
+<li>Reemplaza la definición con el archivo nuevo y selecciona <strong>Actualizar conector</strong>.</li>
+</ol>
+
+<p>Algunas cosas que vale la pena saber antes de hacer esto:</p>
+
+<ul>
+<li><strong>Esto actualiza el conector para todos en el entorno</strong>, no solo para ti — no es algo acotado a un solo flujo.</li>
+<li><strong>Los disparadores ya configurados siguen funcionando mientras su operación subyacente no haya cambiado.</strong> Los disparadores nuevos quedan disponibles para agregar a flujos; los que ya existen no se agregan ni se quitan automáticamente de los flujos que ya los usan.</li>
+<li><strong>Revisa el ícono, el color de fondo y la configuración de autenticación después de actualizar.</strong> La documentación de Microsoft no confirma explícitamente si volver a importar un archivo siempre preserva eso, así que trátalo como &quot;verifica, no asumas&quot; en vez de algo garantizado.</li>
+<li><strong>Si el disparador de un flujo deja de comportarse como esperas después de una actualización, elimina y vuelve a crear la conexión de ese disparador</strong> en el flujo afectado. La propia guía de Microsoft para actualizar la definición de un conector personalizado recomienda esto como la forma de asegurar que un flujo tome el cambio correctamente.</li>
+</ul>
 <h2 id='que-puedes-automatizar'>Qué puedes automatizar</h2>
 <p>El conector entrega los siguientes disparadores:</p>
 
