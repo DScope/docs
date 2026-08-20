@@ -8,7 +8,7 @@ title: Connect DataScope with Power Automate
 
 This guide explains how to enable the DataScope integration in Power Automate
 to automate your field operation: trigger flows when a form is completed,
-when a document is generated, when a task is assigned, or when a ticket is
+when a document is generated, when a task is assigned, or when an issue is
 registered.
 
 ## Before you start
@@ -89,8 +89,8 @@ The connector provides the following triggers:
 | New PDF | A PDF document is generated |
 | Status changed | A form answer changes status |
 | New assigned task | A task is assigned |
-| New ticket | A ticket is registered |
-| Ticket status changed | A ticket changes status |
+| New issue | An issue is registered |
+| Issue status changed | An issue changes status |
 | Completed signature | A document signature is completed |
 | Rejected signature | A signature request is rejected |
 | Updated signature | The signatures on a document are updated |
@@ -103,7 +103,7 @@ following steps of the flow without having to parse the JSON manually.
 - **One active connection per form.** Triggers associated with a form support
   only one active connection at a time. If you need several flows on the
   same form, chain them from a single trigger.
-- **Ticket triggers operate at the account level.** They support only one
+- **Issue triggers operate at the account level.** They support only one
   active connection per account.
 - **Available fields vary by configuration.** Some data, such as planning
   fields or extended task fields, only appears when those features are
@@ -116,7 +116,7 @@ following steps of the flow without having to parse the JSON manually.
   stop it, you also need to go to
   [app.mydatascope.com/integrations](https://app.mydatascope.com/integrations)
   and delete the connection there. Every other trigger (forms, PDFs, tasks,
-  tickets, signatures) does clean up automatically when the flow is turned
+  issues, signatures) does clean up automatically when the flow is turned
   off in Power Automate.
 
 ## If something doesn't work
