@@ -47,13 +47,15 @@ If your goal is a copy of your DataScope data somewhere else, start here rather 
 
 ## Choosing a method
 
-There are three ways to move data out, and they answer different questions.
+There are several ways to move data out, and they answer different questions.
 
 Method | Direction | Fits when
 ------ | --------- | ---------
 [Webhooks](#webhooks) | DataScope pushes, your endpoint reacts | Something has to happen the moment a form arrives
 The REST endpoints | You pull, on your own schedule | You are building a custom integration, or you need a specific slice on demand
 [Airbyte Cloud connectors](#airbyte-cloud-connectors) | You pull, Airbyte runs it | The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you
+Zapier | DataScope pushes, Zapier reacts | You want the same webhook push as a no-code connector, without building your own receiving endpoint
+[Microsoft Power Automate](#microsoft-power-automate) | DataScope pushes, Power Automate reacts | Same idea, wired into a Power Automate flow with the event data exposed as dynamic content
 
 A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable **Send modifications** on the webhook.
 
@@ -2198,7 +2200,7 @@ We have had ongoing trouble keeping the connector published in the official Powe
 
 [Download the connector definition (JSON)](https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json)
 
-Follow the [step-by-step guide](https://github.com/DScope/docs/blob/main/source/power_automate/power_automate_connector_guide.md) to import it and create your first connection. A Spanish version is linked from the top of that guide.
+Follow the [step-by-step guide](https://github.com/DScope/docs/blob/main/source/power_automate/power_automate_connector_guide.md) to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
 
 # Tickets (FKA Issues)
 
