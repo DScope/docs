@@ -33,15 +33,17 @@ Você precisa de:
 4. Selecione **Conectores personalizados**.
 5. Clique em **Novo conector** e escolha **Importar um arquivo OpenAPI**.
 6. Digite um nome para o conector, por exemplo DataScope, selecione o
-   arquivo `apiDefinition.swagger.json` e continue.
+   arquivo <a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/apiDefinition.swagger.json" target="_blank" rel="noopener noreferrer"><code>apiDefinition.swagger.json</code></a> e continue.
 
 ## Passo 2: revisar a configuração geral
 
 O arquivo já traz configurados o host, o caminho base e a descrição, então
 não é necessário alterar nada nesta tela.
 
-Se quiser que o conector exiba o logo do DataScope, faça o upload no campo de
-ícone e defina a cor de fundo. Isso é opcional e afeta apenas a aparência.
+Se quiser que o conector exiba o logo do DataScope, baixe o
+<a href="https://raw.githubusercontent.com/DScope/docs/main/source/power_automate/datascope_icon.png" target="_blank" rel="noopener noreferrer">ícone do DataScope (PNG)</a>
+e faça o upload no campo de ícone, depois defina a cor de fundo. Isso é
+opcional e afeta apenas a aparência.
 
 ## Passo 3: configurar a autenticação
 
@@ -61,6 +63,21 @@ uma conexão. Cole ali sua API Key do DataScope.
 
 Cada usuário que criar fluxos precisa criar sua própria conexão com a API Key
 da sua conta.
+
+## Atualizar para uma versão mais nova do conector
+
+Quando publicamos uma versão nova do `apiDefinition.swagger.json` (por exemplo, para adicionar um disparador ou corrigir um campo), você não precisa criar um conector novo — você atualiza o que já existe:
+
+1. Em [make.powerautomate.com](https://make.powerautomate.com), vá em **Dados > Conectores personalizados**.
+2. Abra o conector do DataScope, depois abra seu **editor do Swagger** (ou importe novamente o arquivo pela aba **Geral**, dependendo da versão do portal em que você está).
+3. Substitua a definição pelo arquivo novo e selecione **Atualizar conector**.
+
+Algumas coisas que vale a pena saber antes de fazer isso:
+
+- **Isso atualiza o conector para todos no ambiente**, não só para você — não é algo restrito a um único fluxo.
+- **Os disparadores já configurados continuam funcionando enquanto sua operação subjacente não tiver mudado.** Disparadores novos ficam disponíveis para adicionar a fluxos; os que já existem não são adicionados nem removidos automaticamente dos fluxos que já os usam.
+- **Reveja o ícone, a cor de fundo e a configuração de autenticação depois de atualizar.** A documentação da Microsoft não confirma explicitamente se reimportar um arquivo sempre preserva isso, então trate como "verifique, não assuma" em vez de algo garantido.
+- **Se o disparador de um fluxo parar de se comportar como esperado depois de uma atualização, remova e recrie a conexão desse disparador** no fluxo afetado. A própria orientação da Microsoft para atualizar a definição de um conector personalizado recomenda isso como a forma de garantir que um fluxo capte a mudança corretamente.
 
 ## O que você pode automatizar
 
