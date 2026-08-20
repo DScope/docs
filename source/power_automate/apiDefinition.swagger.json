@@ -178,7 +178,7 @@
               "description": "Identifier of the finding."
             },
             "code": {
-              "type": "string",
+              "type": "integer",
               "description": "Code that identifies the finding."
             },
             "name": {
@@ -186,7 +186,7 @@
               "description": "Name of the finding."
             },
             "creator_id": {
-              "type": "string",
+              "type": "integer",
               "description": "Identifier of the user who created the finding."
             },
             "creator_name": {
@@ -218,7 +218,7 @@
               "description": "Priority of the finding, in readable text."
             },
             "location_id": {
-              "type": "string",
+              "type": "integer",
               "description": "Identifier of the location linked to the finding."
             },
             "location_name": {
@@ -249,7 +249,7 @@
                 "description": "Information about a user linked to the finding.",
                 "properties": {
                   "id": {
-                    "type": "string",
+                    "type": "integer",
                     "description": "Identifier of the user."
                   },
                   "name": {
@@ -267,7 +267,7 @@
                 "description": "Information about a user linked to the finding.",
                 "properties": {
                   "id": {
-                    "type": "string",
+                    "type": "integer",
                     "description": "Identifier of the user."
                   },
                   "name": {
@@ -373,7 +373,7 @@
               "description": "Identifier of the finding."
             },
             "code": {
-              "type": "string",
+              "type": "integer",
               "description": "Code that identifies the finding."
             },
             "name": {
@@ -381,7 +381,7 @@
               "description": "Name of the finding."
             },
             "creator_id": {
-              "type": "string",
+              "type": "integer",
               "description": "Identifier of the user who created the finding."
             },
             "creator_name": {
@@ -393,7 +393,7 @@
               "description": "Email address of the user who created the finding."
             },
             "modifier_id": {
-              "type": "string",
+              "type": "integer",
               "description": "Identifier of the user who changed the status."
             },
             "modifier_name": {
@@ -437,7 +437,7 @@
               "description": "Priority of the finding, in readable text."
             },
             "location_id": {
-              "type": "string",
+              "type": "integer",
               "description": "Identifier of the location linked to the finding."
             },
             "location_name": {
@@ -468,7 +468,7 @@
                 "description": "Information about a user linked to the finding.",
                 "properties": {
                   "id": {
-                    "type": "string",
+                    "type": "integer",
                     "description": "Identifier of the user."
                   },
                   "name": {
@@ -486,7 +486,7 @@
                 "description": "Information about a user linked to the finding.",
                 "properties": {
                   "id": {
-                    "type": "string",
+                    "type": "integer",
                     "description": "Identifier of the user."
                   },
                   "name": {
