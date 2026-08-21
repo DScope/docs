@@ -2549,6 +2549,11 @@ Remember — use your own Authorization header
 
 # Changelog
 
+**20-Aug-2026**
+
+- Added the [Microsoft Power Automate](#microsoft-power-automate-beta) section under Data Export, with a downloadable connector definition and a step-by-step guide in English, Spanish and Portuguese
+- Renamed Findings to Tickets (Issues in English, Não conformidades in Portuguese) throughout the Power Automate materials, matching the product's current terminology
+
 **07-Aug-2026**
 
 - Added [Get Signature Requests](#get-signature-requests) and its [Airbyte Cloud connector](#signatures-connector), with streams for signature requests and for individual signers
