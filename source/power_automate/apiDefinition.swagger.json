@@ -2046,6 +2046,492 @@
         ]
       }
     },
+    "/assign_task": {
+      "post": {
+        "summary": "Assign Task (Tasks)",
+        "description": "Assigns a task on a form to a user, optionally scheduling it and linking it to a location. If a task with the same code already exists, it is updated instead of creating a new one.",
+        "operationId": "AssignTaskV2",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "form_id",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Identifier of the form the task will be assigned on."
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Email or identifier of the user the task is assigned to. If it does not match an existing user, the task may fall back to another user of the account, so use a valid, existing identifier."
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Code that identifies the task assignment. If a task with this code already exists, it is updated instead of created."
+          },
+          {
+            "name": "task_instruction",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Instructions shown to the user for this task."
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Date and time the task is scheduled for. Defaults to the current date and time when omitted or invalid."
+          },
+          {
+            "name": "gap",
+            "in": "query",
+            "type": "integer",
+            "required": false,
+            "description": "Time window, in hours, around the scheduled date during which the task can be completed. Defaults to 4."
+          },
+          {
+            "name": "mandatory",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "for_everyone",
+              "for_one",
+              "for_nobody"
+            ],
+            "description": "Who the task is mandatory for. Defaults to for_everyone."
+          },
+          {
+            "name": "late_response_allowed",
+            "in": "query",
+            "type": "boolean",
+            "required": false,
+            "description": "Indicates whether the task can still be completed after its scheduled window."
+          },
+          {
+            "name": "location_name",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Name of the location linked to the task. A new location is created if it does not already exist."
+          },
+          {
+            "name": "location_address",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Address of the location linked to the task."
+          },
+          {
+            "name": "l_code",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Code used to find an existing location linked to the task."
+          },
+          {
+            "name": "l_phone",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Phone number of the location linked to the task."
+          },
+          {
+            "name": "l_email",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Email address of the location linked to the task."
+          },
+          {
+            "name": "c_name",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Name of the company linked to the location."
+          },
+          {
+            "name": "c_code",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Code of the company linked to the location."
+          },
+          {
+            "name": "latitude",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Latitude of the location linked to the task."
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Longitude of the location linked to the task."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task assigned successfully, or an error reported in the response body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "string",
+                  "description": "Outcome of the request, for example ok or an error message."
+                },
+                "task": {
+                  "type": "object",
+                  "description": "The created or updated task assignment. Its exact set of fields is not fully documented here."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The task could not be assigned."
+          }
+        }
+      }
+    },
+    "/change_state": {
+      "post": {
+        "summary": "Change Form Status (Forms)",
+        "description": "Changes the status of an existing form answer.",
+        "operationId": "ChangeFormStatus",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "form_name",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Name of the form the answer belongs to."
+          },
+          {
+            "name": "form_code",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Code of the form answer to update."
+          },
+          {
+            "name": "form_state_id",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Identifier of the status to set on the form answer."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form answer status updated successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Outcome of the request, for example ok."
+                },
+                "form_answer": {
+                  "type": "object",
+                  "description": "The updated form answer. Its exact set of fields is not fully documented here."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The status could not be changed, for example because the form, form answer, or status was not found."
+          }
+        }
+      }
+    },
+    "/change_form": {
+      "post": {
+        "summary": "Modify Form Answer (Forms)",
+        "description": "Creates or updates a single question's answer on an existing form answer. The new answer is always stored as free text, regardless of the original question type.",
+        "operationId": "ModifyFormAnswer",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "form_name",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Name or identifier of the form the answer belongs to."
+          },
+          {
+            "name": "form_code",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Code of the form answer to update. The alias code is also accepted."
+          },
+          {
+            "name": "question_name",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Name of the question to create or update."
+          },
+          {
+            "name": "question_value",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "New value to set for the question."
+          },
+          {
+            "name": "subform_index",
+            "in": "query",
+            "type": "integer",
+            "required": false,
+            "description": "Row number of a subform table to update. When omitted, the answer at the root of the form is updated. Behavior for values other than a positive row number is not fully documented here."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form answer updated, or an error reported in the response body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Outcome of the request: ok or error."
+                },
+                "form_answer": {
+                  "type": "object",
+                  "description": "The updated form answer. Its exact set of fields is not fully documented here."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request could not be processed, for example because the form or token was missing."
+          }
+        }
+      }
+    },
+    "/create_pdf": {
+      "post": {
+        "summary": "Forms: Send Data / New Answer [Beta]",
+        "description": "Generates a new form answer and its PDF from an existing form template. Any parameter besides form_id, emails, token, and action is treated as an answer to the matching question in the form, so this action supports as many additional fields as the selected form defines questions for. Not all question types are fully supported, which may result in unexpected behavior. This action does not trigger GSheet Sync, Automatic Signature, or other webhooks such as Power Automate triggers.",
+        "operationId": "SendData",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "form_id",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Identifier of the form template used to generate the new answer."
+          },
+          {
+            "name": "emails",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Email addresses that receive the generated PDF."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form answer and PDF generated successfully. If no question values are provided besides form_id, emails, and token, the response behavior is not fully documented here.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean",
+                  "description": "Indicates whether the request succeeded."
+                },
+                "form_answer_id": {
+                  "type": "integer",
+                  "description": "Identifier of the generated form answer."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request could not be processed, for example because the account or form was not found."
+          }
+        }
+      }
+    },
+    "/findings/create": {
+      "post": {
+        "summary": "Tickets: Create Ticket",
+        "description": "Creates a new ticket. Tickets are not stored in the same database as forms and tasks, so some response fields below could not be fully verified against the underlying storage.",
+        "operationId": "CreateFinding",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Name of the ticket."
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Description of the ticket."
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Ticket type. When set, it can fill in defaults such as priority, expiration, location, and assignees, which may override other values sent in the same request."
+          },
+          {
+            "name": "author_email",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Email of the user registered as the author of the ticket. If it does not match an existing user, the ticket is created under the account associated with the token."
+          },
+          {
+            "name": "creation_date",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Date and time the ticket was created."
+          },
+          {
+            "name": "expiration_date",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Date and time the ticket expires."
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "open",
+              "in_progress",
+              "paused",
+              "closed"
+            ],
+            "description": "Status of the ticket."
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "description": "Priority of the ticket."
+          },
+          {
+            "name": "location_id",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Identifier of the location linked to the ticket."
+          },
+          {
+            "name": "location_name",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Name of the location linked to the ticket."
+          },
+          {
+            "name": "location_type",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Type of the location linked to the ticket."
+          },
+          {
+            "name": "assignees",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "required": false,
+            "description": "Users assigned to the ticket."
+          },
+          {
+            "name": "invitees",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "required": false,
+            "description": "Users invited to the ticket."
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Ticket created successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Identifier of the created ticket."
+                },
+                "finding": {
+                  "type": "object",
+                  "description": "The created ticket. Its exact set of fields could not be fully verified against the underlying storage."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Ticket access is not available for this account, for example because the trial has not started or access has been closed."
+          },
+          "422": {
+            "description": "The ticket could not be created.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Description of the reason the ticket could not be created."
+                },
+                "finding": {
+                  "type": "object",
+                  "description": "Empty object."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/delete_hooks/{account_id}/{webhook_id}/{uuid}": {
       "delete": {
         "summary": "Delete webhook subscription",
