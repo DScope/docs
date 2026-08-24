@@ -78,6 +78,17 @@ The connector provides the following triggers:
 Each trigger delivers the event data as dynamic content, ready to use in the
 following steps of the flow without having to parse the JSON manually.
 
+The connector also provides the following actions, so a flow can push data
+back into DataScope:
+
+| Action | What it does |
+|---|---|
+| Assign Task | Assigns a task on a form to a user |
+| Change Form Status | Changes the status of a form answer |
+| Modify Form Answer | Creates or updates a single question's answer on a form answer |
+| Send Data / New Answer [Beta] | Generates a new form answer and its PDF from an existing form template |
+| Create Ticket | Creates a new ticket |
+
 ## Important considerations
 
 - **One active connection per form.** Triggers associated with a form support

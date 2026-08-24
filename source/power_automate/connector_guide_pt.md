@@ -78,6 +78,17 @@ Cada disparador entrega os dados do evento como conteúdo dinâmico, prontos
 para usar nas próximas etapas do fluxo sem precisar processar o JSON
 manualmente.
 
+O conector também oferece as seguintes ações, para que um fluxo possa enviar
+dados de volta ao DataScope:
+
+| Ação | O que faz |
+|---|---|
+| Assign Task | Atribui uma tarefa de um formulário a um usuário |
+| Change Form Status | Altera o status de uma resposta de formulário |
+| Modify Form Answer | Cria ou atualiza a resposta de uma pergunta em uma resposta de formulário |
+| Send Data / New Answer [Beta] | Gera uma nova resposta de formulário e seu PDF a partir de um modelo existente |
+| Create Ticket | Cria um novo ticket |
+
 ## Considerações importantes
 
 - **Uma conexão ativa por formulário.** Os disparadores associados a um

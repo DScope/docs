@@ -2192,7 +2192,7 @@ That tip is the main reason a webhook alone is not enough for a warehouse: it ca
 
 # Microsoft Power Automate
 
-DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, findings and signature events, delivered as dynamic content instead of raw webhook JSON.
+DataScope publishes a custom connector for Microsoft Power Automate. It includes triggers to react to form answers, generated PDFs, task assignments, findings and signature events, delivered as dynamic content instead of raw webhook JSON, and actions to push data back into DataScope, such as assigning tasks, changing form status, or creating tickets.
 
 <aside class="notice">
 We have had ongoing trouble keeping the connector published in the official Power Automate connector gallery in sync with the latest version. Until that is resolved, the fastest way to connect is to build the custom connector yourself from the definition file below.
