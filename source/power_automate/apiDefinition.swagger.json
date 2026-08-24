@@ -2477,7 +2477,7 @@
             "items": {
               "type": "string"
             },
-            "collectionFormat": "multi",
+            "collectionFormat": "csv",
             "required": false,
             "description": "Users assigned to the ticket."
           },
@@ -2488,7 +2488,7 @@
             "items": {
               "type": "string"
             },
-            "collectionFormat": "multi",
+            "collectionFormat": "csv",
             "required": false,
             "description": "Users invited to the ticket."
           }
