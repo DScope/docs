@@ -199,3 +199,43 @@ DataScope. Two limits to plan around:
   configuration. Reach out to support and we will look into it with you.
 
 For any question, contact support and we will help you with the setup.
+
+## Changelog
+
+Versions of the DataScope app in Zapier, newest first. Zapier always runs the
+version published in its app directory, so there is nothing to update on your
+side.
+
+<!--
+Changelog entry template. Newest version first: add the new version as the
+first block below this comment, and add the same block to connector_guide_en,
+connector_guide_es and connector_guide_pt so the three languages stay in sync.
+An entry is a bold version number, **X.Y.Z**, then a blank line, then one
+bullet per change. Describe only what a reader can check in the published app
+or in this guide. Add a date only when the release date is known, and leave
+unknown history unlisted rather than filling it in.
+-->
+
+**2.1.3**
+
+- Version currently published in Zapier's app directory, built on Zapier
+  platform 18.6.0. The triggers and the actions it provides are the ones listed
+  in [What you can automate](#what-you-can-automate).
+
+**2.0.0**
+
+- Marks the boundary between the delivery path DataScope uses today and the
+  earlier one. DataScope records the version the app reports when you turn a Zap
+  on and the subscription is created, and keeps serving that subscription on the
+  path its recorded version points to. The recorded version changes only when
+  the subscription is created again, so turning a Zap off and back on re-creates
+  it with whatever version is published at that moment.
+- This applies to the PDF, status, task and signature triggers, and to the
+  ticket ones. `Forms: New Form Entry` predates versioned subscriptions and
+  always uses the earlier path, so re-creating it does not move it.
+
+Versions before 2.1.3 are not itemized here. We do not have a reliable record
+of what each earlier version changed, and leaving the gap visible is more
+useful than filling it in. The 2.0.0 boundary is listed because it is the one
+earlier change that can still affect a connection created back then. From
+2.1.3 on, every new version gets its own entry.

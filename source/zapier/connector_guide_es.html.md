@@ -207,3 +207,46 @@ datos capturados en otra parte. Dos límites que conviene tener en cuenta:
   configuración de tu cuenta. Escríbenos y lo revisamos contigo.
 
 Para cualquier duda, escribe a soporte y te acompañamos en la configuración.
+
+## Historial de versiones
+
+Versiones de la app de DataScope en Zapier, de la más nueva a la más antigua. La
+versión que corre es siempre la publicada en el directorio de aplicaciones de
+Zapier, así que no hay nada que instalar ni actualizar de tu lado.
+
+<!--
+Plantilla de entrada del historial. La más nueva va primero: agrega la
+versión nueva como el primer bloque debajo de este comentario, y agrega el mismo
+bloque en connector_guide_en, connector_guide_es y connector_guide_pt para que
+los tres idiomas queden iguales. Una entrada es el número de versión en negrita,
+**X.Y.Z**, después una línea en blanco, después un bullet por cambio. Describe
+solo lo que el lector puede verificar en la app publicada o en esta guía. Agrega
+una fecha solo si se conoce la fecha de publicación, y si no se sabe qué cambió
+una versión anterior, déjalo sin listar en vez de rellenarlo.
+-->
+
+**2.1.3**
+
+- Versión publicada actualmente en el directorio de aplicaciones de Zapier,
+  construida sobre la plataforma 18.6.0 de Zapier. Los disparadores y las
+  actions que entrega son los que aparecen en
+  [Qué puedes automatizar](#que-puedes-automatizar).
+
+**2.0.0**
+
+- Marca el límite entre la vía por la que DataScope entrega los eventos hoy y la
+  anterior. DataScope registra la versión que reporta la app cuando activas el
+  Zap y se crea la suscripción, y sigue atendiendo esa suscripción por la vía
+  que indica su versión registrada. Esa versión solo cambia cuando la
+  suscripción se vuelve a crear, así que apagar y volver a activar un Zap la
+  recrea con la versión que esté publicada en ese momento.
+- Esto aplica a los disparadores de PDF, de estado, de tareas y de firmas, y a
+  los de tickets. `Forms: New Form Entry` es anterior a las suscripciones con
+  versión y siempre usa la vía anterior, así que recrearlo no lo cambia de
+  vía.
+
+Las versiones anteriores a 2.1.3 no están detalladas acá. No tenemos un registro
+confiable de qué cambió cada una, y dejar el vacío a la vista es más útil que
+rellenarlo. El límite de 2.0.0 sí aparece porque es el único cambio anterior que
+todavía puede afectar a una conexión creada en ese entonces. A partir de 2.1.3,
+cada versión nueva tiene su propia entrada.

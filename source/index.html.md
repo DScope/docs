@@ -81,6 +81,8 @@ There is nothing to import. The app is published in Zapier's app directory, and 
 
 Follow the <a href="zapier/connector_guide_en.html" target="_blank" rel="noopener noreferrer">step-by-step guide</a> to create the connection and your first Zap. Spanish and Portuguese versions are linked from the top of that guide.
 
+The guide ends with a <a href="zapier/connector_guide_en.html#changelog" target="_blank" rel="noopener noreferrer">changelog</a> of the app's versions, where you can check which version is published and what it changed.
+
 <aside class="notice">
 Two things to know before you build: a form-scoped trigger supports one active Zap per form, and the ticket triggers one active Zap per account. Where the <code>Form</code> field is optional, select a form anyway, because a subscription with no form attached never fires. The guide covers both, plus the rest of the caveats.
 </aside>
@@ -2566,6 +2568,7 @@ Remember — use your own Authorization header
 **26-Aug-2026**
 
 - Added the [Zapier](#zapier) section under Data Export, with a step-by-step guide in English, Spanish and Portuguese covering the connection, every trigger and action, the Locations and Places choice, and the one-Zap-per-form constraint
+- The Zapier guide now ends with a changelog of the app's versions, so you can tell which version is published and what it changed
 
 **20-Aug-2026**
 

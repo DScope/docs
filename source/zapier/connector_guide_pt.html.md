@@ -211,3 +211,46 @@ dados capturados em outro lugar. Dois limites para levar em conta:
 
 Para qualquer dúvida, escreva para o suporte e nós te acompanhamos na
 configuração.
+
+## Histórico de versões
+
+Versões do app do DataScope no Zapier, da mais nova para a mais antiga. A versão
+que roda é sempre a publicada no diretório de aplicativos do Zapier, então não
+há nada para instalar ou atualizar do seu lado.
+
+<!--
+Modelo de entrada do histórico. A mais nova vem primeiro: adicione a
+versão nova como o primeiro bloco abaixo deste comentário, e adicione o mesmo
+bloco em connector_guide_en, connector_guide_es e connector_guide_pt para que os
+três idiomas fiquem iguais. Uma entrada é o número da versão em negrito,
+**X.Y.Z**, depois uma linha em branco, depois um bullet por mudança. Descreva
+apenas o que o leitor pode verificar no app publicado ou neste guia. Inclua uma
+data somente quando a data de publicação for conhecida, e se não se souber o que
+uma versão anterior mudou, deixe sem listar em vez de preencher.
+-->
+
+**2.1.3**
+
+- Versão publicada atualmente no diretório de aplicativos do Zapier, construída
+  sobre a plataforma 18.6.0 do Zapier. Os disparadores e as actions que ela
+  oferece são os listados em
+  [O que você pode automatizar](#o-que-voce-pode-automatizar).
+
+**2.0.0**
+
+- Marca o limite entre o caminho pelo qual o DataScope entrega os eventos hoje e
+  o anterior. O DataScope registra a versão que o app informa quando você ativa
+  o Zap e a assinatura é criada, e segue atendendo essa assinatura pelo caminho
+  que a versão registrada indica. Essa versão só muda quando a assinatura é
+  criada novamente, então desativar e reativar um Zap a recria com a versão que
+  estiver publicada naquele momento.
+- Isso se aplica aos disparadores de PDF, de status, de tarefas e de
+  assinaturas, e aos de tickets. `Forms: New Form Entry` é anterior às
+  assinaturas com versão e sempre usa o caminho anterior, então recriá-lo não o
+  muda de caminho.
+
+As versões anteriores à 2.1.3 não estão detalhadas aqui. Não temos um registro
+confiável do que cada uma mudou, e deixar a lacuna visível é mais útil do que
+preenchê-la. O limite da 2.0.0 aparece porque é a única mudança anterior que
+ainda pode afetar uma conexão criada naquela época. A partir da 2.1.3, cada
+versão nova tem a sua própria entrada.
