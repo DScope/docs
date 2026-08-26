@@ -41,8 +41,9 @@ You need:
 The first time you use DataScope in a Zap, Zapier asks you for a connection
 and shows a single field, **Token Key**. Paste your DataScope API Key there.
 
-Zapier validates the key right away, so an incomplete or wrong key fails at
-this step rather than silently later on.
+Paste it exactly as DataScope shows it, with no leading or trailing spaces.
+If the connection is accepted but the trigger then returns no data at all, the
+key is the first thing to re-check.
 
 The connection belongs to your Zapier account and you can reuse it in every
 Zap you build. Each person who builds Zaps needs their own connection, with

@@ -42,8 +42,9 @@ Necesitas:
 La primera vez que uses DataScope en un Zap, Zapier te pedirá una conexión y
 te mostrará un solo campo, **Token Key**. Pega ahí tu API Key de DataScope.
 
-Zapier valida la clave de inmediato, así que una API Key incompleta o
-incorrecta falla en este paso y no en silencio más adelante.
+Pégala tal como DataScope te la muestra, sin espacios al inicio ni al final.
+Si la conexión se acepta pero después el disparador no devuelve ningún dato, la
+API Key es lo primero que conviene revisar.
 
 La conexión pertenece a tu cuenta de Zapier y puedes reutilizarla en todos los
 Zaps que armes. Cada persona que arme Zaps necesita su propia conexión, con la

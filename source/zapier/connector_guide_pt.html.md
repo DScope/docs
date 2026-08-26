@@ -44,8 +44,9 @@ Na primeira vez que você usar o DataScope em um Zap, o Zapier vai pedir uma
 conexão e mostrar um único campo, **Token Key**. Cole ali sua API Key do
 DataScope.
 
-O Zapier valida a chave na hora, então uma API Key incompleta ou incorreta
-falha nesta etapa, e não em silêncio mais adiante.
+Cole exatamente como o DataScope mostra, sem espaços no início ou no final. Se
+a conexão for aceita mas o disparador depois não retornar nenhum dado, a API
+Key é a primeira coisa a revisar.
 
 A conexão pertence à sua conta do Zapier e você pode reutilizá-la em todos os
 Zaps que montar. Cada pessoa que monta Zaps precisa da sua própria conexão,
