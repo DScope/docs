@@ -131,6 +131,11 @@ Nas duas versões, se o email ou o nome de usuário que você envia não corresp
 **Location Type** com duas opções, e as duas ações não se comportam da mesma
 forma. Na **Assign Task V2**:
 
+<aside class="notice">
+O campo <b>Location Type</b> chegou na versão 2.1.3, que é liberada para contas selecionadas. Se você não o vê em nenhuma das duas actions, seu Zap está em uma versão anterior e aponta somente para o módulo de locais antigo. Veja o [Histórico de versões](#historico-de-versoes).
+</aside>
+
+
 | Location Type | Comportamento quando nada corresponde |
 |---|---|
 | Locations (old module, legacy) | O local é criado no DataScope a partir do Location Name e dos demais campos de local que você enviou. Sem Location Name não há com o que criá-lo, então a tarefa é atribuída sem local |
@@ -238,8 +243,16 @@ comportar de forma diferente de um novo criado com o mesmo disparador, e em
 qualquer um dos dois casos não há nada para instalar ou atualizar do seu lado.
 Algumas versões são liberadas para contas selecionadas antes de se tornarem a
 padrão para os Zaps novos, então a versão por trás do seu Zap não é sempre a
-atual. Quando uma versão não tem nota de publicação, a entrada descreve o que a
-definição dela oferece, e não o que mudou.
+atual.
+
+Dois números, 2.0.0 e 2.1.0, nunca foram publicados. Por isso as notas de
+publicação registradas na 2.0.1 e na 2.1.1 descrevem apenas a diferença em
+relação a um draft que já não existe. Os bullets abaixo descrevem, em vez disso,
+a diferença em relação à versão publicada anterior.
+
+<aside class="notice">
+O DataScope registra a versão que o app informa quando você ativa o Zap e a assinatura é criada, e usa esse número para decidir por onde entrega os eventos: abaixo de 2.0.0 o caminho anterior, em 2.0.0 ou acima o caminho atual. Como nunca foi publicada uma 2.0.0, na prática todos os Zaps da linha 1.14 usam o caminho anterior e todos os da linha 2.x usam o atual. O número registrado só muda quando a assinatura é criada novamente, então desativar e reativar um Zap o registra de novo. <code>Forms: New Form Entry</code> é anterior às assinaturas com versão e sempre usa o caminho anterior.
+</aside>
 
 <!--
 Modelo de entrada do histórico. A mais nova vem primeiro: adicione a versão nova
@@ -247,20 +260,21 @@ como o primeiro bloco abaixo deste comentário, e adicione o mesmo bloco em
 connector_guide_en, connector_guide_es e connector_guide_pt para que os três
 idiomas fiquem iguais. Uma entrada é o número da versão em negrito, **X.Y.Z**,
 opcionalmente seguido de um parêntese com o estado de liberação, depois uma
-linha em branco, depois um bullet por mudança, retirado da nota de publicação
-daquela versão na plataforma de desenvolvimento do Zapier. Se não houver nota,
-descreva o que a definição da versão oferece e deixe isso claro. Descreva apenas
-o que o leitor pode verificar no app ou neste guia. Nunca publique a quantidade
-de usuários nem de tarefas por versão. Inclua uma data somente quando a data de
-publicação for conhecida.
+linha em branco, depois um bullet por mudança. Prefira a nota de publicação da
+versão na plataforma de desenvolvimento do Zapier; se a nota faltar ou ficar
+aquém da mudança, compare a definição daquela versão com a da publicada
+anterior e descreva isso. Descreva apenas o que o leitor pode verificar no app
+ou neste guia. Nunca publique a quantidade de usuários nem de tarefas por
+versão. Inclua uma data somente quando a data de publicação for conhecida.
 -->
 
 **2.1.3** (liberada para contas selecionadas)
 
-- Traz o campo `Location Type` na `Tasks: Assign Task V2` e na
-  `Tickets: Create Ticket`, com a opção `Places (new module)`, além de
-  `Find Location / Place by ID` na `Tasks: Assign Task V2`. Esta versão não tem
-  nota de publicação registrada.
+- Adiciona o campo `Location Type` na `Tasks: Assign Task V2` e na
+  `Tickets: Create Ticket`, com a opção `Places (new module)` ao lado da de
+  Locations antiga.
+- Adiciona `Find Location / Place by ID` na `Tasks: Assign Task V2`, para que
+  uma tarefa possa apontar para um lugar existente pelo seu ID interno.
 
 **2.1.2** (padrão para os Zaps novos)
 
@@ -270,29 +284,28 @@ publicação for conhecida.
 
 **2.1.1**
 
+- Renomeia os dois disparadores de tickets. `Findings: New Finding` passa a
+  `Tickets: New Ticket (FKA Issue)`, e `Findings: Changed Status` passa a
+  `Tickets: Changed Status (FKA Issue)`.
+- Adiciona a action `Tickets: Create Ticket (FKA Issue)`.
 - Corrige um erro na data de criação e na data de expiração relativa.
 
 **2.0.2**
 
-- O local deixa de ser obrigatório na action `Assign Task`.
+- O Location Name deixa de ser obrigatório na action `Assign Task`.
 - Muda alguns tipos de campos de saída.
 
 **2.0.1**
 
+- A primeira versão publicada da linha 2.x, e a primeira com os três
+  disparadores de assinatura e os dois de tickets, que naquele momento se
+  chamavam `Findings: New Finding` e `Findings: Changed Status`.
+- Consolida o que os drafts da 1.14 tinham adicionado separadamente: o
+  disparador de status, a action `Send Data`, e os campos de obrigatoriedade e
+  de resposta tardia na `Assign Task`.
+- Passa a prefixar o nome de cada disparador e de cada action com a sua área:
+  `Forms:`, `Tasks:` ou `Signatures:`.
 - Melhora um valor padrão.
-
-**2.0.0**
-
-- Marca o limite entre o caminho pelo qual o DataScope entrega os eventos hoje e
-  o anterior. O DataScope registra a versão que o app informa quando você ativa
-  o Zap e a assinatura é criada, e segue atendendo essa assinatura pelo caminho
-  que a versão registrada indica. Essa versão só muda quando a assinatura é
-  criada novamente, então desativar e reativar um Zap a recria com a versão que
-  for a atual naquele momento.
-- Isso se aplica aos disparadores de PDF, de status, de tarefas e de
-  assinaturas, e aos de tickets. `Forms: New Form Entry` é anterior às
-  assinaturas com versão e sempre usa o caminho anterior, então recriá-lo não o
-  muda de caminho.
 
 **1.14.3**
 

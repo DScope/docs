@@ -127,6 +127,11 @@ On both versions, if the email or username you send does not match a user in you
 **Location Type** field with two options, and the two actions do not behave the
 same way. On **Assign Task V2**:
 
+<aside class="notice">
+The <b>Location Type</b> field arrived in version 2.1.3, which is released to selected accounts. If you do not see it on either action, your Zap is on an earlier version and targets the legacy Locations module only. See the [Changelog](#changelog).
+</aside>
+
+
 | Location Type | Behavior when nothing matches |
 |---|---|
 | Locations (old module, legacy) | The location is created in DataScope from the Location Name and the other location fields you sent. With no Location Name there is nothing to create it from, so the task is assigned with no location |
@@ -225,8 +230,16 @@ the version it was created with, so an older Zap can behave differently from a
 new one built on the same trigger, and there is nothing to install or update on
 your side either way. Some versions are released to selected accounts before
 they become the default for new Zaps, so the version behind your Zap is not
-always the current one. Where a version carries no release note, the entry
-describes what its definition provides rather than what it changed.
+always the current one.
+
+Two numbers, 2.0.0 and 2.1.0, were never released. Because of that, the release
+notes recorded on 2.0.1 and 2.1.1 describe only the difference from a draft that
+no longer exists. The bullets below describe the difference from the previous
+released version instead.
+
+<aside class="notice">
+DataScope records the version the app reports when you turn a Zap on and the subscription is created, and uses that number to pick how events are delivered: below 2.0.0 the earlier path, 2.0.0 or above the current one. Since no 2.0.0 was ever released, in practice every Zap on the 1.14 line takes the earlier path and every Zap on the 2.x line takes the current one. The recorded number changes only when the subscription is created again, so turning a Zap off and back on re-records it. <code>Forms: New Form Entry</code> predates versioned subscriptions and always takes the earlier path.
+</aside>
 
 <!--
 Changelog entry template. Newest version first: add the new version as the first
@@ -234,19 +247,20 @@ block below this comment, and add the same block to connector_guide_en,
 connector_guide_es and connector_guide_pt so the three languages stay in sync.
 An entry is a bold version number, **X.Y.Z**, optionally followed by a
 parenthetical for its rollout state, then a blank line, then one bullet per
-change taken from the version's release note in the Zapier developer platform.
-Where there is no release note, describe what the version's definition provides
-and say so. Describe only what a reader can check in the app or in this guide.
-Never publish per-version user or task counts. Add a date only when the release
-date is known.
+change. Prefer the version's release note in the Zapier developer platform;
+where the note is missing or undersells the change, diff the version's
+definition against the previous released one and describe that. Describe only
+what a reader can check in the app or in this guide. Never publish per-version
+user or task counts. Add a date only when the release date is known.
 -->
 
 **2.1.3** (released to selected accounts)
 
-- Carries the `Location Type` field on `Tasks: Assign Task V2` and on
-  `Tickets: Create Ticket`, with the `Places (new module)` option, plus
-  `Find Location / Place by ID` on `Tasks: Assign Task V2`. No release note was
-  recorded for this version.
+- Adds the `Location Type` field to `Tasks: Assign Task V2` and to
+  `Tickets: Create Ticket`, with the `Places (new module)` option next to the
+  legacy Locations one.
+- Adds `Find Location / Place by ID` to `Tasks: Assign Task V2`, so a task can
+  point at an existing location or place by its internal ID.
 
 **2.1.2** (default for new Zaps)
 
@@ -256,28 +270,28 @@ date is known.
 
 **2.1.1**
 
+- Renames the two ticket triggers. `Findings: New Finding` becomes
+  `Tickets: New Ticket (FKA Issue)`, and `Findings: Changed Status` becomes
+  `Tickets: Changed Status (FKA Issue)`.
+- Adds the action `Tickets: Create Ticket (FKA Issue)`.
 - Fixes a bug with the creation date and the relative expiration date.
 
 **2.0.2**
 
-- Location is no longer required on the `Assign Task` action.
+- Location Name is no longer required on the `Assign Task` action.
 - Changes some output field types.
 
 **2.0.1**
 
+- The first released version of the 2.x line, and the first with the three
+  signature triggers and the two ticket triggers, then named
+  `Findings: New Finding` and `Findings: Changed Status`.
+- Consolidates what the 1.14 drafts had added separately: the status trigger,
+  the `Send Data` action, and the mandatory and late-response fields on
+  `Assign Task`.
+- Prefixes every trigger and action name with its area, `Forms:`, `Tasks:` or
+  `Signatures:`.
 - Improves a default value.
-
-**2.0.0**
-
-- Marks the boundary between the delivery path DataScope uses today and the
-  earlier one. DataScope records the version the app reports when you turn a Zap
-  on and the subscription is created, and keeps serving that subscription on the
-  path its recorded version points to. The recorded version changes only when
-  the subscription is created again, so turning a Zap off and back on re-creates
-  it with whatever version is current at that moment.
-- This applies to the PDF, status, task and signature triggers, and to the
-  ticket ones. `Forms: New Form Entry` predates versioned subscriptions and
-  always uses the earlier path, so re-creating it does not move it.
 
 **1.14.3**
 

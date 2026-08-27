@@ -129,6 +129,11 @@ En las dos versiones, si el email o el nombre de usuario que envías no coincide
 **Location Type** con dos opciones, y las dos acciones no se comportan igual. En
 **Assign Task V2**:
 
+<aside class="notice">
+El campo <b>Location Type</b> llegó en la versión 2.1.3, que está liberada a cuentas seleccionadas. Si no lo ves en ninguna de las dos actions, tu Zap está en una versión anterior y apunta solo al módulo de lugares antiguo. Revisa el [Historial de versiones](#historial-de-versiones).
+</aside>
+
+
 | Location Type | Comportamiento cuando nada coincide |
 |---|---|
 | Locations (old module, legacy) | El lugar se crea en DataScope a partir del Location Name y de los demás campos de ubicación que enviaste. Sin Location Name no hay con qué crearlo, así que la tarea se asigna sin lugar |
@@ -235,8 +240,16 @@ puede comportarse distinto a uno nuevo creado con el mismo disparador, y en
 cualquiera de los dos casos no hay nada que instalar ni actualizar de tu lado.
 Algunas versiones se liberan a cuentas seleccionadas antes de pasar a ser la
 predeterminada para los Zaps nuevos, así que la versión detrás de tu Zap no
-siempre es la actual. Cuando una versión no tiene nota de publicación, la
-entrada describe lo que trae su definición en vez de lo que cambió.
+siempre es la actual.
+
+Dos números, 2.0.0 y 2.1.0, nunca se publicaron. Por eso las notas de
+publicación registradas en 2.0.1 y 2.1.1 describen solo la diferencia respecto a
+un draft que ya no existe. Los bullets de abajo describen, en cambio, la
+diferencia respecto a la versión publicada anterior.
+
+<aside class="notice">
+DataScope registra la versión que reporta la app cuando activas el Zap y se crea la suscripción, y usa ese número para decidir por dónde entrega los eventos: por debajo de 2.0.0 la vía anterior, en 2.0.0 o superior la vía actual. Como nunca se publicó una 2.0.0, en la práctica todos los Zaps de la línea 1.14 usan la vía anterior y todos los de la línea 2.x usan la actual. El número registrado solo cambia cuando la suscripción se vuelve a crear, así que apagar y volver a activar un Zap lo vuelve a registrar. <code>Forms: New Form Entry</code> es anterior a las suscripciones con versión y siempre usa la vía anterior.
+</aside>
 
 <!--
 Plantilla de entrada del historial. La más nueva va primero: agrega la versión
@@ -244,20 +257,21 @@ nueva como el primer bloque debajo de este comentario, y agrega el mismo bloque
 en connector_guide_en, connector_guide_es y connector_guide_pt para que los tres
 idiomas queden iguales. Una entrada es el número de versión en negrita,
 **X.Y.Z**, opcionalmente seguido de un paréntesis con su estado de liberación,
-después una línea en blanco, después un bullet por cambio, tomado de la nota de
-publicación de esa versión en la plataforma de desarrollo de Zapier. Si no hay
-nota, describe lo que trae la definición de la versión y acláralo. Describe solo
-lo que el lector puede verificar en la app o en esta guía. Nunca publiques la
-cantidad de usuarios ni de tareas por versión. Agrega una fecha solo si se
-conoce la fecha de publicación.
+después una línea en blanco, después un bullet por cambio. Prioriza la nota de
+publicación de la versión en la plataforma de desarrollo de Zapier; si la nota
+falta o se queda corta, diffea la definición de esa versión contra la publicada
+anterior y describe eso. Describe solo lo que el lector puede verificar en la
+app o en esta guía. Nunca publiques la cantidad de usuarios ni de tareas por
+versión. Agrega una fecha solo si se conoce la fecha de publicación.
 -->
 
 **2.1.3** (liberada a cuentas seleccionadas)
 
-- Trae el campo `Location Type` en `Tasks: Assign Task V2` y en
-  `Tickets: Create Ticket`, con la opción `Places (new module)`, además de
-  `Find Location / Place by ID` en `Tasks: Assign Task V2`. Esta versión no
-  tiene nota de publicación registrada.
+- Agrega el campo `Location Type` en `Tasks: Assign Task V2` y en
+  `Tickets: Create Ticket`, con la opción `Places (new module)` junto a la de
+  Locations antigua.
+- Agrega `Find Location / Place by ID` en `Tasks: Assign Task V2`, para que una
+  tarea pueda apuntar a un lugar existente por su ID interno.
 
 **2.1.2** (predeterminada para los Zaps nuevos)
 
@@ -267,29 +281,29 @@ conoce la fecha de publicación.
 
 **2.1.1**
 
+- Renombra los dos disparadores de tickets. `Findings: New Finding` pasa a
+  `Tickets: New Ticket (FKA Issue)`, y `Findings: Changed Status` pasa a
+  `Tickets: Changed Status (FKA Issue)`.
+- Agrega la action `Tickets: Create Ticket (FKA Issue)`.
 - Corrige un error con la fecha de creación y con la fecha de expiración
   relativa.
 
 **2.0.2**
 
-- La ubicación deja de ser obligatoria en la action `Assign Task`.
+- El Location Name deja de ser obligatorio en la action `Assign Task`.
 - Cambia algunos tipos de campos de salida.
 
 **2.0.1**
 
+- La primera versión publicada de la línea 2.x, y la primera con los tres
+  disparadores de firma y los dos de tickets, que en ese momento se llamaban
+  `Findings: New Finding` y `Findings: Changed Status`.
+- Consolida lo que los drafts de 1.14 habían agregado por separado: el
+  disparador de estado, la action `Send Data`, y los campos de obligatoriedad y
+  de respuesta tardía en `Assign Task`.
+- Antepone su área al nombre de cada disparador y de cada action: `Forms:`,
+  `Tasks:` o `Signatures:`.
 - Mejora un valor por defecto.
-
-**2.0.0**
-
-- Marca el límite entre la vía por la que DataScope entrega los eventos hoy y la
-  anterior. DataScope registra la versión que reporta la app cuando activas el
-  Zap y se crea la suscripción, y sigue atendiendo esa suscripción por la vía
-  que indica su versión registrada. Esa versión solo cambia cuando la
-  suscripción se vuelve a crear, así que apagar y volver a activar un Zap la
-  recrea con la versión que sea la actual en ese momento.
-- Esto aplica a los disparadores de PDF, de estado, de tareas y de firmas, y a
-  los de tickets. `Forms: New Form Entry` es anterior a las suscripciones con
-  versión y siempre usa la vía anterior, así que recrearlo no lo cambia de vía.
 
 **1.14.3**
 
