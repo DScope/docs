@@ -231,26 +231,35 @@ Para cualquier duda, escribe a soporte y te acompañamos en la configuración.
 
 Versiones de la app de DataScope en Zapier, de la más nueva a la más antigua. Un
 Zap sigue corriendo con la versión con la que fue creado, así que un Zap antiguo
-puede comportarse distinto a uno nuevo armado con el mismo disparador. En
+puede comportarse distinto a uno nuevo creado con el mismo disparador, y en
 cualquiera de los dos casos no hay nada que instalar ni actualizar de tu lado.
+Algunas versiones se liberan a cuentas seleccionadas antes de pasar a ser la
+predeterminada para los Zaps nuevos, así que la versión detrás de tu Zap no
+siempre es la actual. Cuando una versión no tiene nota de publicación, la
+entrada describe lo que trae su definición en vez de lo que cambió.
 
 <!--
 Plantilla de entrada del historial. La más nueva va primero: agrega la versión
 nueva como el primer bloque debajo de este comentario, y agrega el mismo bloque
 en connector_guide_en, connector_guide_es y connector_guide_pt para que los tres
 idiomas queden iguales. Una entrada es el número de versión en negrita,
-**X.Y.Z**, después una línea en blanco, después un bullet por cambio, tomado de
-la nota de changelog de esa versión en la plataforma de desarrollo de Zapier.
-Describe solo lo que el lector puede verificar en la app o en esta guía. Nunca
-publiques la cantidad de usuarios ni de tareas por versión. Agrega una fecha
-solo si se conoce la fecha de publicación.
+**X.Y.Z**, opcionalmente seguido de un paréntesis con su estado de liberación,
+después una línea en blanco, después un bullet por cambio, tomado de la nota de
+publicación de esa versión en la plataforma de desarrollo de Zapier. Si no hay
+nota, describe lo que trae la definición de la versión y acláralo. Describe solo
+lo que el lector puede verificar en la app o en esta guía. Nunca publiques la
+cantidad de usuarios ni de tareas por versión. Agrega una fecha solo si se
+conoce la fecha de publicación.
 -->
 
-**2.1.3**
+**2.1.3** (liberada a cuentas seleccionadas)
 
-- En desarrollo. No está publicada, así que todavía ningún Zap corre con ella.
+- Trae el campo `Location Type` en `Tasks: Assign Task V2` y en
+  `Tickets: Create Ticket`, con la opción `Places (new module)`, además de
+  `Find Location / Place by ID` en `Tasks: Assign Task V2`. Esta versión no
+  tiene nota de publicación registrada.
 
-**2.1.2** (versión actual para los Zaps nuevos)
+**2.1.2** (predeterminada para los Zaps nuevos)
 
 - Agrega la action `Tasks: Assign Task V2` y renombra la anterior como
   `Tasks: Assign Task V1 [Legacy]`. La V2 acepta direcciones de email de usuario
@@ -282,12 +291,28 @@ solo si se conoce la fecha de publicación.
   los de tickets. `Forms: New Form Entry` es anterior a las suscripciones con
   versión y siempre usa la vía anterior, así que recrearlo no lo cambia de vía.
 
-**1.14.x**
+**1.14.3**
 
-- La línea anterior, que sigue atendiendo los Zaps que se armaron con ella.
-  Entrega solo `New Form Entry`, `New Assigned Task` y `New PDF` como
-  disparadores, y `Assign Task`, `Change Form Status` y `Modify Form Answer`
-  como actions. El disparador de estado, los tres de firma, los dos de tickets,
-  `Assign Task V2`, `Send Data` y `Create Ticket` no existen ahí, y
-  `Assign Task` exige un Location Name. Para tener cualquiera de esos, vuelve a
-  crear el Zap para que tome la versión actual.
+- Agrega `Make this task mandatory` y `Allow the task to be answered after the
+  due date has been reached` a la action `Assign Task`.
+- No trae el disparador `Status Changed` ni la action `Send Data` que sí tiene
+  1.14.2, así que un Zap en esta versión tiene tres disparadores y tres actions.
+
+**1.14.2**
+
+- Agrega la action `Send Data`.
+- Renombra el disparador `Change Status` como `Status Changed`, y su campo Form
+  pasa a ser opcional.
+
+**1.14.1**
+
+- Agrega el disparador `Change Status`.
+
+**1.14.0**
+
+- La base de la línea 1.14: `New Form Entry`, `New Assigned Task` y `New PDF`
+  como disparadores, y `Assign Task`, `Change Form Status` y
+  `Modify Form Answer` como actions. Acá `Assign Task` exige un Location Name.
+- Los tres disparadores de firma, los dos de tickets, `Assign Task V2` y
+  `Create Ticket` existen solo en la línea 2.x. Para usar cualquiera de ellos,
+  vuelve a crear el Zap para que tome la versión actual.

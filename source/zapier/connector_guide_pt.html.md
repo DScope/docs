@@ -234,26 +234,35 @@ configuração.
 
 Versões do app do DataScope no Zapier, da mais nova para a mais antiga. Um Zap
 continua rodando com a versão com a qual foi criado, então um Zap antigo pode se
-comportar de forma diferente de um novo criado com o mesmo disparador. Em
+comportar de forma diferente de um novo criado com o mesmo disparador, e em
 qualquer um dos dois casos não há nada para instalar ou atualizar do seu lado.
+Algumas versões são liberadas para contas selecionadas antes de se tornarem a
+padrão para os Zaps novos, então a versão por trás do seu Zap não é sempre a
+atual. Quando uma versão não tem nota de publicação, a entrada descreve o que a
+definição dela oferece, e não o que mudou.
 
 <!--
 Modelo de entrada do histórico. A mais nova vem primeiro: adicione a versão nova
 como o primeiro bloco abaixo deste comentário, e adicione o mesmo bloco em
 connector_guide_en, connector_guide_es e connector_guide_pt para que os três
 idiomas fiquem iguais. Uma entrada é o número da versão em negrito, **X.Y.Z**,
-depois uma linha em branco, depois um bullet por mudança, retirado da nota de
-changelog daquela versão na plataforma de desenvolvimento do Zapier. Descreva
-apenas o que o leitor pode verificar no app ou neste guia. Nunca publique a
-quantidade de usuários nem de tarefas por versão. Inclua uma data somente quando
-a data de publicação for conhecida.
+opcionalmente seguido de um parêntese com o estado de liberação, depois uma
+linha em branco, depois um bullet por mudança, retirado da nota de publicação
+daquela versão na plataforma de desenvolvimento do Zapier. Se não houver nota,
+descreva o que a definição da versão oferece e deixe isso claro. Descreva apenas
+o que o leitor pode verificar no app ou neste guia. Nunca publique a quantidade
+de usuários nem de tarefas por versão. Inclua uma data somente quando a data de
+publicação for conhecida.
 -->
 
-**2.1.3**
+**2.1.3** (liberada para contas selecionadas)
 
-- Em desenvolvimento. Não está publicada, então nenhum Zap roda com ela ainda.
+- Traz o campo `Location Type` na `Tasks: Assign Task V2` e na
+  `Tickets: Create Ticket`, com a opção `Places (new module)`, além de
+  `Find Location / Place by ID` na `Tasks: Assign Task V2`. Esta versão não tem
+  nota de publicação registrada.
 
-**2.1.2** (versão atual para os Zaps novos)
+**2.1.2** (padrão para os Zaps novos)
 
 - Adiciona a action `Tasks: Assign Task V2` e renomeia a anterior como
   `Tasks: Assign Task V1 [Legacy]`. A V2 aceita endereços de email de usuário
@@ -285,12 +294,28 @@ a data de publicação for conhecida.
   assinaturas com versão e sempre usa o caminho anterior, então recriá-lo não o
   muda de caminho.
 
-**1.14.x**
+**1.14.3**
 
-- A linha anterior, que continua atendendo os Zaps criados com ela. Ela oferece
-  apenas `New Form Entry`, `New Assigned Task` e `New PDF` como disparadores, e
-  `Assign Task`, `Change Form Status` e `Modify Form Answer` como actions. O
-  disparador de status, os três de assinatura, os dois de tickets,
-  `Assign Task V2`, `Send Data` e `Create Ticket` não existem lá, e
-  `Assign Task` exige um Location Name. Para ter qualquer um desses, crie o Zap
-  novamente para que ele use a versão atual.
+- Adiciona `Make this task mandatory` e `Allow the task to be answered after the
+  due date has been reached` à action `Assign Task`.
+- Não traz o disparador `Status Changed` nem a action `Send Data` que a 1.14.2
+  tem, então um Zap nesta versão tem três disparadores e três actions.
+
+**1.14.2**
+
+- Adiciona a action `Send Data`.
+- Renomeia o disparador `Change Status` como `Status Changed`, e o campo Form
+  dele passa a ser opcional.
+
+**1.14.1**
+
+- Adiciona o disparador `Change Status`.
+
+**1.14.0**
+
+- A base da linha 1.14: `New Form Entry`, `New Assigned Task` e `New PDF` como
+  disparadores, e `Assign Task`, `Change Form Status` e `Modify Form Answer`
+  como actions. Aqui a `Assign Task` exige um Location Name.
+- Os três disparadores de assinatura, os dois de tickets, `Assign Task V2` e
+  `Create Ticket` existem somente na linha 2.x. Para usar qualquer um deles,
+  crie o Zap novamente para que ele use a versão atual.

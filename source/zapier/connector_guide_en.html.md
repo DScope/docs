@@ -222,25 +222,33 @@ For any question, contact support and we will help you with the setup.
 
 Versions of the DataScope app in Zapier, newest first. A Zap keeps running on
 the version it was created with, so an older Zap can behave differently from a
-new one built on the same trigger. There is nothing to install or update on your
-side either way.
+new one built on the same trigger, and there is nothing to install or update on
+your side either way. Some versions are released to selected accounts before
+they become the default for new Zaps, so the version behind your Zap is not
+always the current one. Where a version carries no release note, the entry
+describes what its definition provides rather than what it changed.
 
 <!--
 Changelog entry template. Newest version first: add the new version as the first
 block below this comment, and add the same block to connector_guide_en,
 connector_guide_es and connector_guide_pt so the three languages stay in sync.
-An entry is a bold version number, **X.Y.Z**, then a blank line, then one bullet
-per change, taken from the version's changelog note in the Zapier developer
-platform. Describe only what a reader can check in the app or in this guide.
+An entry is a bold version number, **X.Y.Z**, optionally followed by a
+parenthetical for its rollout state, then a blank line, then one bullet per
+change taken from the version's release note in the Zapier developer platform.
+Where there is no release note, describe what the version's definition provides
+and say so. Describe only what a reader can check in the app or in this guide.
 Never publish per-version user or task counts. Add a date only when the release
 date is known.
 -->
 
-**2.1.3**
+**2.1.3** (released to selected accounts)
 
-- In development. Not published, so no Zap runs on it yet.
+- Carries the `Location Type` field on `Tasks: Assign Task V2` and on
+  `Tickets: Create Ticket`, with the `Places (new module)` option, plus
+  `Find Location / Place by ID` on `Tasks: Assign Task V2`. No release note was
+  recorded for this version.
 
-**2.1.2** (current version for new Zaps)
+**2.1.2** (default for new Zaps)
 
 - Adds the action `Tasks: Assign Task V2`, and relabels the previous one
   `Tasks: Assign Task V1 [Legacy]`. V2 accepts user email addresses that contain
@@ -271,12 +279,28 @@ date is known.
   ticket ones. `Forms: New Form Entry` predates versioned subscriptions and
   always uses the earlier path, so re-creating it does not move it.
 
-**1.14.x**
+**1.14.3**
 
-- The earlier line, still serving Zaps that were built on it. It provides only
-  `New Form Entry`, `New Assigned Task` and `New PDF` as triggers, and
-  `Assign Task`, `Change Form Status` and `Modify Form Answer` as actions. The
-  status trigger, the three signature triggers, the two ticket triggers,
-  `Assign Task V2`, `Send Data` and `Create Ticket` do not exist on it, and
-  `Assign Task` requires a Location Name. To get any of those, rebuild the Zap
-  so it picks up the current version.
+- Adds `Make this task mandatory` and `Allow the task to be answered after the
+  due date has been reached` to the `Assign Task` action.
+- Does not carry the `Status Changed` trigger or the `Send Data` action that
+  1.14.2 has, so a Zap on this version has three triggers and three actions.
+
+**1.14.2**
+
+- Adds the action `Send Data`.
+- Renames the `Change Status` trigger to `Status Changed`, and its Form field
+  becomes optional.
+
+**1.14.1**
+
+- Adds the `Change Status` trigger.
+
+**1.14.0**
+
+- The baseline of the 1.14 line: `New Form Entry`, `New Assigned Task` and
+  `New PDF` as triggers, `Assign Task`, `Change Form Status` and
+  `Modify Form Answer` as actions. `Assign Task` requires a Location Name here.
+- The three signature triggers, the two ticket triggers, `Assign Task V2` and
+  `Create Ticket` only exist on the 2.x line. To use any of them, rebuild the
+  Zap so it picks up the current version.
