@@ -54,7 +54,7 @@ Method | Direction | Fits when
 [Webhooks](#webhooks) | DataScope pushes, your endpoint reacts | Something has to happen the moment a form arrives
 The REST endpoints | You pull, on your own schedule | You are building a custom integration, or you need a specific slice on demand
 [Airbyte Cloud connectors](#airbyte-cloud-connectors) | You pull, Airbyte runs it | The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you
-[Zapier](#zapier) | DataScope pushes, Zapier reacts | You want the same webhook push as a no-code connector, without building your own receiving endpoint
+[Zapier](#zapier) | DataScope pushes, Zapier reacts, and Zaps can write back | You want the webhook push delivered into the apps your team already uses, without building your own receiving endpoint
 [Microsoft Power Automate](#microsoft-power-automate-beta) | DataScope pushes, Power Automate reacts | Same idea, wired into a Power Automate flow with the event data exposed as dynamic content
 
 A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable **Send modifications** on the webhook.
@@ -84,7 +84,7 @@ Follow the <a href="zapier/connector_guide_en.html" target="_blank" rel="noopene
 The guide ends with a <a href="zapier/connector_guide_en.html#changelog" target="_blank" rel="noopener noreferrer">changelog</a> of the app's versions, where you can check which version is published and what it changed.
 
 <aside class="notice">
-Two things to know before you build: a form-scoped trigger supports one active Zap per form, and the ticket triggers one active Zap per account. Where the <code>Form</code> field is optional, select a form anyway, because a subscription with no form attached never fires. The guide covers both, plus the rest of the caveats.
+Two things to know before you build: most form-scoped triggers support one active Zap per form, and the ticket triggers one active Zap per account. Where the <code>Form</code> field is optional, select a form anyway, because a Zap with no form selected delivers nothing. The guide covers both, plus the rest of the caveats.
 </aside>
 
 ## Microsoft Power Automate [Beta]

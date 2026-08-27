@@ -55,7 +55,7 @@ Most triggers show a **Form** dropdown that reads the forms in your account.
 Where the field is optional, pick a form anyway.
 
 <aside class="warning">
-Leaving <b>Form</b> blank creates a subscription that is not attached to any form, and it never fires. If you need the same automation on several forms, create one Zap per form rather than one Zap with no form selected.
+Leaving <b>Form</b> blank does not give you a working Zap: it delivers nothing. If you need the same automation on several forms, create one Zap per form rather than one Zap with no form selected.
 </aside>
 
 ## Step 4: test and turn the Zap on
@@ -117,20 +117,28 @@ Use **V2** for anything new. It does everything V1 does, plus:
 migration: if you want a V1 Zap on V2, replace the action step and map the
 fields again.
 
+<aside class="warning">
+On both versions, if the email or username you send does not match a user in your account, the task is <b>not</b> rejected: it is assigned to another user in the account. Map the user field from something you control, and check the assignee on the first run.
+</aside>
+
 ### Locations or Places
 
 **Tasks: Assign Task V2** and **Tickets: Create Ticket** both have a
-**Location Type** field with two options, and the behavior differs in a way
-worth knowing before you build the Zap:
+**Location Type** field with two options, and the two actions do not behave the
+same way. On **Assign Task V2**:
 
 | Location Type | Behavior when nothing matches |
 |---|---|
-| Locations (old module, legacy) | The location is created in DataScope from the name and the other location fields you sent |
+| Locations (old module, legacy) | The location is created in DataScope from the Location Name and the other location fields you sent. With no Location Name there is nothing to create it from, so the task is assigned with no location |
 | Places (new module) | Nothing is created. The task is not assigned and the Zap fails with `nestable location not found` |
 
-Locations is the default, so existing Zaps keep working with no changes. If
-you choose Places, create the place in DataScope first, or through the places
-API, before the Zap runs.
+**Tickets: Create Ticket** never creates a location, with either option. If the
+location you send does not match an existing record, the ticket is created with
+no location attached and the Zap reports success. It matches on Location ID and
+then Location Name only.
+
+Locations is the default, so existing Zaps keep working with no changes. If you
+choose Places, create the place in DataScope before the Zap runs.
 
 On **Assign Task V2** the location is matched in this order: Location / Place
 ID, then Location Code, then Location Name, then Location Address. The first
@@ -143,24 +151,32 @@ are ignored with Places, because places are never modified from this action.
 
 ### Send Data / New Answer is in Beta
 
-**Forms: Send Data / New Answer** generates a form answer and its PDF from an
-existing form, which makes it useful for bringing data captured elsewhere into
-DataScope. Two limits to plan around:
+**Forms: Send Data / New Answer** creates a form answer from an existing form,
+which makes it useful for bringing data captured elsewhere into DataScope. Three
+things to plan around:
 
+- **The PDF is only generated if you fill the Emails field.** That field is what
+  sends the document, and generating it is part of sending it. Leave it empty and
+  you get the form answer with no PDF.
 - **It does not trigger the rest of the automation chain.** Google Sheets sync,
-  automatic signature and other webhooks, including Zap triggers, do not run
-  for an answer created this way. A Zap that reacts to `Forms: New Form Entry`
-  will not see it.
-- **Not every question type is fully supported**, so some fields may not land
-  as you expect. Test with the form you actually plan to use.
+  automatic signature and the form-answer webhooks do not run for an answer
+  created this way, so a Zap that reacts to `Forms: New Form Entry` will not see
+  it. `Forms: New PDF` is the exception: when you fill the Emails field, that Zap
+  does fire.
+- **Not every question type is fully supported**, so some fields may not land as
+  you expect. Test with the form you actually plan to use.
 
 ## Important considerations
 
-- **One active Zap per form and per trigger.** A form-scoped trigger supports
-  a single active subscription per form. Turning on a second Zap with the same
-  trigger on the same form is rejected with an error naming the trigger type
-  and asking you to remove the previous one. Different triggers on the same
-  form are fine, and so is the same trigger on different forms.
+- **One active Zap per form and per trigger, with one exception.**
+  `Forms: New PDF`, `Forms: Status Changed`, `Tasks: New Assigned Task` and the
+  three signature triggers support a single active subscription per form. Turning
+  on a second Zap with the same trigger on the same form is rejected with an
+  error naming the trigger type and asking you to remove the previous one.
+  Different triggers on the same form are fine, and so is the same trigger on
+  different forms. **`Forms: New Form Entry` is not covered by that check**: a
+  second Zap on the same form is accepted, and both then receive every
+  submission. Add steps to one Zap instead.
 - **If you need several things to happen on one event, add steps to one Zap**
   rather than creating a second Zap on the same trigger and form.
 - **Ticket triggers work at the account level.** `Tickets: New Ticket` and
@@ -180,8 +196,10 @@ DataScope. Two limits to plan around:
 
 ## If something doesn't work
 
-- **The connection fails to create:** check that the API Key is complete, with
-  no leading or trailing spaces.
+- **The connection is accepted but nothing works:** the connection test does not
+  reliably reject a wrong key, so a bad API Key surfaces later as a trigger that
+  returns no data at all. Re-copy the key from the Integrations section, with no
+  leading or trailing spaces, and replace the connection.
 - **Turning the Zap on fails saying the hook already exists:** another Zap in
   your account, possibly built by someone else, already uses that trigger on
   that form. Turn the older Zap off, then turn this one on. If the error
@@ -202,25 +220,44 @@ For any question, contact support and we will help you with the setup.
 
 ## Changelog
 
-Versions of the DataScope app in Zapier, newest first. Zapier always runs the
-version published in its app directory, so there is nothing to update on your
-side.
+Versions of the DataScope app in Zapier, newest first. A Zap keeps running on
+the version it was created with, so an older Zap can behave differently from a
+new one built on the same trigger. There is nothing to install or update on your
+side either way.
 
 <!--
-Changelog entry template. Newest version first: add the new version as the
-first block below this comment, and add the same block to connector_guide_en,
+Changelog entry template. Newest version first: add the new version as the first
+block below this comment, and add the same block to connector_guide_en,
 connector_guide_es and connector_guide_pt so the three languages stay in sync.
-An entry is a bold version number, **X.Y.Z**, then a blank line, then one
-bullet per change. Describe only what a reader can check in the published app
-or in this guide. Add a date only when the release date is known, and leave
-unknown history unlisted rather than filling it in.
+An entry is a bold version number, **X.Y.Z**, then a blank line, then one bullet
+per change, taken from the version's changelog note in the Zapier developer
+platform. Describe only what a reader can check in the app or in this guide.
+Never publish per-version user or task counts. Add a date only when the release
+date is known.
 -->
 
 **2.1.3**
 
-- Version currently published in Zapier's app directory, built on Zapier
-  platform 18.6.0. The triggers and the actions it provides are the ones listed
-  in [What you can automate](#what-you-can-automate).
+- In development. Not published, so no Zap runs on it yet.
+
+**2.1.2** (current version for new Zaps)
+
+- Adds the action `Tasks: Assign Task V2`, and relabels the previous one
+  `Tasks: Assign Task V1 [Legacy]`. V2 accepts user email addresses that contain
+  plus signs.
+
+**2.1.1**
+
+- Fixes a bug with the creation date and the relative expiration date.
+
+**2.0.2**
+
+- Location is no longer required on the `Assign Task` action.
+- Changes some output field types.
+
+**2.0.1**
+
+- Improves a default value.
 
 **2.0.0**
 
@@ -229,13 +266,17 @@ unknown history unlisted rather than filling it in.
   on and the subscription is created, and keeps serving that subscription on the
   path its recorded version points to. The recorded version changes only when
   the subscription is created again, so turning a Zap off and back on re-creates
-  it with whatever version is published at that moment.
+  it with whatever version is current at that moment.
 - This applies to the PDF, status, task and signature triggers, and to the
   ticket ones. `Forms: New Form Entry` predates versioned subscriptions and
   always uses the earlier path, so re-creating it does not move it.
 
-Versions before 2.1.3 are not itemized here. We do not have a reliable record
-of what each earlier version changed, and leaving the gap visible is more
-useful than filling it in. The 2.0.0 boundary is listed because it is the one
-earlier change that can still affect a connection created back then. From
-2.1.3 on, every new version gets its own entry.
+**1.14.x**
+
+- The earlier line, still serving Zaps that were built on it. It provides only
+  `New Form Entry`, `New Assigned Task` and `New PDF` as triggers, and
+  `Assign Task`, `Change Form Status` and `Modify Form Answer` as actions. The
+  status trigger, the three signature triggers, the two ticket triggers,
+  `Assign Task V2`, `Send Data` and `Create Ticket` do not exist on it, and
+  `Assign Task` requires a Location Name. To get any of those, rebuild the Zap
+  so it picks up the current version.

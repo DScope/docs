@@ -56,7 +56,7 @@ La mayoría de los disparadores muestran una lista **Form** con los formularios
 de tu cuenta. Aunque el campo sea opcional, elige un formulario igual.
 
 <aside class="warning">
-Dejar <b>Form</b> en blanco crea una suscripción que no queda asociada a ningún formulario, y nunca se dispara. Si necesitas la misma automatización en varios formularios, crea un Zap por formulario en vez de un Zap sin formulario seleccionado.
+Dejar <b>Form</b> en blanco no te deja un Zap funcional: no entrega nada. Si necesitas la misma automatización en varios formularios, crea un Zap por formulario en vez de un Zap sin formulario seleccionado.
 </aside>
 
 ## Paso 4: probar y activar el Zap
@@ -111,61 +111,77 @@ Usa **V2** para todo lo nuevo. Hace todo lo que hace V1, y además:
 
 - Acepta el signo más en el email del usuario, así que
   `usuario+obra@ejemplo.com` resuelve al usuario correcto.
-- Puede apuntar al nuevo módulo de **Lugares**, no solo al módulo antiguo de
-  Ubicaciones.
+- Puede apuntar al módulo de lugares nuevo, no solo al antiguo.
 - Puede encontrar una ubicación o un lugar existente por su ID interno, que es
   lo que necesitas cuando varios lugares comparten el nombre.
 
-**V1** sigue disponible para que los Zaps armados sobre ella sigan corriendo.
+**V1** sigue disponible para que los Zaps creados sobre ella sigan corriendo.
 No hay migración automática: si quieres pasar un Zap de V1 a V2, reemplaza el
 paso de la action y vuelve a mapear los campos.
 
-### Ubicaciones o Lugares
+<aside class="warning">
+En las dos versiones, si el email o el nombre de usuario que envías no coincide con un usuario de tu cuenta, la tarea <b>no</b> se rechaza: se asigna a otro usuario de la cuenta. Mapea el campo de usuario desde un dato que controles, y revisa a quién quedó asignada la primera ejecución.
+</aside>
+
+### Locations o Places
 
 **Tasks: Assign Task V2** y **Tickets: Create Ticket** tienen un campo
-**Location Type** con dos opciones, y el comportamiento cambia de una forma
-que conviene conocer antes de armar el Zap:
+**Location Type** con dos opciones, y las dos acciones no se comportan igual. En
+**Assign Task V2**:
 
-| Location Type | Comportamiento cuando nada calza |
+| Location Type | Comportamiento cuando nada coincide |
 |---|---|
-| Locations (old module, legacy) | La ubicación se crea en DataScope a partir del nombre y de los demás campos de ubicación que enviaste |
+| Locations (old module, legacy) | El lugar se crea en DataScope a partir del Location Name y de los demás campos de ubicación que enviaste. Sin Location Name no hay con qué crearlo, así que la tarea se asigna sin lugar |
 | Places (new module) | No se crea nada. La tarea no se asigna y el Zap falla con `nestable location not found` |
 
+**Tickets: Create Ticket** nunca crea un lugar, con ninguna de las dos opciones.
+Si el lugar que envías no coincide con un registro existente, el ticket se crea
+sin lugar asociado y el Zap reporta éxito. Solo busca por Location ID y después
+por Location Name.
+
 Locations es la opción por defecto, así que los Zaps existentes siguen
-funcionando sin cambios. Si eliges Places, crea el lugar en DataScope antes,
-o a través de la API de lugares, antes de que corra el Zap.
+funcionando sin cambios. Si eliges Places, crea el lugar en DataScope antes de
+que corra el Zap.
 
 En **Assign Task V2** la ubicación se busca en este orden: Location / Place
 ID, después Location Code, después Location Name y después Location Address.
 Gana la primera que calza.
 
 El resto de los campos de ubicación, Location Phone, Location Email, Company
-Name, Company Legal ID, Latitude y Longitude, aplican solo al módulo antiguo
-de Ubicaciones, donde se guardan en la ubicación que se encontró o se creó. Se
+Name, Company Legal ID, Latitude y Longitude, aplican solo al módulo de lugares
+antiguo, donde se guardan en el lugar que se encontró o se creó. Se
 ignoran con Places, porque los lugares nunca se modifican desde esta action.
 
 ### Send Data / New Answer está en Beta
 
-**Forms: Send Data / New Answer** genera una respuesta de formulario y su PDF a
-partir de un formulario existente, lo que la hace útil para traer a DataScope
-datos capturados en otra parte. Dos límites que conviene tener en cuenta:
+**Forms: Send Data / New Answer** crea una respuesta de formulario a partir de un
+formulario existente, lo que la hace útil para traer a DataScope datos capturados
+en otra parte. Tres cosas que conviene tener en cuenta:
 
+- **El PDF se genera solo si completas el campo Emails.** Ese campo es el que
+  envía el documento, y generarlo es parte de enviarlo. Si lo dejas vacío,
+  obtienes la respuesta de formulario sin PDF.
 - **No dispara el resto de la cadena de automatización.** La sincronización con
-  Google Sheets, la firma automática y otros webhooks, incluidos los
-  disparadores de Zaps, no corren para una respuesta creada así. Un Zap que
-  reacciona a `Forms: New Form Entry` no la va a ver.
+  Google Sheets, la firma automática y los webhooks de respuestas de formulario
+  no corren para una respuesta creada así, por lo que un Zap que reacciona a
+  `Forms: New Form Entry` no la va a ver. `Forms: New PDF` es la excepción: si
+  completas el campo Emails, ese Zap sí se dispara.
 - **No todos los tipos de pregunta están soportados por completo**, así que
-  algunos campos pueden no quedar como esperas. Prueba con el formulario que
-  vas a usar de verdad.
+  algunos campos pueden no quedar como esperas. Prueba con el formulario que vas
+  a usar de verdad.
 
 ## Consideraciones importantes
 
-- **Un Zap activo por formulario y por disparador.** Un disparador asociado a
-  un formulario admite una sola suscripción activa por formulario. Activar un
-  segundo Zap con el mismo disparador sobre el mismo formulario se rechaza con
-  un error que nombra el tipo de disparador y te pide eliminar el anterior.
-  Disparadores distintos sobre el mismo formulario no son problema, y tampoco
-  el mismo disparador sobre formularios distintos.
+- **Un Zap activo por formulario y por disparador, con una excepción.**
+  `Forms: New PDF`, `Forms: Status Changed`, `Tasks: New Assigned Task` y los
+  tres disparadores de firma admiten una sola suscripción activa por formulario.
+  Activar un segundo Zap con el mismo disparador sobre el mismo formulario se
+  rechaza con un error que nombra el tipo de disparador y te pide eliminar el
+  anterior. Disparadores distintos sobre el mismo formulario no son problema, y
+  tampoco el mismo disparador sobre formularios distintos.
+  **`Forms: New Form Entry` no pasa por esa validación**: un segundo Zap sobre el
+  mismo formulario se acepta, y después los dos reciben todos los envíos. Agrega
+  pasos a un solo Zap en vez de eso.
 - **Si necesitas que pasen varias cosas con un mismo evento, agrega pasos a un
   solo Zap** en vez de crear un segundo Zap con el mismo disparador y
   formulario.
@@ -187,8 +203,11 @@ datos capturados en otra parte. Dos límites que conviene tener en cuenta:
 
 ## Si algo no funciona
 
-- **La conexión falla al crearse:** verifica que la API Key esté completa y sin
-  espacios al inicio o al final.
+- **La conexión se acepta pero nada funciona:** la prueba de conexión no rechaza
+  de forma confiable una API Key incorrecta, así que una clave mala aparece más
+  tarde como un disparador que no devuelve ningún dato. Vuelve a copiar la clave
+  desde la sección Integraciones, sin espacios al inicio ni al final, y reemplaza
+  la conexión.
 - **Al activar el Zap falla diciendo que el hook ya existe:** otro Zap de tu
   cuenta, quizás armado por otra persona, ya usa ese disparador sobre ese
   formulario. Apaga el Zap más antiguo y luego activa este. Si el error
@@ -210,27 +229,46 @@ Para cualquier duda, escribe a soporte y te acompañamos en la configuración.
 
 ## Historial de versiones
 
-Versiones de la app de DataScope en Zapier, de la más nueva a la más antigua. La
-versión que corre es siempre la publicada en el directorio de aplicaciones de
-Zapier, así que no hay nada que instalar ni actualizar de tu lado.
+Versiones de la app de DataScope en Zapier, de la más nueva a la más antigua. Un
+Zap sigue corriendo con la versión con la que fue creado, así que un Zap antiguo
+puede comportarse distinto a uno nuevo armado con el mismo disparador. En
+cualquiera de los dos casos no hay nada que instalar ni actualizar de tu lado.
 
 <!--
-Plantilla de entrada del historial. La más nueva va primero: agrega la
-versión nueva como el primer bloque debajo de este comentario, y agrega el mismo
-bloque en connector_guide_en, connector_guide_es y connector_guide_pt para que
-los tres idiomas queden iguales. Una entrada es el número de versión en negrita,
-**X.Y.Z**, después una línea en blanco, después un bullet por cambio. Describe
-solo lo que el lector puede verificar en la app publicada o en esta guía. Agrega
-una fecha solo si se conoce la fecha de publicación, y si no se sabe qué cambió
-una versión anterior, déjalo sin listar en vez de rellenarlo.
+Plantilla de entrada del historial. La más nueva va primero: agrega la versión
+nueva como el primer bloque debajo de este comentario, y agrega el mismo bloque
+en connector_guide_en, connector_guide_es y connector_guide_pt para que los tres
+idiomas queden iguales. Una entrada es el número de versión en negrita,
+**X.Y.Z**, después una línea en blanco, después un bullet por cambio, tomado de
+la nota de changelog de esa versión en la plataforma de desarrollo de Zapier.
+Describe solo lo que el lector puede verificar en la app o en esta guía. Nunca
+publiques la cantidad de usuarios ni de tareas por versión. Agrega una fecha
+solo si se conoce la fecha de publicación.
 -->
 
 **2.1.3**
 
-- Versión publicada actualmente en el directorio de aplicaciones de Zapier,
-  construida sobre la plataforma 18.6.0 de Zapier. Los disparadores y las
-  actions que entrega son los que aparecen en
-  [Qué puedes automatizar](#que-puedes-automatizar).
+- En desarrollo. No está publicada, así que todavía ningún Zap corre con ella.
+
+**2.1.2** (versión actual para los Zaps nuevos)
+
+- Agrega la action `Tasks: Assign Task V2` y renombra la anterior como
+  `Tasks: Assign Task V1 [Legacy]`. La V2 acepta direcciones de email de usuario
+  que contienen el signo más.
+
+**2.1.1**
+
+- Corrige un error con la fecha de creación y con la fecha de expiración
+  relativa.
+
+**2.0.2**
+
+- La ubicación deja de ser obligatoria en la action `Assign Task`.
+- Cambia algunos tipos de campos de salida.
+
+**2.0.1**
+
+- Mejora un valor por defecto.
 
 **2.0.0**
 
@@ -239,14 +277,17 @@ una versión anterior, déjalo sin listar en vez de rellenarlo.
   Zap y se crea la suscripción, y sigue atendiendo esa suscripción por la vía
   que indica su versión registrada. Esa versión solo cambia cuando la
   suscripción se vuelve a crear, así que apagar y volver a activar un Zap la
-  recrea con la versión que esté publicada en ese momento.
+  recrea con la versión que sea la actual en ese momento.
 - Esto aplica a los disparadores de PDF, de estado, de tareas y de firmas, y a
   los de tickets. `Forms: New Form Entry` es anterior a las suscripciones con
-  versión y siempre usa la vía anterior, así que recrearlo no lo cambia de
-  vía.
+  versión y siempre usa la vía anterior, así que recrearlo no lo cambia de vía.
 
-Las versiones anteriores a 2.1.3 no están detalladas acá. No tenemos un registro
-confiable de qué cambió cada una, y dejar el vacío a la vista es más útil que
-rellenarlo. El límite de 2.0.0 sí aparece porque es el único cambio anterior que
-todavía puede afectar a una conexión creada en ese entonces. A partir de 2.1.3,
-cada versión nueva tiene su propia entrada.
+**1.14.x**
+
+- La línea anterior, que sigue atendiendo los Zaps que se armaron con ella.
+  Entrega solo `New Form Entry`, `New Assigned Task` y `New PDF` como
+  disparadores, y `Assign Task`, `Change Form Status` y `Modify Form Answer`
+  como actions. El disparador de estado, los tres de firma, los dos de tickets,
+  `Assign Task V2`, `Send Data` y `Create Ticket` no existen ahí, y
+  `Assign Task` exige un Location Name. Para tener cualquiera de esos, vuelve a
+  crear el Zap para que tome la versión actual.
