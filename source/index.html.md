@@ -54,7 +54,7 @@ Method | Direction | Fits when
 [Webhooks](#webhooks) | DataScope pushes, your endpoint reacts | Something has to happen the moment a form arrives
 The REST endpoints | You pull, on your own schedule | You are building a custom integration, or you need a specific slice on demand
 [Airbyte Cloud connectors](#airbyte-cloud-connectors) | You pull, Airbyte runs it | The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you
-[Zapier](https://zapier.com/apps/datascope-forms/integrations) | DataScope pushes, Zapier reacts | You want the same webhook push as a no-code connector, without building your own receiving endpoint
+[Zapier](#zapier) | DataScope pushes, Zapier reacts, and Zaps can write back | You want the webhook push delivered into the apps your team already uses, without building your own receiving endpoint
 [Microsoft Power Automate](#microsoft-power-automate-beta) | DataScope pushes, Power Automate reacts | Same idea, wired into a Power Automate flow with the event data exposed as dynamic content
 
 A **webhook** fits when something has to happen the moment a form arrives: notify a system, start a workflow, post to a channel. DataScope pushes, your endpoint reacts. It covers new submissions, and edits too when you enable **Send modifications** on the webhook.
@@ -70,6 +70,22 @@ Control over the payload | `custom_fields` selects exactly which fields you rece
 If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the connectors below cover all of it.
 
 Using both is normal. A webhook for the immediate reaction, a connector for the warehouse copy.
+
+## Zapier
+
+DataScope publishes an app for Zapier, so you can trigger Zaps from form answers, generated PDFs, task assignments, tickets and signature events, and act back on DataScope with actions like assigning a task or creating a ticket.
+
+There is nothing to import. The app is published in Zapier's app directory, and the only thing you need to connect it is your API Key.
+
+<a href="https://zapier.com/apps/datascope-forms/integrations" target="_blank" rel="noopener noreferrer">Open the DataScope app in Zapier</a>
+
+Follow the <a href="zapier/connector_guide_en.html" target="_blank" rel="noopener noreferrer">step-by-step guide</a> to create the connection and your first Zap. Spanish and Portuguese versions are linked from the top of that guide.
+
+The guide ends with a <a href="zapier/connector_guide_en.html#changelog" target="_blank" rel="noopener noreferrer">changelog</a> of the app's versions, where you can check which version is published and what it changed.
+
+<aside class="notice">
+Two things to know before you build: most form-scoped triggers support one active Zap per form, and the ticket triggers one active Zap per account. Where the <code>Form</code> field is optional, select a form anyway, because a Zap with no form selected delivers nothing. The guide covers both, plus the rest of the caveats.
+</aside>
 
 ## Microsoft Power Automate [Beta]
 
@@ -2548,6 +2564,11 @@ Remember — use your own Authorization header
 </aside>
 
 # Changelog
+
+**26-Aug-2026**
+
+- Added the [Zapier](#zapier) section under Data Export, with a step-by-step guide in English, Spanish and Portuguese covering the connection, every trigger and action, the Locations and Places choice, and the one-Zap-per-form constraint
+- The Zapier guide now ends with a changelog of the app's versions, so you can tell which version is published and what it changed
 
 **20-Aug-2026**
 
