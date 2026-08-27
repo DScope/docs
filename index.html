@@ -232,6 +232,9 @@
                     <a href="#choosing-a-method" class="toc-h2 toc-link" data-title="choosing-a-method">Choosing a method</a>
                   </li>
                   <li>
+                    <a href="#zapier" class="toc-h2 toc-link" data-title="zapier">Zapier</a>
+                  </li>
+                  <li>
                     <a href="#microsoft-power-automate-beta" class="toc-h2 toc-link" data-title="microsoft-power-automate-beta">Microsoft Power Automate [Beta]</a>
                   </li>
                   <li>
@@ -425,9 +428,9 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 <td>The destination is a data warehouse and you want the paging, the incremental state and the deduplication handled for you</td>
 </tr>
 <tr>
-<td><a href="https://zapier.com/apps/datascope-forms/integrations">Zapier</a></td>
-<td>DataScope pushes, Zapier reacts</td>
-<td>You want the same webhook push as a no-code connector, without building your own receiving endpoint</td>
+<td><a href="#zapier">Zapier</a></td>
+<td>DataScope pushes, Zapier reacts, and Zaps can write back</td>
+<td>You want the webhook push delivered into the apps your team already uses, without building your own receiving endpoint</td>
 </tr>
 <tr>
 <td><a href="#microsoft-power-automate-beta">Microsoft Power Automate</a></td>
@@ -463,6 +466,20 @@ You must replace <code>b1cd93mfls9fdmfkadn23</code> with your personal API key.
 <p>If the destination is a data warehouse, you do not have to write the receiver, the retry handling or the deduplication yourself: the connectors below cover all of it.</p>
 
 <p>Using both is normal. A webhook for the immediate reaction, a connector for the warehouse copy.</p>
+<h2 id='zapier'>Zapier</h2>
+<p>DataScope publishes an app for Zapier, so you can trigger Zaps from form answers, generated PDFs, task assignments, tickets and signature events, and act back on DataScope with actions like assigning a task or creating a ticket.</p>
+
+<p>There is nothing to import. The app is published in Zapier&#39;s app directory, and the only thing you need to connect it is your API Key.</p>
+
+<p><a href="https://zapier.com/apps/datascope-forms/integrations" target="_blank" rel="noopener noreferrer">Open the DataScope app in Zapier</a></p>
+
+<p>Follow the <a href="zapier/connector_guide_en.html" target="_blank" rel="noopener noreferrer">step-by-step guide</a> to create the connection and your first Zap. Spanish and Portuguese versions are linked from the top of that guide.</p>
+
+<p>The guide ends with a <a href="zapier/connector_guide_en.html#changelog" target="_blank" rel="noopener noreferrer">changelog</a> of the app&#39;s versions, where you can check which version is published and what it changed.</p>
+
+<aside class="notice">
+Two things to know before you build: most form-scoped triggers support one active Zap per form, and the ticket triggers one active Zap per account. Where the <code>Form</code> field is optional, select a form anyway, because a Zap with no form selected delivers nothing. The guide covers both, plus the rest of the caveats.
+</aside>
 <h2 id='microsoft-power-automate-beta'>Microsoft Power Automate [Beta]</h2>
 <p>DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, tickets and signature events, delivered as dynamic content instead of raw webhook JSON.</p>
 
@@ -4522,6 +4539,13 @@ Remember — use your own Authorization header
 Remember — use your own Authorization header
 </aside>
 <h1 id='changelog'>Changelog</h1>
+<p><strong>26-Aug-2026</strong></p>
+
+<ul>
+<li>Added the <a href="#zapier">Zapier</a> section under Data Export, with a step-by-step guide in English, Spanish and Portuguese covering the connection, every trigger and action, the Locations and Places choice, and the one-Zap-per-form constraint</li>
+<li>The Zapier guide now ends with a changelog of the app&#39;s versions, so you can tell which version is published and what it changed</li>
+</ul>
+
 <p><strong>20-Aug-2026</strong></p>
 
 <ul>

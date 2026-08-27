@@ -1,0 +1,655 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Connect DataScope with Zapier</title>
+
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .cd {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <link href="../stylesheets/screen.css" rel="stylesheet" media="screen" />
+    <link href="../stylesheets/print.css" rel="stylesheet" media="print" />
+      <script src="../javascripts/all_nosearch.js"></script>
+  </head>
+
+  <body class="zapier zapier_connector_guide_en" data-languages="[]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="../images/navbar.png" alt="Navbar" />
+      </span>
+    </a>
+    <div class="toc-wrapper">
+      <img src="../images/logo.png" class="logo" alt="Logo" />
+      <div id="toc" class="toc-list-h1">
+          <li>
+            <a href="#connect-datascope-with-zapier" class="toc-h1 toc-link" data-title="connect-datascope-with-zapier">Connect DataScope with Zapier</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#before-you-start" class="toc-h2 toc-link" data-title="before-you-start">Before you start</a>
+                  </li>
+                  <li>
+                    <a href="#step-1-create-the-zap" class="toc-h2 toc-link" data-title="step-1-create-the-zap">Step 1: create the Zap</a>
+                  </li>
+                  <li>
+                    <a href="#step-2-create-the-connection" class="toc-h2 toc-link" data-title="step-2-create-the-connection">Step 2: create the connection</a>
+                  </li>
+                  <li>
+                    <a href="#step-3-choose-the-form" class="toc-h2 toc-link" data-title="step-3-choose-the-form">Step 3: choose the form</a>
+                  </li>
+                  <li>
+                    <a href="#step-4-test-and-turn-the-zap-on" class="toc-h2 toc-link" data-title="step-4-test-and-turn-the-zap-on">Step 4: test and turn the Zap on</a>
+                  </li>
+                  <li>
+                    <a href="#what-you-can-automate" class="toc-h2 toc-link" data-title="what-you-can-automate">What you can automate</a>
+                  </li>
+                  <li>
+                    <a href="#important-considerations" class="toc-h2 toc-link" data-title="important-considerations">Important considerations</a>
+                  </li>
+                  <li>
+                    <a href="#if-something-doesn-39-t-work" class="toc-h2 toc-link" data-title="if-something-doesn-t-work">If something doesn't work</a>
+                  </li>
+                  <li>
+                    <a href="#changelog" class="toc-h2 toc-link" data-title="changelog">Changelog</a>
+                  </li>
+              </ul>
+          </li>
+      </div>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='connect-datascope-with-zapier'>Connect DataScope with Zapier</h1>
+<blockquote>
+<p>¿Prefieres leer esto en español o portugués? <a href="connector_guide_es.html">Ve a la guía en español</a> | <a href="connector_guide_pt.html">Versão em português</a>.</p>
+</blockquote>
+
+<p>This guide explains how to connect DataScope with Zapier to automate your
+field operation: trigger Zaps when a form is completed, when a document is
+generated, when a task is assigned or when a ticket is registered, and act
+back on DataScope from the other apps you already use.</p>
+
+<aside class="notice">
+Unlike the Power Automate connector, there is nothing to import here. The DataScope app is published in Zapier's app directory, so all you need to connect is your API Key.
+</aside>
+<h2 id='before-you-start'>Before you start</h2>
+<p>You need:</p>
+
+<ul>
+<li>A Zapier account with permission to create Zaps in the workspace you are
+working in.</li>
+<li>Your DataScope API Key. You get it from <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>,
+in the Integrations section of your account, under the API Key tab.</li>
+<li>At least one published form in DataScope. Most triggers and actions ask you
+to pick a form, and the dropdown reads the forms in your account.</li>
+</ul>
+<h2 id='step-1-create-the-zap'>Step 1: create the Zap</h2>
+<ol>
+<li>Go to <a href="https://zapier.com/apps/datascope-forms/integrations" target="_blank" rel="noopener noreferrer">the DataScope app in Zapier</a> and sign in.</li>
+<li>Select <strong>Create Zap</strong>, or start from one of the ready-made templates listed
+on that page. The Integrations section of DataScope lists the same
+templates, grouped by use case.</li>
+<li>In the trigger step, search for <strong>DataScope Forms</strong> and select it.</li>
+<li>Choose the event you want to react to, from the list under
+<a href="#what-you-can-automate">What you can automate</a>.</li>
+</ol>
+<h2 id='step-2-create-the-connection'>Step 2: create the connection</h2>
+<p>The first time you use DataScope in a Zap, Zapier asks you for a connection
+and shows a single field, <strong>Token Key</strong>. Paste your DataScope API Key there.</p>
+
+<p>Paste it exactly as DataScope shows it, with no leading or trailing spaces.
+If the connection is accepted but the trigger then returns no data at all, the
+key is the first thing to re-check.</p>
+
+<p>The connection belongs to your Zapier account and you can reuse it in every
+Zap you build. Each person who builds Zaps needs their own connection, with
+the API Key of their own account.</p>
+<h2 id='step-3-choose-the-form'>Step 3: choose the form</h2>
+<p>Most triggers show a <strong>Form</strong> dropdown that reads the forms in your account.
+Where the field is optional, pick a form anyway.</p>
+
+<aside class="warning">
+Leaving <b>Form</b> blank does not give you a working Zap: it delivers nothing. If you need the same automation on several forms, create one Zap per form rather than one Zap with no form selected.
+</aside>
+<h2 id='step-4-test-and-turn-the-zap-on'>Step 4: test and turn the Zap on</h2>
+<p>Zapier&#39;s <strong>Test trigger</strong> pulls the most recent matching events from your
+account, so it needs at least one to show sample data. If your account has
+none yet, submit a form answer, generate a document, or assign a task,
+depending on the trigger you picked, and test again.</p>
+
+<p>Once the sample data looks right, add the steps that follow and publish the
+Zap. The subscription on DataScope&#39;s side is created when you turn the Zap
+on, not while you are editing it.</p>
+<h2 id='what-you-can-automate'>What you can automate</h2>
+<p>The DataScope app provides the following triggers. The names are the ones you
+see in Zapier&#39;s trigger list:</p>
+
+<table><thead>
+<tr>
+<th>Trigger</th>
+<th>Fires when</th>
+<th>Form field</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Forms: New Form Entry</td>
+<td>A form answer is submitted</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Forms: New PDF</td>
+<td>A PDF is generated by email backup or auto-notify</td>
+<td>Optional, pick one</td>
+</tr>
+<tr>
+<td>Forms: Status Changed</td>
+<td>A form answer changes status</td>
+<td>Optional, pick one</td>
+</tr>
+<tr>
+<td>Tasks: New Assigned Task</td>
+<td>A task is assigned</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Signatures: New Completed Signature</td>
+<td>Every signer has signed the document</td>
+<td>Optional, pick one</td>
+</tr>
+<tr>
+<td>Signatures: New Rejected Signature</td>
+<td>A signer rejects the signature request</td>
+<td>Optional, pick one</td>
+</tr>
+<tr>
+<td>Signatures: Updated Signature</td>
+<td>The signatures on a document change while some are still pending</td>
+<td>Optional, pick one</td>
+</tr>
+<tr>
+<td>Tickets: New Ticket (FKA Issue)</td>
+<td>A ticket is created</td>
+<td>Not applicable, account level</td>
+</tr>
+<tr>
+<td>Tickets: Changed Status (FKA Issue)</td>
+<td>A ticket changes status</td>
+<td>Not applicable, account level</td>
+</tr>
+</tbody></table>
+
+<p>Each trigger delivers the event data as individual fields, ready to map into
+the following steps of the Zap without having to parse the JSON yourself. For
+form answers, every question arrives as its own field, with its name, its type
+and its value.</p>
+
+<p>The app also provides the following actions, so a Zap can act back on
+DataScope instead of only reacting to it:</p>
+
+<table><thead>
+<tr>
+<th>Action</th>
+<th>What it does</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Tasks: Assign Task V2</td>
+<td>Assigns a task on a form to a user, optionally scheduling it and linking it to a location or a place</td>
+</tr>
+<tr>
+<td>Tasks: Assign Task V1 [Legacy]</td>
+<td>The earlier version of the same action, kept so existing Zaps keep working</td>
+</tr>
+<tr>
+<td>Forms: Send Data / New Answer [Beta]</td>
+<td>Generates a new form answer and its PDF from an existing form used as a template</td>
+</tr>
+<tr>
+<td>Change Form Status</td>
+<td>Changes the status of a form answer, found by form name and form code</td>
+</tr>
+<tr>
+<td>Modify Form Answer</td>
+<td>Creates or updates a single answer inside an existing form response</td>
+</tr>
+<tr>
+<td>Tickets: Create Ticket (FKA Issue)</td>
+<td>Creates a ticket, optionally taking its defaults from a Ticket Type</td>
+</tr>
+</tbody></table>
+<h3 id='assign-task-v1-or-v2'>Assign Task: V1 or V2</h3>
+<p>Use <strong>V2</strong> for anything new. It does everything V1 does, plus:</p>
+
+<ul>
+<li>It accepts plus signs in the user&#39;s email address, so
+<code>user+site@example.com</code> resolves to the right user.</li>
+<li>It can target the new <strong>Places</strong> module, not only the legacy Locations one.</li>
+<li>It can find an existing location or place by its internal ID, which is what
+you want when several places share a name.</li>
+</ul>
+
+<p><strong>V1</strong> stays available so Zaps built on it keep running. There is no automatic
+migration: if you want a V1 Zap on V2, replace the action step and map the
+fields again.</p>
+
+<aside class="warning">
+On both versions, if the email or username you send does not match a user in your account, the task is <b>not</b> rejected: it is assigned to another user in the account. Map the user field from something you control, and check the assignee on the first run.
+</aside>
+<h3 id='locations-or-places'>Locations or Places</h3>
+<p><strong>Tasks: Assign Task V2</strong> and <strong>Tickets: Create Ticket</strong> both have a
+<strong>Location Type</strong> field with two options, and the two actions do not behave the
+same way. On <strong>Assign Task V2</strong>:</p>
+
+<aside class="notice">
+The <b>Location Type</b> field arrived in version 2.1.3, which is released to selected accounts. If you do not see it on either action, your Zap is on an earlier version and targets the legacy Locations module only. See the [Changelog](#changelog).
+</aside>
+
+<table><thead>
+<tr>
+<th>Location Type</th>
+<th>Behavior when nothing matches</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Locations (old module, legacy)</td>
+<td>The location is created in DataScope from the Location Name and the other location fields you sent. With no Location Name there is nothing to create it from, so the task is assigned with no location</td>
+</tr>
+<tr>
+<td>Places (new module)</td>
+<td>Nothing is created. The task is not assigned and the Zap fails with <code>nestable location not found</code></td>
+</tr>
+</tbody></table>
+
+<p><strong>Tickets: Create Ticket</strong> never creates a location, with either option. If the
+location you send does not match an existing record, the ticket is created with
+no location attached and the Zap reports success. It matches on Location ID and
+then Location Name only.</p>
+
+<p>Locations is the default, so existing Zaps keep working with no changes. If you
+choose Places, create the place in DataScope before the Zap runs.</p>
+
+<p>On <strong>Assign Task V2</strong> the location is matched in this order: Location / Place
+ID, then Location Code, then Location Name, then Location Address. The first
+one that matches wins.</p>
+
+<p>The remaining location fields, Location Phone, Location Email, Company Name,
+Company Legal ID, Latitude and Longitude, apply only to the legacy Locations
+module, where they are saved on the location that is matched or created. They
+are ignored with Places, because places are never modified from this action.</p>
+<h3 id='send-data-new-answer-is-in-beta'>Send Data / New Answer is in Beta</h3>
+<p><strong>Forms: Send Data / New Answer</strong> creates a form answer from an existing form,
+which makes it useful for bringing data captured elsewhere into DataScope. Three
+things to plan around:</p>
+
+<ul>
+<li><strong>The PDF is only generated if you fill the Emails field.</strong> That field is what
+sends the document, and generating it is part of sending it. Leave it empty and
+you get the form answer with no PDF.</li>
+<li><strong>It does not trigger the rest of the automation chain.</strong> Google Sheets sync,
+automatic signature and the form-answer webhooks do not run for an answer
+created this way, so a Zap that reacts to <code>Forms: New Form Entry</code> will not see
+it. <code>Forms: New PDF</code> is the exception: when you fill the Emails field, that Zap
+does fire.</li>
+<li><strong>Not every question type is fully supported</strong>, so some fields may not land as
+you expect. Test with the form you actually plan to use.</li>
+</ul>
+<h2 id='important-considerations'>Important considerations</h2>
+<ul>
+<li><strong>One active Zap per form and per trigger, with one exception.</strong>
+<code>Forms: New PDF</code>, <code>Forms: Status Changed</code>, <code>Tasks: New Assigned Task</code> and the
+three signature triggers support a single active subscription per form. Turning
+on a second Zap with the same trigger on the same form is rejected with an
+error naming the trigger type and asking you to remove the previous one.
+Different triggers on the same form are fine, and so is the same trigger on
+different forms. <strong><code>Forms: New Form Entry</code> is not covered by that check</strong>: a
+second Zap on the same form is accepted, and both then receive every
+submission. Add steps to one Zap instead.</li>
+<li><strong>If you need several things to happen on one event, add steps to one Zap</strong>
+rather than creating a second Zap on the same trigger and form.</li>
+<li><strong>Ticket triggers work at the account level.</strong> <code>Tickets: New Ticket</code> and
+<code>Tickets: Changed Status</code> cover every ticket in the account and support one
+active Zap per account each. They have no Form field.</li>
+<li><strong>Available fields vary by configuration.</strong> Some data, such as signer
+identity fields or extended task fields, appears only when those features
+are enabled on your account.</li>
+<li><strong>A trigger&#39;s sample data is not the full field list.</strong> Zapier builds the
+field list from recent events, so a question that nobody has answered yet,
+or an optional field that was empty, may not appear until it does. Send one
+representative answer before mapping the steps that follow.</li>
+<li><strong>The <code>Forms: New Form Entry</code> trigger is visible on DataScope&#39;s side.</strong> It
+registers itself in the Webhooks list of
+<a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>.
+The other triggers do not appear in that list.</li>
+</ul>
+<h2 id='if-something-doesn-39-t-work'>If something doesn&#39;t work</h2>
+<ul>
+<li><strong>The connection is accepted but nothing works:</strong> the connection test does not
+reliably reject a wrong key, so a bad API Key surfaces later as a trigger that
+returns no data at all. Re-copy the key from the Integrations section, with no
+leading or trailing spaces, and replace the connection.</li>
+<li><strong>Turning the Zap on fails saying the hook already exists:</strong> another Zap in
+your account, possibly built by someone else, already uses that trigger on
+that form. Turn the older Zap off, then turn this one on. If the error
+persists, contact support and we will clear the leftover subscription.</li>
+<li><strong>Test trigger returns no data:</strong> the trigger reads recent events, so an
+account with none yet has nothing to show. Produce one and test again.</li>
+<li><strong>The Zap never fires:</strong> confirm that a form is selected in the trigger,
+that the Zap is on, and check the Zap history in Zapier. An event that
+arrived while the Zap was off is not replayed.</li>
+<li><strong>A Zap you turned off keeps receiving data:</strong> if the trigger is
+<code>Forms: New Form Entry</code>, open the Webhooks list at
+<a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
+and delete the entry there.</li>
+<li><strong>Expected fields don&#39;t appear:</strong> some fields depend on your account&#39;s
+configuration. Reach out to support and we will look into it with you.</li>
+</ul>
+
+<p>For any question, contact support and we will help you with the setup.</p>
+<h2 id='changelog'>Changelog</h2>
+<p>Versions of the DataScope app in Zapier, newest first. A Zap keeps running on
+the version it was created with, so an older Zap can behave differently from a
+new one built on the same trigger, and there is nothing to install or update on
+your side either way. Some versions are released to selected accounts before
+they become the default for new Zaps, so the version behind your Zap is not
+always the current one.</p>
+
+<p>Two numbers, 2.0.0 and 2.1.0, were never released. Because of that, the release
+notes recorded on 2.0.1 and 2.1.1 describe only the difference from a draft that
+no longer exists. The bullets below describe the difference from the previous
+released version instead.</p>
+
+<aside class="notice">
+DataScope records the version the app reports when you turn a Zap on and the subscription is created, and uses that number to pick how events are delivered: below 2.0.0 the earlier path, 2.0.0 or above the current one. Since no 2.0.0 was ever released, in practice every Zap on the 1.14 line takes the earlier path and every Zap on the 2.x line takes the current one. The recorded number changes only when the subscription is created again, so turning a Zap off and back on re-records it. <code>Forms: New Form Entry</code> predates versioned subscriptions and always takes the earlier path.
+</aside>
+
+<!--
+Changelog entry template. Newest version first: add the new version as the first
+block below this comment, and add the same block to connector_guide_en,
+connector_guide_es and connector_guide_pt so the three languages stay in sync.
+An entry is a bold version number, **X.Y.Z**, optionally followed by a
+parenthetical for its rollout state, then a blank line, then one bullet per
+change. Prefer the version's release note in the Zapier developer platform;
+where the note is missing or undersells the change, diff the version's
+definition against the previous released one and describe that. Describe only
+what a reader can check in the app or in this guide. Never publish per-version
+user or task counts. Add a date only when the release date is known.
+-->
+
+<p><strong>2.1.3</strong> (released to selected accounts)</p>
+
+<ul>
+<li>Adds the <code>Location Type</code> field to <code>Tasks: Assign Task V2</code> and to
+<code>Tickets: Create Ticket</code>, with the <code>Places (new module)</code> option next to the
+legacy Locations one.</li>
+<li>Adds <code>Find Location / Place by ID</code> to <code>Tasks: Assign Task V2</code>, so a task can
+point at an existing location or place by its internal ID.</li>
+</ul>
+
+<p><strong>2.1.2</strong> (default for new Zaps)</p>
+
+<ul>
+<li>Adds the action <code>Tasks: Assign Task V2</code>, and relabels the previous one
+<code>Tasks: Assign Task V1 [Legacy]</code>. V2 accepts user email addresses that contain
+plus signs.</li>
+</ul>
+
+<p><strong>2.1.1</strong></p>
+
+<ul>
+<li>Renames the two ticket triggers. <code>Findings: New Finding</code> becomes
+<code>Tickets: New Ticket (FKA Issue)</code>, and <code>Findings: Changed Status</code> becomes
+<code>Tickets: Changed Status (FKA Issue)</code>.</li>
+<li>Adds the action <code>Tickets: Create Ticket (FKA Issue)</code>.</li>
+<li>Fixes a bug with the creation date and the relative expiration date.</li>
+</ul>
+
+<p><strong>2.0.2</strong></p>
+
+<ul>
+<li>Location Name is no longer required on the <code>Assign Task</code> action.</li>
+<li>Changes some output field types.</li>
+</ul>
+
+<p><strong>2.0.1</strong></p>
+
+<ul>
+<li>The first released version of the 2.x line, and the first with the three
+signature triggers and the two ticket triggers, then named
+<code>Findings: New Finding</code> and <code>Findings: Changed Status</code>.</li>
+<li>Consolidates what the 1.14 drafts had added separately: the status trigger,
+the <code>Send Data</code> action, and the mandatory and late-response fields on
+<code>Assign Task</code>.</li>
+<li>Prefixes every trigger and action name with its area, <code>Forms:</code>, <code>Tasks:</code> or
+<code>Signatures:</code>.</li>
+<li>Improves a default value.</li>
+</ul>
+
+<p><strong>1.14.3</strong></p>
+
+<ul>
+<li>Adds <code>Make this task mandatory</code> and <code>Allow the task to be answered after the
+due date has been reached</code> to the <code>Assign Task</code> action.</li>
+<li>Does not carry the <code>Status Changed</code> trigger or the <code>Send Data</code> action that
+1.14.2 has, so a Zap on this version has three triggers and three actions.</li>
+</ul>
+
+<p><strong>1.14.2</strong></p>
+
+<ul>
+<li>Adds the action <code>Send Data</code>.</li>
+<li>Renames the <code>Change Status</code> trigger to <code>Status Changed</code>, and its Form field
+becomes optional.</li>
+</ul>
+
+<p><strong>1.14.1</strong></p>
+
+<ul>
+<li>Adds the <code>Change Status</code> trigger.</li>
+</ul>
+
+<p><strong>1.14.0</strong></p>
+
+<ul>
+<li>The baseline of the 1.14 line: <code>New Form Entry</code>, <code>New Assigned Task</code> and
+<code>New PDF</code> as triggers, <code>Assign Task</code>, <code>Change Form Status</code> and
+<code>Modify Form Answer</code> as actions. <code>Assign Task</code> requires a Location Name here.</li>
+<li>The three signature triggers, the two ticket triggers, <code>Assign Task V2</code> and
+<code>Create Ticket</code> only exist on the 2.x line. To use any of them, rebuild the
+Zap so it picks up the current version.</li>
+</ul>
+
+      </div>
+      <div class="dark-box">
+      </div>
+    </div>
+  </body>
+</html>

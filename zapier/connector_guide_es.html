@@ -1,0 +1,667 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Conectar DataScope con Zapier</title>
+
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .cd {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <link href="../stylesheets/screen.css" rel="stylesheet" media="screen" />
+    <link href="../stylesheets/print.css" rel="stylesheet" media="print" />
+      <script src="../javascripts/all_nosearch.js"></script>
+  </head>
+
+  <body class="zapier zapier_connector_guide_es" data-languages="[]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="../images/navbar.png" alt="Navbar" />
+      </span>
+    </a>
+    <div class="toc-wrapper">
+      <img src="../images/logo.png" class="logo" alt="Logo" />
+      <div id="toc" class="toc-list-h1">
+          <li>
+            <a href="#conectar-datascope-con-zapier" class="toc-h1 toc-link" data-title="conectar-datascope-con-zapier">Conectar DataScope con Zapier</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#antes-de-empezar" class="toc-h2 toc-link" data-title="antes-de-empezar">Antes de empezar</a>
+                  </li>
+                  <li>
+                    <a href="#paso-1-crear-el-zap" class="toc-h2 toc-link" data-title="paso-1-crear-el-zap">Paso 1: crear el Zap</a>
+                  </li>
+                  <li>
+                    <a href="#paso-2-crear-la-conexion" class="toc-h2 toc-link" data-title="paso-2-crear-la-conexion">Paso 2: crear la conexión</a>
+                  </li>
+                  <li>
+                    <a href="#paso-3-elegir-el-formulario" class="toc-h2 toc-link" data-title="paso-3-elegir-el-formulario">Paso 3: elegir el formulario</a>
+                  </li>
+                  <li>
+                    <a href="#paso-4-probar-y-activar-el-zap" class="toc-h2 toc-link" data-title="paso-4-probar-y-activar-el-zap">Paso 4: probar y activar el Zap</a>
+                  </li>
+                  <li>
+                    <a href="#que-puedes-automatizar" class="toc-h2 toc-link" data-title="que-puedes-automatizar">Qué puedes automatizar</a>
+                  </li>
+                  <li>
+                    <a href="#consideraciones-importantes" class="toc-h2 toc-link" data-title="consideraciones-importantes">Consideraciones importantes</a>
+                  </li>
+                  <li>
+                    <a href="#si-algo-no-funciona" class="toc-h2 toc-link" data-title="si-algo-no-funciona">Si algo no funciona</a>
+                  </li>
+                  <li>
+                    <a href="#historial-de-versiones" class="toc-h2 toc-link" data-title="historial-de-versiones">Historial de versiones</a>
+                  </li>
+              </ul>
+          </li>
+      </div>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='conectar-datascope-con-zapier'>Conectar DataScope con Zapier</h1>
+<blockquote>
+<p>Reading this in English or Portuguese? <a href="connector_guide_en.html">Switch to the English guide</a> | <a href="connector_guide_pt.html">Versão em português</a>.</p>
+</blockquote>
+
+<p>Esta guía explica cómo conectar DataScope con Zapier para automatizar tu
+operación en terreno: disparar Zaps cuando se completa un formulario, cuando
+se genera un documento, cuando se asigna una tarea o cuando se registra un
+ticket, y actuar sobre DataScope desde las otras aplicaciones que ya usas.</p>
+
+<aside class="notice">
+A diferencia del conector de Power Automate, acá no hay nada que importar. La app de DataScope está publicada en el directorio de aplicaciones de Zapier, así que lo único que necesitas para conectarla es tu API Key.
+</aside>
+<h2 id='antes-de-empezar'>Antes de empezar</h2>
+<p>Necesitas:</p>
+
+<ul>
+<li>Una cuenta de Zapier con permisos para crear Zaps en el espacio de trabajo
+donde vas a trabajar.</li>
+<li>Tu API Key de DataScope. La obtienes desde <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>,
+en la sección Integraciones de tu cuenta, en la pestaña API Key.</li>
+<li>Al menos un formulario publicado en DataScope. La mayoría de los disparadores
+y de las actions te piden elegir un formulario, y la lista se llena con los
+formularios de tu cuenta.</li>
+</ul>
+<h2 id='paso-1-crear-el-zap'>Paso 1: crear el Zap</h2>
+<ol>
+<li>Entra a <a href="https://zapier.com/apps/datascope-forms/integrations" target="_blank" rel="noopener noreferrer">la app de DataScope en Zapier</a> e inicia sesión.</li>
+<li>Selecciona <strong>Create Zap</strong>, o parte de una de las plantillas listadas en esa
+página. La sección Integraciones de DataScope lista las mismas plantillas,
+agrupadas por caso de uso.</li>
+<li>En el paso del disparador, busca <strong>DataScope Forms</strong> y selecciónalo.</li>
+<li>Elige el evento al que quieres reaccionar, de la lista en
+<a href="#que-puedes-automatizar">Qué puedes automatizar</a>.</li>
+</ol>
+<h2 id='paso-2-crear-la-conexion'>Paso 2: crear la conexión</h2>
+<p>La primera vez que uses DataScope en un Zap, Zapier te pedirá una conexión y
+te mostrará un solo campo, <strong>Token Key</strong>. Pega ahí tu API Key de DataScope.</p>
+
+<p>Pégala tal como DataScope te la muestra, sin espacios al inicio ni al final.
+Si la conexión se acepta pero después el disparador no devuelve ningún dato, la
+API Key es lo primero que conviene revisar.</p>
+
+<p>La conexión pertenece a tu cuenta de Zapier y puedes reutilizarla en todos los
+Zaps que armes. Cada persona que arme Zaps necesita su propia conexión, con la
+API Key de su cuenta.</p>
+<h2 id='paso-3-elegir-el-formulario'>Paso 3: elegir el formulario</h2>
+<p>La mayoría de los disparadores muestran una lista <strong>Form</strong> con los formularios
+de tu cuenta. Aunque el campo sea opcional, elige un formulario igual.</p>
+
+<aside class="warning">
+Dejar <b>Form</b> en blanco no te deja un Zap funcional: no entrega nada. Si necesitas la misma automatización en varios formularios, crea un Zap por formulario en vez de un Zap sin formulario seleccionado.
+</aside>
+<h2 id='paso-4-probar-y-activar-el-zap'>Paso 4: probar y activar el Zap</h2>
+<p>El botón <strong>Test trigger</strong> de Zapier trae los últimos eventos que calzan con el
+disparador, así que necesita al menos uno para mostrarte datos de ejemplo. Si
+tu cuenta todavía no tiene ninguno, envía una respuesta de formulario, genera
+un documento o asigna una tarea, según el disparador que elegiste, y prueba de
+nuevo.</p>
+
+<p>Cuando los datos de ejemplo se vean bien, agrega los pasos siguientes y
+publica el Zap. La suscripción del lado de DataScope se crea al activar el
+Zap, no mientras lo estás editando.</p>
+<h2 id='que-puedes-automatizar'>Qué puedes automatizar</h2>
+<p>La app de DataScope entrega los siguientes disparadores. Los nombres son los
+que ves en la lista de disparadores de Zapier:</p>
+
+<table><thead>
+<tr>
+<th>Disparador</th>
+<th>Se activa cuando</th>
+<th>Campo Form</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Forms: New Form Entry</td>
+<td>Se envía una respuesta de formulario</td>
+<td>Obligatorio</td>
+</tr>
+<tr>
+<td>Forms: New PDF</td>
+<td>Se genera un PDF por respaldo por email o por autonotificación</td>
+<td>Opcional, elige uno</td>
+</tr>
+<tr>
+<td>Forms: Status Changed</td>
+<td>Una respuesta de formulario cambia de estado</td>
+<td>Opcional, elige uno</td>
+</tr>
+<tr>
+<td>Tasks: New Assigned Task</td>
+<td>Se asigna una tarea</td>
+<td>Obligatorio</td>
+</tr>
+<tr>
+<td>Signatures: New Completed Signature</td>
+<td>Todos los firmantes firmaron el documento</td>
+<td>Opcional, elige uno</td>
+</tr>
+<tr>
+<td>Signatures: New Rejected Signature</td>
+<td>Un firmante rechaza la solicitud de firma</td>
+<td>Opcional, elige uno</td>
+</tr>
+<tr>
+<td>Signatures: Updated Signature</td>
+<td>Cambian las firmas de un documento y todavía quedan pendientes</td>
+<td>Opcional, elige uno</td>
+</tr>
+<tr>
+<td>Tickets: New Ticket (FKA Issue)</td>
+<td>Se crea un ticket</td>
+<td>No aplica, es a nivel de cuenta</td>
+</tr>
+<tr>
+<td>Tickets: Changed Status (FKA Issue)</td>
+<td>Un ticket cambia de estado</td>
+<td>No aplica, es a nivel de cuenta</td>
+</tr>
+</tbody></table>
+
+<p>Cada disparador entrega los datos del evento como campos individuales, listos
+para mapear en los pasos siguientes del Zap sin tener que procesar el JSON
+manualmente. En el caso de las respuestas de formulario, cada pregunta llega
+como su propio campo, con su nombre, su tipo y su valor.</p>
+
+<p>La app también entrega las siguientes actions, para que un Zap pueda actuar
+sobre DataScope y no solo reaccionar a sus eventos:</p>
+
+<table><thead>
+<tr>
+<th>Action</th>
+<th>Qué hace</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Tasks: Assign Task V2</td>
+<td>Asigna una tarea de un formulario a un usuario, opcionalmente agendándola y vinculándola a una ubicación o a un lugar</td>
+</tr>
+<tr>
+<td>Tasks: Assign Task V1 [Legacy]</td>
+<td>La versión anterior de la misma action, se mantiene para que los Zaps existentes sigan funcionando</td>
+</tr>
+<tr>
+<td>Forms: Send Data / New Answer [Beta]</td>
+<td>Genera una nueva respuesta de formulario y su PDF a partir de un formulario existente usado como plantilla</td>
+</tr>
+<tr>
+<td>Change Form Status</td>
+<td>Cambia el estado de una respuesta de formulario, identificada por nombre y código de formulario</td>
+</tr>
+<tr>
+<td>Modify Form Answer</td>
+<td>Crea o modifica una respuesta puntual dentro de un formulario ya enviado</td>
+</tr>
+<tr>
+<td>Tickets: Create Ticket (FKA Issue)</td>
+<td>Crea un ticket, opcionalmente tomando sus valores por defecto de un Ticket Type</td>
+</tr>
+</tbody></table>
+<h3 id='assign-task-v1-o-v2'>Assign Task: V1 o V2</h3>
+<p>Usa <strong>V2</strong> para todo lo nuevo. Hace todo lo que hace V1, y además:</p>
+
+<ul>
+<li>Acepta el signo más en el email del usuario, así que
+<code>usuario+obra@ejemplo.com</code> resuelve al usuario correcto.</li>
+<li>Puede apuntar al módulo de lugares nuevo, no solo al antiguo.</li>
+<li>Puede encontrar una ubicación o un lugar existente por su ID interno, que es
+lo que necesitas cuando varios lugares comparten el nombre.</li>
+</ul>
+
+<p><strong>V1</strong> sigue disponible para que los Zaps creados sobre ella sigan corriendo.
+No hay migración automática: si quieres pasar un Zap de V1 a V2, reemplaza el
+paso de la action y vuelve a mapear los campos.</p>
+
+<aside class="warning">
+En las dos versiones, si el email o el nombre de usuario que envías no coincide con un usuario de tu cuenta, la tarea <b>no</b> se rechaza: se asigna a otro usuario de la cuenta. Mapea el campo de usuario desde un dato que controles, y revisa a quién quedó asignada la primera ejecución.
+</aside>
+<h3 id='locations-o-places'>Locations o Places</h3>
+<p><strong>Tasks: Assign Task V2</strong> y <strong>Tickets: Create Ticket</strong> tienen un campo
+<strong>Location Type</strong> con dos opciones, y las dos acciones no se comportan igual. En
+<strong>Assign Task V2</strong>:</p>
+
+<aside class="notice">
+El campo <b>Location Type</b> llegó en la versión 2.1.3, que está liberada a cuentas seleccionadas. Si no lo ves en ninguna de las dos actions, tu Zap está en una versión anterior y apunta solo al módulo de lugares antiguo. Revisa el [Historial de versiones](#historial-de-versiones).
+</aside>
+
+<table><thead>
+<tr>
+<th>Location Type</th>
+<th>Comportamiento cuando nada coincide</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Locations (old module, legacy)</td>
+<td>El lugar se crea en DataScope a partir del Location Name y de los demás campos de ubicación que enviaste. Sin Location Name no hay con qué crearlo, así que la tarea se asigna sin lugar</td>
+</tr>
+<tr>
+<td>Places (new module)</td>
+<td>No se crea nada. La tarea no se asigna y el Zap falla con <code>nestable location not found</code></td>
+</tr>
+</tbody></table>
+
+<p><strong>Tickets: Create Ticket</strong> nunca crea un lugar, con ninguna de las dos opciones.
+Si el lugar que envías no coincide con un registro existente, el ticket se crea
+sin lugar asociado y el Zap reporta éxito. Solo busca por Location ID y después
+por Location Name.</p>
+
+<p>Locations es la opción por defecto, así que los Zaps existentes siguen
+funcionando sin cambios. Si eliges Places, crea el lugar en DataScope antes de
+que corra el Zap.</p>
+
+<p>En <strong>Assign Task V2</strong> la ubicación se busca en este orden: Location / Place
+ID, después Location Code, después Location Name y después Location Address.
+Gana la primera que calza.</p>
+
+<p>El resto de los campos de ubicación, Location Phone, Location Email, Company
+Name, Company Legal ID, Latitude y Longitude, aplican solo al módulo de lugares
+antiguo, donde se guardan en el lugar que se encontró o se creó. Se
+ignoran con Places, porque los lugares nunca se modifican desde esta action.</p>
+<h3 id='send-data-new-answer-esta-en-beta'>Send Data / New Answer está en Beta</h3>
+<p><strong>Forms: Send Data / New Answer</strong> crea una respuesta de formulario a partir de un
+formulario existente, lo que la hace útil para traer a DataScope datos capturados
+en otra parte. Tres cosas que conviene tener en cuenta:</p>
+
+<ul>
+<li><strong>El PDF se genera solo si completas el campo Emails.</strong> Ese campo es el que
+envía el documento, y generarlo es parte de enviarlo. Si lo dejas vacío,
+obtienes la respuesta de formulario sin PDF.</li>
+<li><strong>No dispara el resto de la cadena de automatización.</strong> La sincronización con
+Google Sheets, la firma automática y los webhooks de respuestas de formulario
+no corren para una respuesta creada así, por lo que un Zap que reacciona a
+<code>Forms: New Form Entry</code> no la va a ver. <code>Forms: New PDF</code> es la excepción: si
+completas el campo Emails, ese Zap sí se dispara.</li>
+<li><strong>No todos los tipos de pregunta están soportados por completo</strong>, así que
+algunos campos pueden no quedar como esperas. Prueba con el formulario que vas
+a usar de verdad.</li>
+</ul>
+<h2 id='consideraciones-importantes'>Consideraciones importantes</h2>
+<ul>
+<li><strong>Un Zap activo por formulario y por disparador, con una excepción.</strong>
+<code>Forms: New PDF</code>, <code>Forms: Status Changed</code>, <code>Tasks: New Assigned Task</code> y los
+tres disparadores de firma admiten una sola suscripción activa por formulario.
+Activar un segundo Zap con el mismo disparador sobre el mismo formulario se
+rechaza con un error que nombra el tipo de disparador y te pide eliminar el
+anterior. Disparadores distintos sobre el mismo formulario no son problema, y
+tampoco el mismo disparador sobre formularios distintos.
+<strong><code>Forms: New Form Entry</code> no pasa por esa validación</strong>: un segundo Zap sobre el
+mismo formulario se acepta, y después los dos reciben todos los envíos. Agrega
+pasos a un solo Zap en vez de eso.</li>
+<li><strong>Si necesitas que pasen varias cosas con un mismo evento, agrega pasos a un
+solo Zap</strong> en vez de crear un segundo Zap con el mismo disparador y
+formulario.</li>
+<li><strong>Los disparadores de tickets operan a nivel de cuenta.</strong> <code>Tickets: New
+Ticket</code> y <code>Tickets: Changed Status</code> cubren todos los tickets de la cuenta y
+admiten un Zap activo por cuenta cada uno. No tienen campo Form.</li>
+<li><strong>Los campos disponibles varían según tu configuración.</strong> Algunos datos, como
+los de identidad de los firmantes o los campos extendidos de tareas,
+aparecen solo si esas funcionalidades están habilitadas en tu cuenta.</li>
+<li><strong>Los datos de ejemplo de un disparador no son la lista completa de campos.</strong>
+Zapier arma la lista a partir de los eventos recientes, así que una pregunta
+que nadie respondió todavía, o un campo opcional que llegó vacío, puede no
+aparecer hasta que lo haga. Envía una respuesta representativa antes de
+mapear los pasos siguientes.</li>
+<li><strong>El disparador <code>Forms: New Form Entry</code> es visible del lado de DataScope.</strong>
+Se registra en la lista de Webhooks de
+<a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>.
+El resto de los disparadores no aparece en esa lista.</li>
+</ul>
+<h2 id='si-algo-no-funciona'>Si algo no funciona</h2>
+<ul>
+<li><strong>La conexión se acepta pero nada funciona:</strong> la prueba de conexión no rechaza
+de forma confiable una API Key incorrecta, así que una clave mala aparece más
+tarde como un disparador que no devuelve ningún dato. Vuelve a copiar la clave
+desde la sección Integraciones, sin espacios al inicio ni al final, y reemplaza
+la conexión.</li>
+<li><strong>Al activar el Zap falla diciendo que el hook ya existe:</strong> otro Zap de tu
+cuenta, quizás armado por otra persona, ya usa ese disparador sobre ese
+formulario. Apaga el Zap más antiguo y luego activa este. Si el error
+persiste, escríbenos y limpiamos la suscripción que quedó.</li>
+<li><strong>Test trigger no devuelve datos:</strong> el disparador lee eventos recientes, así
+que una cuenta que todavía no tiene ninguno no tiene nada que mostrar. Genera
+uno y prueba de nuevo.</li>
+<li><strong>El Zap nunca se dispara:</strong> confirma que haya un formulario seleccionado en
+el disparador, que el Zap esté activo, y revisa el historial del Zap en
+Zapier. Un evento que llegó mientras el Zap estaba apagado no se reenvía.</li>
+<li><strong>Un Zap que apagaste sigue recibiendo datos:</strong> si el disparador es
+<code>Forms: New Form Entry</code>, abre la lista de Webhooks en
+<a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
+y elimina ahí la entrada.</li>
+<li><strong>No aparecen los campos esperados:</strong> algunos campos dependen de la
+configuración de tu cuenta. Escríbenos y lo revisamos contigo.</li>
+</ul>
+
+<p>Para cualquier duda, escribe a soporte y te acompañamos en la configuración.</p>
+<h2 id='historial-de-versiones'>Historial de versiones</h2>
+<p>Versiones de la app de DataScope en Zapier, de la más nueva a la más antigua. Un
+Zap sigue corriendo con la versión con la que fue creado, así que un Zap antiguo
+puede comportarse distinto a uno nuevo creado con el mismo disparador, y en
+cualquiera de los dos casos no hay nada que instalar ni actualizar de tu lado.
+Algunas versiones se liberan a cuentas seleccionadas antes de pasar a ser la
+predeterminada para los Zaps nuevos, así que la versión detrás de tu Zap no
+siempre es la actual.</p>
+
+<p>Dos números, 2.0.0 y 2.1.0, nunca se publicaron. Por eso las notas de
+publicación registradas en 2.0.1 y 2.1.1 describen solo la diferencia respecto a
+un draft que ya no existe. Los bullets de abajo describen, en cambio, la
+diferencia respecto a la versión publicada anterior.</p>
+
+<aside class="notice">
+DataScope registra la versión que reporta la app cuando activas el Zap y se crea la suscripción, y usa ese número para decidir por dónde entrega los eventos: por debajo de 2.0.0 la vía anterior, en 2.0.0 o superior la vía actual. Como nunca se publicó una 2.0.0, en la práctica todos los Zaps de la línea 1.14 usan la vía anterior y todos los de la línea 2.x usan la actual. El número registrado solo cambia cuando la suscripción se vuelve a crear, así que apagar y volver a activar un Zap lo vuelve a registrar. <code>Forms: New Form Entry</code> es anterior a las suscripciones con versión y siempre usa la vía anterior.
+</aside>
+
+<!--
+Plantilla de entrada del historial. La más nueva va primero: agrega la versión
+nueva como el primer bloque debajo de este comentario, y agrega el mismo bloque
+en connector_guide_en, connector_guide_es y connector_guide_pt para que los tres
+idiomas queden iguales. Una entrada es el número de versión en negrita,
+**X.Y.Z**, opcionalmente seguido de un paréntesis con su estado de liberación,
+después una línea en blanco, después un bullet por cambio. Prioriza la nota de
+publicación de la versión en la plataforma de desarrollo de Zapier; si la nota
+falta o se queda corta, diffea la definición de esa versión contra la publicada
+anterior y describe eso. Describe solo lo que el lector puede verificar en la
+app o en esta guía. Nunca publiques la cantidad de usuarios ni de tareas por
+versión. Agrega una fecha solo si se conoce la fecha de publicación.
+-->
+
+<p><strong>2.1.3</strong> (liberada a cuentas seleccionadas)</p>
+
+<ul>
+<li>Agrega el campo <code>Location Type</code> en <code>Tasks: Assign Task V2</code> y en
+<code>Tickets: Create Ticket</code>, con la opción <code>Places (new module)</code> junto a la de
+Locations antigua.</li>
+<li>Agrega <code>Find Location / Place by ID</code> en <code>Tasks: Assign Task V2</code>, para que una
+tarea pueda apuntar a un lugar existente por su ID interno.</li>
+</ul>
+
+<p><strong>2.1.2</strong> (predeterminada para los Zaps nuevos)</p>
+
+<ul>
+<li>Agrega la action <code>Tasks: Assign Task V2</code> y renombra la anterior como
+<code>Tasks: Assign Task V1 [Legacy]</code>. La V2 acepta direcciones de email de usuario
+que contienen el signo más.</li>
+</ul>
+
+<p><strong>2.1.1</strong></p>
+
+<ul>
+<li>Renombra los dos disparadores de tickets. <code>Findings: New Finding</code> pasa a
+<code>Tickets: New Ticket (FKA Issue)</code>, y <code>Findings: Changed Status</code> pasa a
+<code>Tickets: Changed Status (FKA Issue)</code>.</li>
+<li>Agrega la action <code>Tickets: Create Ticket (FKA Issue)</code>.</li>
+<li>Corrige un error con la fecha de creación y con la fecha de expiración
+relativa.</li>
+</ul>
+
+<p><strong>2.0.2</strong></p>
+
+<ul>
+<li>El Location Name deja de ser obligatorio en la action <code>Assign Task</code>.</li>
+<li>Cambia algunos tipos de campos de salida.</li>
+</ul>
+
+<p><strong>2.0.1</strong></p>
+
+<ul>
+<li>La primera versión publicada de la línea 2.x, y la primera con los tres
+disparadores de firma y los dos de tickets, que en ese momento se llamaban
+<code>Findings: New Finding</code> y <code>Findings: Changed Status</code>.</li>
+<li>Consolida lo que los drafts de 1.14 habían agregado por separado: el
+disparador de estado, la action <code>Send Data</code>, y los campos de obligatoriedad y
+de respuesta tardía en <code>Assign Task</code>.</li>
+<li>Antepone su área al nombre de cada disparador y de cada action: <code>Forms:</code>,
+<code>Tasks:</code> o <code>Signatures:</code>.</li>
+<li>Mejora un valor por defecto.</li>
+</ul>
+
+<p><strong>1.14.3</strong></p>
+
+<ul>
+<li>Agrega <code>Make this task mandatory</code> y <code>Allow the task to be answered after the
+due date has been reached</code> a la action <code>Assign Task</code>.</li>
+<li>No trae el disparador <code>Status Changed</code> ni la action <code>Send Data</code> que sí tiene
+1.14.2, así que un Zap en esta versión tiene tres disparadores y tres actions.</li>
+</ul>
+
+<p><strong>1.14.2</strong></p>
+
+<ul>
+<li>Agrega la action <code>Send Data</code>.</li>
+<li>Renombra el disparador <code>Change Status</code> como <code>Status Changed</code>, y su campo Form
+pasa a ser opcional.</li>
+</ul>
+
+<p><strong>1.14.1</strong></p>
+
+<ul>
+<li>Agrega el disparador <code>Change Status</code>.</li>
+</ul>
+
+<p><strong>1.14.0</strong></p>
+
+<ul>
+<li>La base de la línea 1.14: <code>New Form Entry</code>, <code>New Assigned Task</code> y <code>New PDF</code>
+como disparadores, y <code>Assign Task</code>, <code>Change Form Status</code> y
+<code>Modify Form Answer</code> como actions. Acá <code>Assign Task</code> exige un Location Name.</li>
+<li>Los tres disparadores de firma, los dos de tickets, <code>Assign Task V2</code> y
+<code>Create Ticket</code> existen solo en la línea 2.x. Para usar cualquiera de ellos,
+vuelve a crear el Zap para que tome la versión actual.</li>
+</ul>
+
+      </div>
+      <div class="dark-box">
+      </div>
+    </div>
+  </body>
+</html>
