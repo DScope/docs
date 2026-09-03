@@ -200,6 +200,70 @@
         "x-ms-visibility": "internal"
       }
     },
+    "/list_users": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "List users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "type"
+                  },
+                  "user_key": {
+                    "type": "integer",
+                    "description": "user_key"
+                  },
+                  "identifier": {
+                    "type": "string",
+                    "description": "identifier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get list of users",
+        "description": "Retrieves the list of users available in the account.",
+        "operationId": "User-list",
+        "parameters": [],
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/findings/types": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "List ticket types",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get list of ticket types",
+        "description": "Retrieves the list of ticket types available in the account.",
+        "operationId": "Finding-type-list",
+        "parameters": [],
+        "x-ms-visibility": "internal"
+      }
+    },
     "/hooks/power_automate/finding_created": {
       "x-ms-notification-content": {
         "description": "Details of the created ticket.",
@@ -2094,7 +2158,13 @@
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Identifier of the form the task will be assigned on."
+            "description": "Identifier of the form the task will be assigned on.",
+            "x-ms-summary": "Form",
+            "x-ms-dynamic-values": {
+              "operationId": "Form-list",
+              "value-path": "key",
+              "value-title": "label"
+            }
           },
           {
             "name": "user_id",
@@ -2379,7 +2449,13 @@
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Identifier of the form template used to generate the new answer."
+            "description": "Identifier of the form template used to generate the new answer.",
+            "x-ms-summary": "Form",
+            "x-ms-dynamic-values": {
+              "operationId": "Form-list",
+              "value-path": "key",
+              "value-title": "label"
+            }
           },
           {
             "name": "emails",
@@ -2440,14 +2516,26 @@
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Ticket type. When set, it can fill in defaults such as priority, expiration, location, and assignees, which may override other values sent in the same request."
+            "description": "Ticket type. When set, it can fill in defaults such as priority, expiration, location, and assignees, which may override other values sent in the same request.",
+            "x-ms-summary": "Ticket Type",
+            "x-ms-dynamic-values": {
+              "operationId": "Finding-type-list",
+              "value-path": "id",
+              "value-title": "name"
+            }
           },
           {
             "name": "author_email",
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Email of the user registered as the author of the ticket. If it does not match an existing user, the ticket is created under the account associated with the token."
+            "description": "Email of the user registered as the author of the ticket. If it does not match an existing user, the ticket is created under the account associated with the token.",
+            "x-ms-summary": "Author",
+            "x-ms-dynamic-values": {
+              "operationId": "User-list",
+              "value-path": "identifier",
+              "value-title": "identifier"
+            }
           },
           {
             "name": "creation_date",
@@ -2519,7 +2607,13 @@
             },
             "collectionFormat": "csv",
             "required": false,
-            "description": "Users assigned to the ticket."
+            "description": "Users assigned to the ticket.",
+            "x-ms-summary": "Assignees",
+            "x-ms-dynamic-values": {
+              "operationId": "User-list",
+              "value-path": "user_key",
+              "value-title": "identifier"
+            }
           },
           {
             "name": "invitees",
@@ -2530,7 +2624,13 @@
             },
             "collectionFormat": "csv",
             "required": false,
-            "description": "Users invited to the ticket."
+            "description": "Users invited to the ticket.",
+            "x-ms-summary": "Invitees",
+            "x-ms-dynamic-values": {
+              "operationId": "User-list",
+              "value-path": "user_key",
+              "value-title": "identifier"
+            }
           }
         ],
         "responses": {
