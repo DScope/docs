@@ -166,6 +166,40 @@
         "x-ms-visibility": "internal"
       }
     },
+    "/list_states": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "List form statuses",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "type"
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "key"
+                  },
+                  "identifier": {
+                    "type": "string",
+                    "description": "identifier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get list of form statuses",
+        "description": "Retrieves the list of form statuses available in the account.",
+        "operationId": "Form-state-list",
+        "parameters": [],
+        "x-ms-visibility": "internal"
+      }
+    },
     "/hooks/power_automate/finding_created": {
       "x-ms-notification-content": {
         "description": "Details of the created ticket.",
@@ -2231,7 +2265,13 @@
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Identifier of the status to set on the form answer."
+            "description": "Identifier of the status to set on the form answer.",
+            "x-ms-summary": "Form Status",
+            "x-ms-dynamic-values": {
+              "operationId": "Form-state-list",
+              "value-path": "key",
+              "value-title": "identifier"
+            }
           }
         ],
         "responses": {
