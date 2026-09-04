@@ -2184,14 +2184,16 @@
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Code that identifies the task assignment. If a task with this code already exists, it is updated instead of created."
+            "description": "Code that identifies the task assignment. If a task with this code already exists, it is updated instead of created. If omitted, a new code is generated automatically.",
+            "x-ms-summary": "Task Code"
           },
           {
             "name": "task_instruction",
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Instructions shown to the user for this task."
+            "description": "Instructions shown to the user for this task.",
+            "x-ms-summary": "Instructions"
           },
           {
             "name": "date",
@@ -2199,14 +2201,16 @@
             "type": "string",
             "format": "date-time",
             "required": false,
-            "description": "Date and time the task is scheduled for. Defaults to the current date and time when omitted or invalid."
+            "description": "Date and time the task is scheduled for. Defaults to the current date and time when omitted or invalid.",
+            "x-ms-summary": "Scheduled Date"
           },
           {
             "name": "gap",
             "in": "query",
             "type": "integer",
             "required": false,
-            "description": "Time window, in hours, around the scheduled date during which the task can be completed. Defaults to 4."
+            "description": "Time window, in hours, around the scheduled date during which the task can be completed. Defaults to 4.",
+            "x-ms-summary": "Time Window (Hours)"
           },
           {
             "name": "mandatory",
@@ -2218,14 +2222,16 @@
               "for_one",
               "for_nobody"
             ],
-            "description": "Who the task is mandatory for. Defaults to for_everyone."
+            "description": "Who the task is mandatory for. for_everyone requires every assigned user to complete it, for_nobody makes it optional for everyone, and for_one currently behaves like assigning the task to a single named user, with no additional group-completion behavior. Defaults to for_everyone.",
+            "x-ms-summary": "Mandatory"
           },
           {
             "name": "late_response_allowed",
             "in": "query",
             "type": "boolean",
             "required": false,
-            "description": "Indicates whether the task can still be completed after its scheduled window."
+            "description": "Indicates whether the task can still be completed after its scheduled window.",
+            "x-ms-summary": "Allow Late Response"
           }
         ],
         "responses": {
@@ -2278,7 +2284,8 @@
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Code of the form answer to update."
+            "description": "Code of the form answer to update.",
+            "x-ms-summary": "Form Code"
           },
           {
             "name": "form_state_id",
@@ -2331,35 +2338,40 @@
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Name or identifier of the form the answer belongs to."
+            "description": "Name or identifier of the form the answer belongs to.",
+            "x-ms-summary": "Form"
           },
           {
             "name": "form_code",
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Code of the form answer to update. The alias code is also accepted."
+            "description": "Code of the form answer to update. The alias code is also accepted.",
+            "x-ms-summary": "Form Code"
           },
           {
             "name": "question_name",
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Name of the question to create or update."
+            "description": "Name of the question to create or update.",
+            "x-ms-summary": "Question Name"
           },
           {
             "name": "question_value",
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "New value to set for the question."
+            "description": "New value to set for the question.",
+            "x-ms-summary": "Question Value"
           },
           {
             "name": "subform_index",
             "in": "query",
             "type": "integer",
             "required": false,
-            "description": "Row number of a subform table to update. When omitted, the answer at the root of the form is updated. Behavior for values other than a positive row number is not fully documented here."
+            "description": "Row number of a subform table to update, starting at 1. When omitted, the answer at the root of the form is updated. Behavior for values other than a positive row number is not fully documented here.",
+            "x-ms-summary": "Subform Row"
           }
         ],
         "responses": {
@@ -2387,7 +2399,7 @@
     },
     "/create_pdf": {
       "post": {
-        "summary": "Forms: Send Data / New Answer [Beta]",
+        "summary": "Send Data / New Answer (Forms) [Beta]",
         "description": "Generates a new form answer and its PDF from an existing form template. Any parameter besides form_id, emails, token, and action is treated as an answer to the matching question in the form, so this action supports as many additional fields as the selected form defines questions for. Not all question types are fully supported, which may result in unexpected behavior. This action does not trigger GSheet Sync, Automatic Signature, or other webhooks such as Power Automate triggers.",
         "operationId": "SendData",
         "consumes": [
@@ -2412,7 +2424,8 @@
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Email addresses that receive the generated PDF."
+            "description": "Email addresses that receive the generated PDF.",
+            "x-ms-summary": "Recipient Emails"
           }
         ],
         "responses": {
@@ -2440,8 +2453,8 @@
     },
     "/findings/create": {
       "post": {
-        "summary": "Tickets: Create Ticket",
-        "description": "Creates a new ticket. Tickets are not stored in the same database as forms and tasks, so some response fields below could not be fully verified against the underlying storage.",
+        "summary": "Create Ticket (Tickets)",
+        "description": "Creates a new ticket.",
         "operationId": "CreateFinding",
         "consumes": [
           "application/x-www-form-urlencoded"
@@ -2452,14 +2465,16 @@
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Name of the ticket."
+            "description": "Name of the ticket.",
+            "x-ms-summary": "Name"
           },
           {
             "name": "description",
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Description of the ticket."
+            "description": "Description of the ticket.",
+            "x-ms-summary": "Description"
           },
           {
             "name": "type",
@@ -2492,14 +2507,16 @@
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Date and time the ticket was created."
+            "description": "Date and time the ticket was created. Defaults to the current date and time when omitted.",
+            "x-ms-summary": "Creation Date"
           },
           {
             "name": "expiration_date",
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Date and time the ticket expires."
+            "description": "Date and time the ticket expires.",
+            "x-ms-summary": "Expiration Date"
           },
           {
             "name": "status",
@@ -2512,7 +2529,8 @@
               "paused",
               "closed"
             ],
-            "description": "Status of the ticket."
+            "description": "Status of the ticket.",
+            "x-ms-summary": "Status"
           },
           {
             "name": "priority",
@@ -2525,28 +2543,32 @@
               "high",
               "critical"
             ],
-            "description": "Priority of the ticket."
+            "description": "Priority of the ticket.",
+            "x-ms-summary": "Priority"
           },
           {
             "name": "location_id",
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Identifier of the location linked to the ticket."
+            "description": "Identifier of the location linked to the ticket.",
+            "x-ms-summary": "Location ID"
           },
           {
             "name": "location_name",
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Name of the location linked to the ticket."
+            "description": "Name of the location linked to the ticket.",
+            "x-ms-summary": "Location Name"
           },
           {
             "name": "location_type",
             "in": "query",
             "type": "string",
             "required": false,
-            "description": "Type of the location linked to the ticket."
+            "description": "Type of the location linked to the ticket.",
+            "x-ms-summary": "Location Type"
           },
           {
             "name": "assignees",
