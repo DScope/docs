@@ -89,7 +89,7 @@ Two things to know before you build: most form-scoped triggers support one activ
 
 ## Microsoft Power Automate [Beta]
 
-DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, tickets and signature events, delivered as dynamic content instead of raw webhook JSON.
+DataScope publishes a custom connector for Microsoft Power Automate, so you can trigger flows from form answers, generated PDFs, task assignments, tickets and signature events, delivered as dynamic content instead of raw webhook JSON, and act back on DataScope with actions like assigning a task or creating a ticket.
 
 <aside class="notice">
 We have had ongoing trouble keeping the connector published in the official Power Automate connector gallery in sync with the latest version. Until that is resolved, the fastest way to connect is to build the custom connector yourself from the definition file below.

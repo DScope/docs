@@ -166,6 +166,104 @@
         "x-ms-visibility": "internal"
       }
     },
+    "/list_states": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "List form statuses",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "type"
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "key"
+                  },
+                  "identifier": {
+                    "type": "string",
+                    "description": "identifier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get list of form statuses",
+        "description": "Retrieves the list of form statuses available in the account.",
+        "operationId": "Form-state-list",
+        "parameters": [],
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/list_users": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "List users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "type"
+                  },
+                  "user_key": {
+                    "type": "integer",
+                    "description": "user_key"
+                  },
+                  "identifier": {
+                    "type": "string",
+                    "description": "identifier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get list of users",
+        "description": "Retrieves the list of users available in the account.",
+        "operationId": "User-list",
+        "parameters": [],
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/findings/types": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "List ticket types",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get list of ticket types",
+        "description": "Retrieves the list of ticket types available in the account.",
+        "operationId": "Finding-type-list",
+        "parameters": [],
+        "x-ms-visibility": "internal"
+      }
+    },
     "/hooks/power_automate/finding_created": {
       "x-ms-notification-content": {
         "description": "Details of the created ticket.",
@@ -2044,6 +2142,506 @@
             "x-ms-visibility": "internal"
           }
         ]
+      }
+    },
+    "/assign_task": {
+      "post": {
+        "summary": "Assign Task (Tasks)",
+        "description": "Assigns a task on a form to a user. If a task with the same code already exists, it is updated instead of creating a new one.",
+        "operationId": "AssignTaskV2",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "form_id",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Identifier of the form the task will be assigned on.",
+            "x-ms-summary": "Form",
+            "x-ms-dynamic-values": {
+              "operationId": "Form-list",
+              "value-path": "key",
+              "value-title": "label"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Email or identifier of the user the task is assigned to. If it does not match an existing user, the task may fall back to another user of the account, so use a valid, existing identifier.",
+            "x-ms-summary": "User",
+            "x-ms-dynamic-values": {
+              "operationId": "User-list",
+              "value-path": "identifier",
+              "value-title": "identifier"
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Code that identifies the task assignment. If a task with this code already exists, it is updated instead of created. If omitted, a new code is generated automatically.",
+            "x-ms-summary": "Task Code"
+          },
+          {
+            "name": "task_instruction",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Instructions shown to the user for this task.",
+            "x-ms-summary": "Instructions"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": false,
+            "description": "Date and time the task is scheduled for. Defaults to the current date and time when omitted or invalid.",
+            "x-ms-summary": "Scheduled Date"
+          },
+          {
+            "name": "gap",
+            "in": "query",
+            "type": "integer",
+            "required": false,
+            "description": "Time window, in hours, around the scheduled date during which the task can be completed. Defaults to 4.",
+            "x-ms-summary": "Time Window (Hours)"
+          },
+          {
+            "name": "mandatory",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "for_everyone",
+              "for_one",
+              "for_nobody"
+            ],
+            "description": "Who the task is mandatory for. for_everyone requires every assigned user to complete it, for_nobody makes it optional for everyone, and for_one currently behaves like assigning the task to a single named user, with no additional group-completion behavior. Defaults to for_everyone.",
+            "x-ms-summary": "Mandatory"
+          },
+          {
+            "name": "late_response_allowed",
+            "in": "query",
+            "type": "boolean",
+            "required": false,
+            "description": "Indicates whether the task can still be completed after its scheduled window.",
+            "x-ms-summary": "Allow Late Response"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task assigned successfully, or an error reported in the response body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "string",
+                  "description": "Outcome of the request, for example ok or an error message."
+                },
+                "task": {
+                  "type": "object",
+                  "description": "The created or updated task assignment. Its exact set of fields is not fully documented here."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The task could not be assigned."
+          }
+        }
+      }
+    },
+    "/change_state": {
+      "post": {
+        "summary": "Change Form Status (Forms)",
+        "description": "Changes the status of an existing form answer.",
+        "operationId": "ChangeFormStatus",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "form_name",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Name of the form the answer belongs to.",
+            "x-ms-summary": "Form",
+            "x-ms-dynamic-values": {
+              "operationId": "Form-list",
+              "value-path": "label",
+              "value-title": "label"
+            }
+          },
+          {
+            "name": "form_code",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Code of the form answer to update.",
+            "x-ms-summary": "Form Code"
+          },
+          {
+            "name": "form_state_id",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Identifier of the status to set on the form answer.",
+            "x-ms-summary": "Form Status",
+            "x-ms-dynamic-values": {
+              "operationId": "Form-state-list",
+              "value-path": "key",
+              "value-title": "identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form answer status updated successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Outcome of the request, for example ok."
+                },
+                "form_answer": {
+                  "type": "object",
+                  "description": "The updated form answer. Its exact set of fields is not fully documented here."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The status could not be changed, for example because the form, form answer, or status was not found."
+          }
+        }
+      }
+    },
+    "/change_form": {
+      "post": {
+        "summary": "Modify Form Answer (Forms)",
+        "description": "Creates or updates a single question's answer on an existing form answer. The new answer is always stored as free text, regardless of the original question type.",
+        "operationId": "ModifyFormAnswer",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "form_name",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Name or identifier of the form the answer belongs to.",
+            "x-ms-summary": "Form"
+          },
+          {
+            "name": "form_code",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Code of the form answer to update. The alias code is also accepted.",
+            "x-ms-summary": "Form Code"
+          },
+          {
+            "name": "question_name",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Name of the question to create or update.",
+            "x-ms-summary": "Question Name"
+          },
+          {
+            "name": "question_value",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "New value to set for the question.",
+            "x-ms-summary": "Question Value"
+          },
+          {
+            "name": "subform_index",
+            "in": "query",
+            "type": "integer",
+            "required": false,
+            "description": "Row number of a subform table to update, starting at 1. When omitted, the answer at the root of the form is updated. Behavior for values other than a positive row number is not fully documented here.",
+            "x-ms-summary": "Subform Row"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form answer updated, or an error reported in the response body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Outcome of the request: ok or error."
+                },
+                "form_answer": {
+                  "type": "object",
+                  "description": "The updated form answer. Its exact set of fields is not fully documented here."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request could not be processed, for example because the form or token was missing."
+          }
+        }
+      }
+    },
+    "/create_pdf": {
+      "post": {
+        "summary": "Send Data / New Answer (Forms) [Beta]",
+        "description": "Generates a new form answer and its PDF from an existing form template. Any parameter besides form_id, emails, token, and action is treated as an answer to the matching question in the form, so this action supports as many additional fields as the selected form defines questions for. Not all question types are fully supported, which may result in unexpected behavior. This action does not trigger GSheet Sync, Automatic Signature, or other webhooks such as Power Automate triggers.",
+        "operationId": "SendData",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "form_id",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Identifier of the form template used to generate the new answer.",
+            "x-ms-summary": "Form",
+            "x-ms-dynamic-values": {
+              "operationId": "Form-list",
+              "value-path": "key",
+              "value-title": "label"
+            }
+          },
+          {
+            "name": "emails",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Email addresses that receive the generated PDF.",
+            "x-ms-summary": "Recipient Emails"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form answer and PDF generated successfully. If no question values are provided besides form_id, emails, and token, the response behavior is not fully documented here.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean",
+                  "description": "Indicates whether the request succeeded."
+                },
+                "form_answer_id": {
+                  "type": "integer",
+                  "description": "Identifier of the generated form answer."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request could not be processed, for example because the account or form was not found."
+          }
+        }
+      }
+    },
+    "/findings/create": {
+      "post": {
+        "summary": "Create Ticket (Tickets)",
+        "description": "Creates a new ticket.",
+        "operationId": "CreateFinding",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Name of the ticket.",
+            "x-ms-summary": "Name"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Description of the ticket.",
+            "x-ms-summary": "Description"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Ticket type. When set, it can fill in defaults such as priority, expiration, location, and assignees, which may override other values sent in the same request.",
+            "x-ms-summary": "Ticket Type",
+            "x-ms-dynamic-values": {
+              "operationId": "Finding-type-list",
+              "value-path": "id",
+              "value-title": "name"
+            }
+          },
+          {
+            "name": "author_email",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Email of the user registered as the author of the ticket. If it does not match an existing user, the ticket is created under the account associated with the token.",
+            "x-ms-summary": "Author",
+            "x-ms-dynamic-values": {
+              "operationId": "User-list",
+              "value-path": "identifier",
+              "value-title": "identifier"
+            }
+          },
+          {
+            "name": "creation_date",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Date and time the ticket was created. Defaults to the current date and time when omitted.",
+            "x-ms-summary": "Creation Date"
+          },
+          {
+            "name": "expiration_date",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Date and time the ticket expires.",
+            "x-ms-summary": "Expiration Date"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "open",
+              "in_progress",
+              "paused",
+              "closed"
+            ],
+            "description": "Status of the ticket.",
+            "x-ms-summary": "Status"
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "description": "Priority of the ticket.",
+            "x-ms-summary": "Priority"
+          },
+          {
+            "name": "location_id",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Identifier of the location linked to the ticket.",
+            "x-ms-summary": "Location ID"
+          },
+          {
+            "name": "location_name",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Name of the location linked to the ticket.",
+            "x-ms-summary": "Location Name"
+          },
+          {
+            "name": "location_type",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Type of the location linked to the ticket.",
+            "x-ms-summary": "Location Type"
+          },
+          {
+            "name": "assignees",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "required": false,
+            "description": "Users assigned to the ticket.",
+            "x-ms-summary": "Assignees",
+            "x-ms-dynamic-values": {
+              "operationId": "User-list",
+              "value-path": "user_key",
+              "value-title": "identifier"
+            }
+          },
+          {
+            "name": "invitees",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "required": false,
+            "description": "Users invited to the ticket.",
+            "x-ms-summary": "Invitees",
+            "x-ms-dynamic-values": {
+              "operationId": "User-list",
+              "value-path": "user_key",
+              "value-title": "identifier"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Ticket created successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Identifier of the created ticket."
+                },
+                "finding": {
+                  "type": "object",
+                  "description": "The created ticket. Its exact set of fields could not be fully verified against the underlying storage."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Ticket access is not available for this account, for example because the trial has not started or access has been closed."
+          },
+          "422": {
+            "description": "The ticket could not be created.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Description of the reason the ticket could not be created."
+                },
+                "finding": {
+                  "type": "object",
+                  "description": "Empty object."
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/delete_hooks/{account_id}/{webhook_id}/{uuid}": {
