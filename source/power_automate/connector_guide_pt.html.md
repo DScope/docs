@@ -107,7 +107,7 @@ O conector também oferece as seguintes actions, para que um fluxo possa agir so
 
 | Action | O que faz |
 |---|---|
-| Assign Task | Atribui uma tarefa de um formulário a um usuário, opcionalmente agendando-a e vinculando-a a um local |
+| Assign Task | Atribui uma tarefa de um formulário a um usuário, opcionalmente agendando-a |
 | Change Form Status | Muda o status de uma resposta de formulário |
 | Modify Form Answer | Cria ou modifica uma resposta dentro de um formulário |
 | Send Data | Gera uma nova resposta de formulário e seu PDF a partir de um modelo existente |

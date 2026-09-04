@@ -2147,7 +2147,7 @@
     "/assign_task": {
       "post": {
         "summary": "Assign Task (Tasks)",
-        "description": "Assigns a task on a form to a user, optionally scheduling it and linking it to a location. If a task with the same code already exists, it is updated instead of creating a new one.",
+        "description": "Assigns a task on a form to a user. If a task with the same code already exists, it is updated instead of creating a new one.",
         "operationId": "AssignTaskV2",
         "consumes": [
           "application/x-www-form-urlencoded"
@@ -2171,7 +2171,13 @@
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Email or identifier of the user the task is assigned to. If it does not match an existing user, the task may fall back to another user of the account, so use a valid, existing identifier."
+            "description": "Email or identifier of the user the task is assigned to. If it does not match an existing user, the task may fall back to another user of the account, so use a valid, existing identifier.",
+            "x-ms-summary": "User",
+            "x-ms-dynamic-values": {
+              "operationId": "User-list",
+              "value-path": "identifier",
+              "value-title": "identifier"
+            }
           },
           {
             "name": "code",
@@ -2191,6 +2197,7 @@
             "name": "date",
             "in": "query",
             "type": "string",
+            "format": "date-time",
             "required": false,
             "description": "Date and time the task is scheduled for. Defaults to the current date and time when omitted or invalid."
           },
@@ -2219,69 +2226,6 @@
             "type": "boolean",
             "required": false,
             "description": "Indicates whether the task can still be completed after its scheduled window."
-          },
-          {
-            "name": "location_name",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Name of the location linked to the task. A new location is created if it does not already exist."
-          },
-          {
-            "name": "location_address",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Address of the location linked to the task."
-          },
-          {
-            "name": "l_code",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Code used to find an existing location linked to the task."
-          },
-          {
-            "name": "l_phone",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Phone number of the location linked to the task."
-          },
-          {
-            "name": "l_email",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Email address of the location linked to the task."
-          },
-          {
-            "name": "c_name",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Name of the company linked to the location."
-          },
-          {
-            "name": "c_code",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Code of the company linked to the location."
-          },
-          {
-            "name": "latitude",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Latitude of the location linked to the task."
-          },
-          {
-            "name": "longitude",
-            "in": "query",
-            "type": "string",
-            "required": false,
-            "description": "Longitude of the location linked to the task."
           }
         ],
         "responses": {
@@ -2321,7 +2265,13 @@
             "in": "query",
             "type": "string",
             "required": true,
-            "description": "Name of the form the answer belongs to."
+            "description": "Name of the form the answer belongs to.",
+            "x-ms-summary": "Form",
+            "x-ms-dynamic-values": {
+              "operationId": "Form-list",
+              "value-path": "label",
+              "value-title": "label"
+            }
           },
           {
             "name": "form_code",
