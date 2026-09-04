@@ -87,8 +87,8 @@ vê na lista de disparadores do Zapier:
 | Signatures: New Completed Signature | Todos os signatários assinaram o documento | Opcional, escolha um |
 | Signatures: New Rejected Signature | Um signatário rejeita a solicitação de assinatura | Opcional, escolha um |
 | Signatures: Updated Signature | As assinaturas de um documento mudam e ainda há pendentes | Opcional, escolha um |
-| Tickets: New Ticket (FKA Issue) | Um ticket é criado | Não se aplica, é no nível da conta |
-| Tickets: Changed Status (FKA Issue) | Um ticket muda de status | Não se aplica, é no nível da conta |
+| Tickets: New Ticket | Um ticket é criado | Não se aplica, é no nível da conta |
+| Tickets: Changed Status | Um ticket muda de status | Não se aplica, é no nível da conta |
 
 Cada disparador entrega os dados do evento como campos individuais, prontos
 para mapear nas etapas seguintes do Zap sem precisar processar o JSON
@@ -105,7 +105,7 @@ DataScope e não apenas reagir aos seus eventos:
 | Forms: Send Data / New Answer [Beta] | Gera uma nova resposta de formulário e seu PDF a partir de um formulário existente usado como modelo |
 | Change Form Status | Muda o status de uma resposta de formulário, identificada por nome e código do formulário |
 | Modify Form Answer | Cria ou modifica uma resposta pontual dentro de um formulário já enviado |
-| Tickets: Create Ticket (FKA Issue) | Cria um ticket, opcionalmente herdando os valores padrão de um Ticket Type |
+| Tickets: Create Ticket | Cria um ticket, opcionalmente herdando os valores padrão de um Ticket Type |
 
 ### Assign Task: V1 ou V2
 
@@ -275,6 +275,23 @@ versão. Inclua uma data somente quando a data de publicação for conhecida.
   Locations antiga.
 - Adiciona `Find Location / Place by ID` na `Tasks: Assign Task V2`, para que
   uma tarefa possa apontar para um lugar existente pelo seu ID interno.
+- Remove o sufixo `(FKA Issue)` dos dois disparadores de tickets e da
+  `Tickets: Create Ticket`. Um Zap criado em uma versão anterior continua
+  mostrando o nome antigo.
+- `User Email` na `Tasks: Assign Task V2` e `Form Name` na
+  `Change Form Status` passam a ser listas suspensas, então você escolhe o
+  usuário ou o formulário em vez de digitá-lo.
+- Renomeia rótulos de campos de saída na
+  `Signatures: New Completed Signature`. `Signer Rut` agora é
+  `Signer National ID`, e `If Signer is a Datascope User` agora é
+  `Signer Is External User`, que é o que o campo realmente informa. As chaves
+  por trás dos rótulos não mudam, então os mapeamentos existentes continuam
+  funcionando.
+- Reescreve os textos de ajuda da maioria dos campos, incluindo todos os campos
+  de localização da `Tasks: Assign Task V2`, que agora indicam a qual módulo
+  cada um se aplica. Na `Modify Form Answer` corrige o rótulo `From Code` para
+  `Form Code`, e a descrição da `Tasks: Assign Task V1 [Legacy]` agora diz que
+  a V2 é a que deve ser usada.
 
 **2.1.2** (padrão para os Zaps novos)
 
