@@ -9,7 +9,7 @@ title: Conectar o DataScope com o Power Automate
 Este guia explica como habilitar a integração do DataScope no Power Automate
 para automatizar sua operação em campo: disparar fluxos quando um formulário
 é preenchido, quando um documento é gerado, quando uma tarefa é atribuída ou
-quando uma não conformidade é registrada.
+quando um ticket é registrado.
 
 <aside class="notice">
 Você pode encontrar o DataScope listado na galeria oficial de conectores do Power Automate (<a href="https://preview.flow.microsoft.com/en-us/connectors/shared_datascopeforms/datascope-forms/" target="_blank" rel="noopener noreferrer">preview.flow.microsoft.com</a>, documentado em <a href="https://learn.microsoft.com/en-us/connectors/datascopeforms/" target="_blank" rel="noopener noreferrer">learn.microsoft.com</a>). Essa versão está desatualizada, por isso este guia mostra como construir o custom connector você mesmo.
@@ -93,8 +93,8 @@ O conector oferece os seguintes disparadores:
 | Novo PDF | Um documento PDF é gerado |
 | Mudança de status | Uma resposta de formulário muda de status |
 | Nova tarefa atribuída | Uma tarefa é atribuída |
-| Nova não conformidade | Uma não conformidade é registrada |
-| Mudança de status de não conformidade | Uma não conformidade muda de status |
+| Novo ticket | Um ticket é registrado |
+| Mudança de status de ticket | Um ticket muda de status |
 | Assinatura concluída | A assinatura de um documento é concluída |
 | Assinatura rejeitada | Uma solicitação de assinatura é rejeitada |
 | Assinatura atualizada | As assinaturas de um documento são atualizadas |
@@ -119,7 +119,7 @@ O conector também oferece as seguintes actions, para que um fluxo possa agir so
   formulário admitem apenas uma conexão ativa por vez. Se precisar de vários
   fluxos sobre o mesmo formulário, encadeie-os a partir de um único
   disparador.
-- **Os disparadores de não conformidades operam no nível da conta.** Admitem
+- **Os disparadores de tickets operam no nível da conta.** Admitem
   apenas uma conexão ativa por conta.
 - **Os campos disponíveis variam conforme sua configuração.** Alguns dados,
   como os de planejamento ou os campos estendidos de tarefas, aparecem
@@ -132,7 +132,7 @@ O conector também oferece as seguintes actions, para que um fluxo possa agir so
   interrompê-lo por completo, também é necessário acessar
   <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
   e excluir a conexão correspondente ali. Os demais disparadores
-  (formulários, PDFs, tarefas, não conformidades, assinaturas) se limpam
+  (formulários, PDFs, tarefas, tickets, assinaturas) se limpam
   automaticamente ao desativar o flow no Power Automate.
 
 ## Se algo não funcionar
