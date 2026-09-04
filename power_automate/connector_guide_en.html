@@ -255,7 +255,7 @@
 
 <p>This guide explains how to enable the DataScope integration in Power Automate
 to automate your field operation: trigger flows when a form is completed,
-when a document is generated, when a task is assigned, or when an issue is
+when a document is generated, when a task is assigned, or when a ticket is
 registered.</p>
 
 <aside class="notice">
@@ -353,12 +353,12 @@ account&#39;s API Key.</p>
 <td>A task is assigned</td>
 </tr>
 <tr>
-<td>New issue</td>
-<td>An issue is registered</td>
+<td>New ticket</td>
+<td>A ticket is registered</td>
 </tr>
 <tr>
-<td>Issue status changed</td>
-<td>An issue changes status</td>
+<td>Ticket status changed</td>
+<td>A ticket changes status</td>
 </tr>
 <tr>
 <td>Completed signature</td>
@@ -376,12 +376,42 @@ account&#39;s API Key.</p>
 
 <p>Each trigger delivers the event data as dynamic content, ready to use in the
 following steps of the flow without having to parse the JSON manually.</p>
+
+<p>The connector also provides the following actions, so a flow can act back on DataScope instead of only reacting to it:</p>
+
+<table><thead>
+<tr>
+<th>Action</th>
+<th>What it does</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Assign Task</td>
+<td>Assigns a task on a form to a user, optionally scheduling it</td>
+</tr>
+<tr>
+<td>Change Form Status</td>
+<td>Changes the status of a form answer</td>
+</tr>
+<tr>
+<td>Modify Form Answer</td>
+<td>Creates or updates an answer within a form response</td>
+</tr>
+<tr>
+<td>Send Data</td>
+<td>Generates a new form answer and its PDF from an existing template</td>
+</tr>
+<tr>
+<td>Create Ticket</td>
+<td>Creates a new ticket</td>
+</tr>
+</tbody></table>
 <h2 id='important-considerations'>Important considerations</h2>
 <ul>
 <li><strong>One active connection per form.</strong> Triggers associated with a form support
 only one active connection at a time. If you need several flows on the
 same form, chain them from a single trigger.</li>
-<li><strong>Issue triggers operate at the account level.</strong> They support only one
+<li><strong>Ticket triggers operate at the account level.</strong> They support only one
 active connection per account.</li>
 <li><strong>Available fields vary by configuration.</strong> Some data, such as planning
 fields or extended task fields, only appears when those features are
@@ -394,7 +424,7 @@ subscription is not automatically removed on DataScope&#39;s side. To fully
 stop it, you also need to go to
 <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
 and delete the connection there. Every other trigger (forms, PDFs, tasks,
-issues, signatures) does clean up automatically when the flow is turned
+tickets, signatures) does clean up automatically when the flow is turned
 off in Power Automate.</li>
 </ul>
 <h2 id='if-something-doesn-39-t-work'>If something doesn&#39;t work</h2>

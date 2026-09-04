@@ -376,6 +376,36 @@ de su cuenta.</p>
 <p>Cada disparador entrega los datos del evento como contenido dinámico, listos
 para usar en los pasos siguientes del flujo sin necesidad de procesar el JSON
 manualmente.</p>
+
+<p>El conector también entrega las siguientes actions, para que un flujo pueda actuar sobre DataScope y no solo reaccionar a sus eventos:</p>
+
+<table><thead>
+<tr>
+<th>Action</th>
+<th>Qué hace</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Assign Task</td>
+<td>Asigna una tarea de un formulario a un usuario, opcionalmente agendándola</td>
+</tr>
+<tr>
+<td>Change Form Status</td>
+<td>Cambia el estado de una respuesta de formulario</td>
+</tr>
+<tr>
+<td>Modify Form Answer</td>
+<td>Crea o modifica una respuesta dentro de un formulario</td>
+</tr>
+<tr>
+<td>Send Data</td>
+<td>Genera una nueva respuesta de formulario y su PDF a partir de una plantilla existente</td>
+</tr>
+<tr>
+<td>Create Ticket</td>
+<td>Crea un nuevo ticket</td>
+</tr>
+</tbody></table>
 <h2 id='consideraciones-importantes'>Consideraciones importantes</h2>
 <ul>
 <li><strong>Una conexión activa por formulario.</strong> Los disparadores asociados a un
