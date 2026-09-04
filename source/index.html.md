@@ -2546,8 +2546,8 @@ status | String | Status of ticket. Fallback: `open`. Options: `[open, in_progre
 priority | String | Status of ticket. Fallback: `medium`. Options: `[low, medium, high, critical]`
 location_id | Integer | Optional. ID of the location
 location_name | Integer | Optional. Name of the location in case of unrecognized `location_id`
-assignees | Array of Integers or Strings | Required. MobileUser IDs or emails of users to be assigned to the ticket
-invitees | Array of Integers or Strings | Optional. MobileUser IDs or emails of users to be invited to the ticket (ignoring already assigned ones)
+assignees | Array or String | Required. MobileUser IDs or emails of users to be assigned to the ticket. Send an array, or a comma-separated string if your client cannot send array parameters. Up to 100 entries
+invitees | Array or String | Optional. MobileUser IDs or emails of users to be invited to the ticket (ignoring already assigned ones). Send an array, or a comma-separated string if your client cannot send array parameters. Up to 100 entries
 type | String | Optional. Ticket Type ID or Ticket Type Name. If provided, preset data will be retrieved from this type. Fallback: "Other" (no type assigned).
 creation_date | String or Datetime | Optional. Date or String with a custom creation date of ticket (YYYY-MM-DD HH:MM)
 
@@ -2564,6 +2564,19 @@ Remember — use your own Authorization header
 </aside>
 
 # Changelog
+
+**04-Sep-2026**
+
+- The user pickers in the [Zapier](#zapier) and [Power Automate](#microsoft-power-automate-beta) connectors no longer list the technical accounts DataScope creates for submissions that have no real user behind them, so they can no longer be selected as an author, an assignee or an invitee. The change is server side and applies to the Zaps and flows you already have
+- The [Microsoft Power Automate](#microsoft-power-automate-beta) connector now carries actions, not only triggers: Assign Task, Change Form Status, Modify Form Answer, Send Data (Beta) and Create Ticket. Re-import the definition file to pick them up
+- Form, status, user and ticket type fields on those actions offer a dropdown, so there is no need to paste raw ids copied from elsewhere
+- Assign Task uses the native date picker for the due date, and no longer exposes the fields that created a Location on the fly
+- The English and Portuguese guides now call tickets by their current name, as the Spanish one already did
+- Rebuilt the [Zapier](#zapier) changelog entry for app version 2.1.3 from the app definition, covering the ticket trigger and action renames, the new user and form dropdowns, the renamed signature output fields and the rewritten help text. The guides now use the current trigger and action names
+
+**31-Aug-2026**
+
+- [Create Ticket](#create-ticket) accepts `assignees` and `invitees` as a comma-separated string, not only as an array, for clients that cannot send array parameters. Up to 100 entries per field. Clients that already send an array are unaffected
 
 **26-Aug-2026**
 

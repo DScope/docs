@@ -83,8 +83,8 @@ see in Zapier's trigger list:
 | Signatures: New Completed Signature | Every signer has signed the document | Optional, pick one |
 | Signatures: New Rejected Signature | A signer rejects the signature request | Optional, pick one |
 | Signatures: Updated Signature | The signatures on a document change while some are still pending | Optional, pick one |
-| Tickets: New Ticket (FKA Issue) | A ticket is created | Not applicable, account level |
-| Tickets: Changed Status (FKA Issue) | A ticket changes status | Not applicable, account level |
+| Tickets: New Ticket | A ticket is created | Not applicable, account level |
+| Tickets: Changed Status | A ticket changes status | Not applicable, account level |
 
 Each trigger delivers the event data as individual fields, ready to map into
 the following steps of the Zap without having to parse the JSON yourself. For
@@ -101,7 +101,7 @@ DataScope instead of only reacting to it:
 | Forms: Send Data / New Answer [Beta] | Generates a new form answer and its PDF from an existing form used as a template |
 | Change Form Status | Changes the status of a form answer, found by form name and form code |
 | Modify Form Answer | Creates or updates a single answer inside an existing form response |
-| Tickets: Create Ticket (FKA Issue) | Creates a ticket, optionally taking its defaults from a Ticket Type |
+| Tickets: Create Ticket | Creates a ticket, optionally taking its defaults from a Ticket Type |
 
 ### Assign Task: V1 or V2
 
@@ -261,6 +261,21 @@ user or task counts. Add a date only when the release date is known.
   legacy Locations one.
 - Adds `Find Location / Place by ID` to `Tasks: Assign Task V2`, so a task can
   point at an existing location or place by its internal ID.
+- Drops the `(FKA Issue)` suffix from the two ticket triggers and from
+  `Tickets: Create Ticket`. A Zap built on an earlier version still shows the
+  old name.
+- `User Email` on `Tasks: Assign Task V2` and `Form Name` on
+  `Change Form Status` become dropdowns, so you pick the user or the form from
+  a list instead of typing it.
+- Renames output field labels on `Signatures: New Completed Signature`.
+  `Signer Rut` is now `Signer National ID`, and `If Signer is a Datascope User`
+  is now `Signer Is External User`, which is what the field actually reports.
+  The keys behind the labels do not change, so existing mappings keep working.
+- Rewrites the help text on most fields, including every location field on
+  `Tasks: Assign Task V2`, which now states which module each one applies to.
+  `Modify Form Answer` gets its `From Code` label fixed to `Form Code`, and
+  `Tasks: Assign Task V1 [Legacy]` now says in its description that V2 is the
+  one to use.
 
 **2.1.2** (default for new Zaps)
 
