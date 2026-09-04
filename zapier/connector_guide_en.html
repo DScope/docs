@@ -356,12 +356,12 @@ see in Zapier&#39;s trigger list:</p>
 <td>Optional, pick one</td>
 </tr>
 <tr>
-<td>Tickets: New Ticket (FKA Issue)</td>
+<td>Tickets: New Ticket</td>
 <td>A ticket is created</td>
 <td>Not applicable, account level</td>
 </tr>
 <tr>
-<td>Tickets: Changed Status (FKA Issue)</td>
+<td>Tickets: Changed Status</td>
 <td>A ticket changes status</td>
 <td>Not applicable, account level</td>
 </tr>
@@ -402,7 +402,7 @@ DataScope instead of only reacting to it:</p>
 <td>Creates or updates a single answer inside an existing form response</td>
 </tr>
 <tr>
-<td>Tickets: Create Ticket (FKA Issue)</td>
+<td>Tickets: Create Ticket</td>
 <td>Creates a ticket, optionally taking its defaults from a Ticket Type</td>
 </tr>
 </tbody></table>
@@ -572,6 +572,21 @@ user or task counts. Add a date only when the release date is known.
 legacy Locations one.</li>
 <li>Adds <code>Find Location / Place by ID</code> to <code>Tasks: Assign Task V2</code>, so a task can
 point at an existing location or place by its internal ID.</li>
+<li>Drops the <code>(FKA Issue)</code> suffix from the two ticket triggers and from
+<code>Tickets: Create Ticket</code>. A Zap built on an earlier version still shows the
+old name.</li>
+<li><code>User Email</code> on <code>Tasks: Assign Task V2</code> and <code>Form Name</code> on
+<code>Change Form Status</code> become dropdowns, so you pick the user or the form from
+a list instead of typing it.</li>
+<li>Renames output field labels on <code>Signatures: New Completed Signature</code>.
+<code>Signer Rut</code> is now <code>Signer National ID</code>, and <code>If Signer is a Datascope User</code>
+is now <code>Signer Is External User</code>, which is what the field actually reports.
+The keys behind the labels do not change, so existing mappings keep working.</li>
+<li>Rewrites the help text on most fields, including every location field on
+<code>Tasks: Assign Task V2</code>, which now states which module each one applies to.
+<code>Modify Form Answer</code> gets its <code>From Code</code> label fixed to <code>Form Code</code>, and
+<code>Tasks: Assign Task V1 [Legacy]</code> now says in its description that V2 is the
+one to use.</li>
 </ul>
 
 <p><strong>2.1.2</strong> (default for new Zaps)</p>

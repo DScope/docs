@@ -358,12 +358,12 @@ que ves en la lista de disparadores de Zapier:</p>
 <td>Opcional, elige uno</td>
 </tr>
 <tr>
-<td>Tickets: New Ticket (FKA Issue)</td>
+<td>Tickets: New Ticket</td>
 <td>Se crea un ticket</td>
 <td>No aplica, es a nivel de cuenta</td>
 </tr>
 <tr>
-<td>Tickets: Changed Status (FKA Issue)</td>
+<td>Tickets: Changed Status</td>
 <td>Un ticket cambia de estado</td>
 <td>No aplica, es a nivel de cuenta</td>
 </tr>
@@ -404,7 +404,7 @@ sobre DataScope y no solo reaccionar a sus eventos:</p>
 <td>Crea o modifica una respuesta puntual dentro de un formulario ya enviado</td>
 </tr>
 <tr>
-<td>Tickets: Create Ticket (FKA Issue)</td>
+<td>Tickets: Create Ticket</td>
 <td>Crea un ticket, opcionalmente tomando sus valores por defecto de un Ticket Type</td>
 </tr>
 </tbody></table>
@@ -583,6 +583,23 @@ versión. Agrega una fecha solo si se conoce la fecha de publicación.
 Locations antigua.</li>
 <li>Agrega <code>Find Location / Place by ID</code> en <code>Tasks: Assign Task V2</code>, para que una
 tarea pueda apuntar a un lugar existente por su ID interno.</li>
+<li>Saca el sufijo <code>(FKA Issue)</code> de los dos disparadores de tickets y de
+<code>Tickets: Create Ticket</code>. Un Zap creado en una versión anterior sigue
+mostrando el nombre antiguo.</li>
+<li><code>User Email</code> en <code>Tasks: Assign Task V2</code> y <code>Form Name</code> en
+<code>Change Form Status</code> pasan a ser listas desplegables, así eliges el usuario o
+el formulario en vez de escribirlo.</li>
+<li>Renombra etiquetas de campos de salida en
+<code>Signatures: New Completed Signature</code>. <code>Signer Rut</code> ahora es
+<code>Signer National ID</code>, y <code>If Signer is a Datascope User</code> ahora es
+<code>Signer Is External User</code>, que es lo que el campo realmente informa. Las
+claves detrás de las etiquetas no cambian, así que los mapeos existentes
+siguen funcionando.</li>
+<li>Reescribe los textos de ayuda de la mayoría de los campos, incluidos todos
+los campos de ubicación de <code>Tasks: Assign Task V2</code>, que ahora indican a qué
+módulo aplica cada uno. En <code>Modify Form Answer</code> corrige la etiqueta
+<code>From Code</code> a <code>Form Code</code>, y la descripción de
+<code>Tasks: Assign Task V1 [Legacy]</code> ahora dice que la V2 es la que hay que usar.</li>
 </ul>
 
 <p><strong>2.1.2</strong> (predeterminada para los Zaps nuevos)</p>
