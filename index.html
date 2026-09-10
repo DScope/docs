@@ -257,6 +257,12 @@
                   <li>
                     <a href="#change-answer" class="toc-h2 toc-link" data-title="change-answer">Change Answer</a>
                   </li>
+                  <li>
+                    <a href="#get-answer-statuses" class="toc-h2 toc-link" data-title="get-answer-statuses">Get Answer Statuses</a>
+                  </li>
+                  <li>
+                    <a href="#change-answer-status" class="toc-h2 toc-link" data-title="change-answer-status">Change Answer Status</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -1474,6 +1480,142 @@ If your destination is a data warehouse, you do not need to implement the paging
 <td>Number to specify the subform index (Starting from 1). Leave blank if question it&#39;s not inside subform*.</td>
 </tr>
 </tbody></table>
+<h2 id='get-answer-statuses'>Get Answer Statuses</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/list_states"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+</code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/list_states'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unicode"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"key"</span><span class="p">:</span><span class="w"> </span><span class="mi">4521</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"identifier"</span><span class="p">:</span><span class="w"> </span><span class="s2">"In review"</span><span class="w">
+   </span><span class="p">},</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unicode"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"key"</span><span class="p">:</span><span class="w"> </span><span class="mi">4522</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"identifier"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Approved"</span><span class="w">
+   </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+<p>Statuses are the values reported as <code>form_state</code> on an answer. This endpoint lists the ones configured in your account, and the <code>key</code> of each one is what <a href="#change-answer-status">Change Answer Status</a> expects as <code>form_state_id</code>.</p>
+<h3 id='http-request-5'>HTTP Request</h3>
+<p><code>GET https://www.mydatascope.com/api/external/list_states</code></p>
+
+<p><code>POST</code> is also accepted. The endpoint takes no parameters either way.</p>
+<h3 id='response-fields'>Response Fields</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>type</td>
+<td>String</td>
+<td>Always <code>unicode</code>. It is the field type expected by the dropdowns of the Zapier and Power Automate connectors</td>
+</tr>
+<tr>
+<td>key</td>
+<td>Integer</td>
+<td>ID of the status, and the value to send as <code>form_state_id</code> when changing the status of an answer</td>
+</tr>
+<tr>
+<td>identifier</td>
+<td>String</td>
+<td>Name of the status, as configured in the web app</td>
+</tr>
+</tbody></table>
+<h3 id='return-codes'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+400: Bad Request
+</code></pre>
+<aside class="notice">
+A status deleted in the web app is still listed here, because the response is not filtered by the deleted flag. The Answers endpoints report <code>-</code> as the <code>form_state</code> of an answer whose status was deleted.
+</aside>
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+<h2 id='change-answer-status'>Change Answer Status</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.mydatascope.com/api/external/change_state"</span>
+  -H <span class="s2">"Authorization: b1cd93mfls9fdmfkadn23"</span>
+  -d <span class="s2">"form_name=Safety Inspection"</span>
+  -d <span class="s2">"form_code=A-1024"</span>
+  -d <span class="s2">"form_state_id=4522"</span>
+</code></pre><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.mydatascope.com/api/external/change_state'</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="ss">form_name: </span><span class="s1">'Safety Inspection'</span><span class="p">,</span>
+  <span class="ss">form_code: </span><span class="s1">'A-1024'</span><span class="p">,</span>
+  <span class="ss">form_state_id: </span><span class="mi">4522</span>
+<span class="p">},</span> <span class="p">{</span>
+<span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span>
+<span class="p">}</span>
+<span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this, you can check the description of each parameter below:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+   </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
+   </span><span class="s2">"form_answer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4325235</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">6344234</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A-1024"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"form_state_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4522</span><span class="w">
+   </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Changing the status through the API works like changing it from the web app: the change is recorded in the history of the answer, the webhooks configured for status changes are fired, and the user who submitted the answer receives a push notification when the account has status change notifications enabled.</p>
+<h3 id='http-request-6'>HTTP Request</h3>
+<p><code>POST https://www.mydatascope.com/api/external/change_state</code></p>
+
+<p><code>GET</code> is also accepted, with the same parameters.</p>
+<h3 id='input-parameter'>Input Parameter</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>form_name</td>
+<td>String</td>
+<td>Required. Name of the form the answer belongs to. Only the name works here, not the ID of the form. If two forms share the same name, the most recent one is used</td>
+</tr>
+<tr>
+<td>form_code</td>
+<td>String</td>
+<td>Required. Code of the answer to update</td>
+</tr>
+<tr>
+<td>form_state_id</td>
+<td>Integer</td>
+<td>Required. ID of the status to set, as returned by <a href="#get-answer-statuses">Get Answer Statuses</a></td>
+</tr>
+</tbody></table>
+<h3 id='return-codes-2'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+400: Bad Request
+</code></pre>
+<aside class="notice">
+<code>form_answer</code> carries every field of the answer; the example above shows only a few of them. A <code>400</code> comes back with an empty body whenever the form name, the answer code or the status ID does not match something in your account, so check the three of them when you get one.
+</aside>
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
 <h1 id='signatures'>Signatures</h1><h2 id='get-signature-requests'>Get Signature Requests</h2><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
@@ -1552,7 +1694,7 @@ If your destination is a data warehouse, you do not need to implement the paging
 <aside class="warning">
 The user whose token you use needs export permission in DataScope, the same permission the Answers endpoints require. Ask your account administrator to confirm it before setting up a recurring integration.
 </aside>
-<h3 id='http-request-5'>HTTP Request</h3>
+<h3 id='http-request-7'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/signatures/list</code></p>
 <h3 id='query-parameters-5'>Query Parameters</h3>
 <table><thead>
@@ -1887,7 +2029,7 @@ The PDF is regenerated asynchronously as signatures come in, so <code>pdf_url</c
 
 </span></code></pre>
 <p>This endpoint retrieves all locations</p>
-<h3 id='http-request-6'>HTTP Request</h3>
+<h3 id='http-request-8'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/locations</code></p>
 <h3 id='output-parameter-3'>Output Parameter</h3>
 <table><thead>
@@ -2032,9 +2174,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint create a location</p>
-<h3 id='http-request-7'>HTTP Request</h3>
+<h3 id='http-request-9'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
-<h3 id='input-parameter'>Input Parameter</h3>
+<h3 id='input-parameter-2'>Input Parameter</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2103,7 +2245,7 @@ Remember — use your own Authorization header
 <td>Email of the Company</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes'>Return Codes:</h3>
+<h3 id='return-codes-3'>Return Codes:</h3>
 <table><thead>
 <tr>
 <th>Code</th>
@@ -2192,9 +2334,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint updates a location</p>
-<h3 id='http-request-8'>HTTP Request</h3>
+<h3 id='http-request-10'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/locations</code></p>
-<h3 id='input-parameter-2'>Input Parameter</h3>
+<h3 id='input-parameter-3'>Input Parameter</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2263,7 +2405,7 @@ Remember — use your own Authorization header
 <td>Email of the Company</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-2'>Return Codes:</h3>
+<h3 id='return-codes-4'>Return Codes:</h3>
 <table><thead>
 <tr>
 <th>Code</th>
@@ -2332,7 +2474,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-9'>HTTP Request</h3>
+<h3 id='http-request-11'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_objects</code></p>
 <h3 id='query-parameters-6'>Query Parameters</h3>
 <table><thead>
@@ -2418,7 +2560,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves a specific element of the list</p>
-<h3 id='http-request-10'>HTTP Request</h3>
+<h3 id='http-request-12'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/metadata_object</code></p>
 <h3 id='query-parameters-7'>Query Parameters</h3>
 <table><thead>
@@ -2523,7 +2665,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint creates a list element</p>
-<h3 id='http-request-11'>HTTP Request</h3>
+<h3 id='http-request-13'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_object</code></p>
 <h3 id='query-params'>Query params:</h3>
 <table><thead>
@@ -2541,7 +2683,7 @@ Remember — use your own Authorization header
 </tbody></table>
 
 <p>*For locations objects use locations API</p>
-<h3 id='input-parameter-3'>Input Parameter</h3>
+<h3 id='input-parameter-4'>Input Parameter</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2575,7 +2717,7 @@ Remember — use your own Authorization header
 <td>Custom attribute of the element of the list</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-3'>Return Codes:</h3>
+<h3 id='return-codes-5'>Return Codes:</h3>
 <table><thead>
 <tr>
 <th>Code</th>
@@ -2644,9 +2786,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint updates a list object</p>
-<h3 id='http-request-12'>HTTP Request</h3>
+<h3 id='http-request-14'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_object/{id}</code></p>
-<h3 id='input-parameter-4'>Input Parameter</h3>
+<h3 id='input-parameter-5'>Input Parameter</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2680,7 +2822,7 @@ Remember — use your own Authorization header
 <td>Custom attribute of the element of the list</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-4'>Return Codes:</h3>
+<h3 id='return-codes-6'>Return Codes:</h3>
 <table><thead>
 <tr>
 <th>Code</th>
@@ -2745,9 +2887,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint creates a empty list</p>
-<h3 id='http-request-13'>HTTP Request</h3>
+<h3 id='http-request-15'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_types</code></p>
-<h3 id='input-parameter-5'>Input Parameter</h3>
+<h3 id='input-parameter-6'>Input Parameter</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2776,7 +2918,7 @@ Remember — use your own Authorization header
 <td>Valid values: (&quot;standard&quot;, &quot;percent&quot;, &quot;price&quot;)</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-5'>Return Codes:</h3>
+<h3 id='return-codes-7'>Return Codes:</h3>
 <table><thead>
 <tr>
 <th>Code</th>
@@ -2841,9 +2983,9 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint updates a list</p>
-<h3 id='http-request-14'>HTTP Request</h3>
+<h3 id='http-request-16'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_types/{id}</code></p>
-<h3 id='input-parameter-6'>Input Parameter</h3>
+<h3 id='input-parameter-7'>Input Parameter</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2872,7 +3014,7 @@ Remember — use your own Authorization header
 <td>Valid values: (&quot;standard&quot;, &quot;percent&quot;, &quot;price&quot;)</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-6'>Return Codes:</h3>
+<h3 id='return-codes-8'>Return Codes:</h3>
 <table><thead>
 <tr>
 <th>Code</th>
@@ -2979,7 +3121,7 @@ Remember — use your own Authorization header
   </span><span class="s2">"list_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='http-request-15'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-17'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/metadata_objects/bulk_update</code></p>
 <h3 id='input-parameters'>Input Parameters</h3>
 <table><thead>
@@ -3041,7 +3183,7 @@ Remember — use your own Authorization header
 <td>Custom attribute of the list element</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-7'>Return Codes</h3>
+<h3 id='return-codes-9'>Return Codes</h3>
 <table><thead>
 <tr>
 <th>Code</th>
@@ -3140,7 +3282,7 @@ Remember — use your own Authorization header
    </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 
-</span></code></pre><h3 id='http-request-16'>HTTP Request</h3>
+</span></code></pre><h3 id='http-request-18'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/assign_task</code></p>
 <h3 id='query-parameters-8'>Query Parameters</h3>
 <table><thead>
@@ -3279,7 +3421,7 @@ Remember — use your own Authorization header
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves the full detail of a single task assignment by its internal ID. Returns the same fields as the list endpoint. Returns 404 if the assignment does not belong to the authenticated account.</p>
-<h3 id='http-request-17'>HTTP Request</h3>
+<h3 id='http-request-19'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/task_assigns/:id</code></p>
 <h3 id='path-parameters'>Path Parameters</h3>
 <table><thead>
@@ -3295,7 +3437,7 @@ Remember — use your own Authorization header
 <td>Internal database ID of the task assignment</td>
 </tr>
 </tbody></table>
-<h3 id='response-fields'>Response Fields</h3>
+<h3 id='response-fields-2'>Response Fields</h3>
 <table><thead>
 <tr>
 <th>Field</th>
@@ -3520,7 +3662,7 @@ Remember — use your own Authorization header
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a paginated list of task assignments for the authenticated account. The response fields match the platform&#39;s Excel export plus the internal <code>id</code>, enabling automated integrations without manual downloads. The <code>total</code> field reflects the number of task assignments matching the applied filters — without filters, it returns the count of all historical tasks in the account.</p>
-<h3 id='http-request-18'>HTTP Request</h3>
+<h3 id='http-request-20'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/task_assigns</code></p>
 <h3 id='input-parameters-2'>Input Parameters</h3>
 <table><thead>
@@ -3566,7 +3708,7 @@ Remember — use your own Authorization header
 <td>Optional. Number of results to skip (for pagination). Default: 0</td>
 </tr>
 </tbody></table>
-<h3 id='response-fields-2'>Response Fields</h3>
+<h3 id='response-fields-3'>Response Fields</h3>
 <table><thead>
 <tr>
 <th>Field</th>
@@ -3767,7 +3909,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-19'>HTTP Request</h3>
+<h3 id='http-request-21'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/notifications</code></p>
 <h3 id='query-parameters-9'>Query Parameters</h3>
 <table><thead>
@@ -3865,7 +4007,7 @@ Remember — use your own Authorization header
 
 </span></code></pre>
 <p>This endpoint retrieves all list items of a specific list</p>
-<h3 id='http-request-20'>HTTP Request</h3>
+<h3 id='http-request-22'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/files</code></p>
 <h3 id='query-parameters-10'>Query Parameters</h3>
 <table><thead>
@@ -4019,7 +4161,7 @@ That tip is the main reason a webhook alone is not enough for a warehouse: it ca
 </span><span class="p">]</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a list of Tickets filtered by creation date period.</p>
-<h3 id='http-request-21'>HTTP Request</h3>
+<h3 id='http-request-23'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/findings/list</code></p>
 <h3 id='input-parameters-3'>Input Parameters</h3>
 <table><thead>
@@ -4071,7 +4213,7 @@ That tip is the main reason a webhook alone is not enough for a warehouse: it ca
 <li>First page: <code>limit=200&amp;offset=0</code> → returns tickets 1–200</li>
 <li>Second page: <code>limit=200&amp;offset=200</code> → returns tickets 201–400</li>
 </ul>
-<h3 id='response-fields-3'>Response Fields</h3>
+<h3 id='response-fields-4'>Response Fields</h3>
 <table><thead>
 <tr>
 <th>Field</th>
@@ -4220,7 +4362,7 @@ That tip is the main reason a webhook alone is not enough for a warehouse: it ca
 <td>Question from the linked form answer (null if no form answer linked)</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-8'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+<h3 id='return-codes-10'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
 401: Unauthorized
 422: Unprocessable Entity (invalid date range or range exceeds 90 days)
 </code></pre>
@@ -4264,7 +4406,7 @@ Remember — use your own Authorization header
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a single Ticket by its Firestore document ID.</p>
-<h3 id='http-request-22'>HTTP Request</h3>
+<h3 id='http-request-24'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/findings/get/:id</code></p>
 <h3 id='url-parameter'>URL Parameter</h3>
 <table><thead>
@@ -4280,7 +4422,7 @@ Remember — use your own Authorization header
 <td>Required. The Firestore document ID of the ticket. This can be obtained from the ticket URL in the DataScope web app (<code>?selected=&lt;id&gt;</code>)</td>
 </tr>
 </tbody></table>
-<h3 id='response-fields-4'>Response Fields</h3>
+<h3 id='response-fields-5'>Response Fields</h3>
 <table><thead>
 <tr>
 <th>Field</th>
@@ -4384,7 +4526,7 @@ Remember — use your own Authorization header
 <td>Question from the linked form answer (null if no form answer linked)</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-9'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+<h3 id='return-codes-11'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
 404: Not Found
 403: Forbidden
 </code></pre>
@@ -4401,9 +4543,9 @@ Remember — use your own Authorization header
 <span class="ss">:Authorization</span> <span class="o">=&gt;</span> <span class="s1">'b1cd93mfls9fdmfkadn23'</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-</code></pre><h3 id='http-request-23'>HTTP Request</h3>
+</code></pre><h3 id='http-request-25'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/last_findings</code></p>
-<h3 id='return-codes-10'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+<h3 id='return-codes-12'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
 403: Forbidden
 </code></pre>
 <aside class="success">
@@ -4436,9 +4578,9 @@ Remember — use your own Authorization header
 ]
 </code></p>
 </blockquote>
-<h3 id='http-request-24'>HTTP Request</h3>
+<h3 id='http-request-26'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/findings/types</code></p>
-<h3 id='input-parameter-7'>Input Parameter</h3>
+<h3 id='input-parameter-8'>Input Parameter</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -4452,7 +4594,7 @@ Remember — use your own Authorization header
 <td>Optional. Name to search</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-11'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
+<h3 id='return-codes-13'>Return Codes</h3><pre class="highlight plaintext"><code>200: OK
 403: Forbidden
 </code></pre>
 <aside class="success">
@@ -4460,9 +4602,9 @@ Remember — use your own Authorization header
 </aside>
 <h2 id='create-ticket'>Create Ticket</h2>
 <p>This endpoint create a ticket</p>
-<h3 id='http-request-25'>HTTP Request</h3>
+<h3 id='http-request-27'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/findings/create</code></p>
-<h3 id='input-parameter-8'>Input Parameter</h3>
+<h3 id='input-parameter-9'>Input Parameter</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -4531,7 +4673,7 @@ Remember — use your own Authorization header
 <td>Optional. Date or String with a custom creation date of ticket (YYYY-MM-DD HH:MM)</td>
 </tr>
 </tbody></table>
-<h3 id='return-codes-12'>Return Codes:</h3><pre class="highlight plaintext"><code>201: Created
+<h3 id='return-codes-14'>Return Codes:</h3><pre class="highlight plaintext"><code>201: Created
 403: Forbidden
 422: Unprocessable Entity
 </code></pre>
@@ -4539,6 +4681,12 @@ Remember — use your own Authorization header
 Remember — use your own Authorization header
 </aside>
 <h1 id='changelog'>Changelog</h1>
+<p><strong>10-Sep-2026</strong></p>
+
+<ul>
+<li>Documented <a href="#get-answer-statuses">Get Answer Statuses</a> and <a href="#change-answer-status">Change Answer Status</a>, the two endpoints behind the Change Form Status action of the <a href="#zapier">Zapier</a> and <a href="#microsoft-power-automate-beta">Power Automate</a> connectors. Both were already available, they were only missing from this reference</li>
+</ul>
+
 <p><strong>04-Sep-2026</strong></p>
 
 <ul>
