@@ -1511,7 +1511,7 @@ If your destination is a data warehouse, you do not need to implement the paging
 <h3 id='http-request-5'>HTTP Request</h3>
 <p><code>GET https://www.mydatascope.com/api/external/list_states</code></p>
 
-<p><code>POST</code> is also accepted. The endpoint takes no parameters either way.</p>
+<p>The endpoint takes no parameters.</p>
 <h3 id='response-fields'>Response Fields</h3>
 <table><thead>
 <tr>
@@ -1580,8 +1580,6 @@ Remember — use your own Authorization header
 <p>Changing the status through the API works like changing it from the web app: the change is recorded in the history of the answer, the webhooks configured for status changes are fired, and the user who submitted the answer receives a push notification when the account has status change notifications enabled.</p>
 <h3 id='http-request-6'>HTTP Request</h3>
 <p><code>POST https://www.mydatascope.com/api/external/change_state</code></p>
-
-<p><code>GET</code> is also accepted, with the same parameters.</p>
 <h3 id='input-parameter'>Input Parameter</h3>
 <table><thead>
 <tr>
