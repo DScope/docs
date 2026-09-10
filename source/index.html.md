@@ -682,7 +682,7 @@ Statuses are the values reported as `form_state` on an answer. This endpoint lis
 
 `GET https://www.mydatascope.com/api/external/list_states`
 
-`POST` is also accepted. The endpoint takes no parameters either way.
+The endpoint takes no parameters.
 
 ### Response Fields
 
@@ -750,8 +750,6 @@ Changing the status through the API works like changing it from the web app: the
 ### HTTP Request
 
 `POST https://www.mydatascope.com/api/external/change_state`
-
-`GET` is also accepted, with the same parameters.
 
 ### Input Parameter
 Parameter | Type | Description
