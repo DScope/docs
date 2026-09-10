@@ -641,6 +641,139 @@ question_name | Name of the question to change
 question_value | Value of the question to change
 subform_index | Number to specify the subform index (Starting from 1). Leave blank if question it's not inside subform*.
 
+## Get Answer Statuses
+
+```shell
+curl "https://www.mydatascope.com/api/external/list_states"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/list_states'
+response = RestClient.get url, {
+:Authorization => 'b1cd93mfls9fdmfkadn23',
+}
+JSON.parse(response)
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+[
+   {
+      "type": "unicode",
+      "key": 4521,
+      "identifier": "In review"
+   },
+   {
+      "type": "unicode",
+      "key": 4522,
+      "identifier": "Approved"
+   }
+]
+```
+
+Statuses are the values reported as `form_state` on an answer. This endpoint lists the ones configured in your account, and the `key` of each one is what [Change Answer Status](#change-answer-status) expects as `form_state_id`.
+
+### HTTP Request
+
+`GET https://www.mydatascope.com/api/external/list_states`
+
+`POST` is also accepted. The endpoint takes no parameters either way.
+
+### Response Fields
+
+Parameter | Type | Description
+--------- | ------- | -----------
+type | String | Always `unicode`. It is the field type expected by the dropdowns of the Zapier and Power Automate connectors
+key | Integer | ID of the status, and the value to send as `form_state_id` when changing the status of an answer
+identifier | String | Name of the status, as configured in the web app
+
+### Return Codes
+```
+200: OK
+400: Bad Request
+```
+
+<aside class="notice">
+A status deleted in the web app is still listed here, because the response is not filtered by the deleted flag. The Answers endpoints report <code>-</code> as the <code>form_state</code> of an answer whose status was deleted.
+</aside>
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+
+## Change Answer Status
+
+```shell
+curl "https://www.mydatascope.com/api/external/change_state"
+  -H "Authorization: b1cd93mfls9fdmfkadn23"
+  -d "form_name=Safety Inspection"
+  -d "form_code=A-1024"
+  -d "form_state_id=4522"
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+url = 'https://www.mydatascope.com/api/external/change_state'
+response = RestClient.post url, {
+  form_name: 'Safety Inspection',
+  form_code: 'A-1024',
+  form_state_id: 4522
+}, {
+:Authorization => 'b1cd93mfls9fdmfkadn23'
+}
+JSON.parse(response)
+```
+
+> The above command returns JSON structured like this, you can check the description of each parameter below:
+
+```json
+{
+   "status": "ok",
+   "form_answer": {
+      "id": 4325235,
+      "form_id": 6344234,
+      "code": "A-1024",
+      "form_state_id": 4522
+   }
+}
+```
+
+Changing the status through the API works like changing it from the web app: the change is recorded in the history of the answer, the webhooks configured for status changes are fired, and the user who submitted the answer receives a push notification when the account has status change notifications enabled.
+
+### HTTP Request
+
+`POST https://www.mydatascope.com/api/external/change_state`
+
+`GET` is also accepted, with the same parameters.
+
+### Input Parameter
+Parameter | Type | Description
+--------- | ------- | -----------
+form_name | String | Required. Name of the form the answer belongs to. Only the name works here, not the ID of the form. If two forms share the same name, the most recent one is used
+form_code | String | Required. Code of the answer to update
+form_state_id | Integer | Required. ID of the status to set, as returned by [Get Answer Statuses](#get-answer-statuses)
+
+### Return Codes
+```
+200: OK
+400: Bad Request
+```
+
+<aside class="notice">
+<code>form_answer</code> carries every field of the answer; the example above shows only a few of them. A <code>400</code> comes back with an empty body whenever the form name, the answer code or the status ID does not match something in your account, so check the three of them when you get one.
+</aside>
+
+<aside class="success">
+Remember — use your own Authorization header
+</aside>
+
 
 # Signatures
 
@@ -2564,6 +2697,10 @@ Remember — use your own Authorization header
 </aside>
 
 # Changelog
+
+**10-Sep-2026**
+
+- Documented [Get Answer Statuses](#get-answer-statuses) and [Change Answer Status](#change-answer-status), the two endpoints behind the Change Form Status action of the [Zapier](#zapier) and [Power Automate](#microsoft-power-automate-beta) connectors. Both were already available, they were only missing from this reference
 
 **04-Sep-2026**
 
