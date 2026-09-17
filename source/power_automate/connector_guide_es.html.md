@@ -136,8 +136,16 @@ que esperas y solo entonces elimina el antiguo.
 Mientras los dos flujos estén activos, la misma respuesta de formulario se entrega dos veces, en dos formatos distintos, una vez a cada flujo. Todo lo que haga el flujo ocurre dos veces: dos órdenes de trabajo, dos aprobaciones, dos correos. Mantén corto el periodo en que ambos están activos, y revisa el resultado antes de dejarlos corriendo en paralelo.
 </aside>
 
-Dos cosas para tener en cuenta:
+Tres cosas para tener en cuenta:
 
+- **Una pregunta con varias respuestas llega como una sola línea de texto.** El
+  acceso directo por pregunta siempre trae un valor único, así que un checklist
+  se lee como los nombres de lo que quedó marcado, y una pregunta sobre una
+  lista como pares `opción: valor`, separados en ambos casos por `;`. Nada de
+  eso viene escapado, así que conviene tratarlo como texto para mostrar o
+  guardar, no para separar. Cuando necesites esos valores uno por uno, usa la
+  lista de ítems de la respuesta, que trae cada uno como campo propio y con su
+  opción al lado.
 - **`pdf_url` es oportunista.** El campo está, pero trae un valor solo cuando
   el PDF ya existe en el momento en que se entrega la respuesta. El disparador
   no espera a que el documento se genere, así que un flujo que usa `pdf_url`
