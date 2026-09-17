@@ -89,7 +89,8 @@ The connector provides the following triggers:
 
 | Trigger | Fires when |
 |---|---|
-| New answer | A form answer is submitted |
+| New answer v2 | A form answer is submitted, with every question available as its own dynamic content |
+| New answer (deprecated) | A form answer is submitted. Kept so flows already built on it keep running |
 | New PDF | A PDF document is generated |
 | Status changed | A form answer changes status |
 | New assigned task | A task is assigned |
@@ -112,6 +113,41 @@ The connector also provides the following actions, so a flow can act back on Dat
 | Send Data | Generates a new form answer and its PDF from an existing template |
 | Create Ticket | Creates a new ticket |
 
+## The New answer v2 trigger
+
+**New answer v2** is the trigger to use when you build a new flow on a
+submitted form answer. It fires when the answer is submitted, and its fields
+arrive as dynamic content you can pick directly in the following steps, with no
+**Parse JSON** step to add and no schema to paste. Repeatable tables come
+through as a list of answer items: put an **Apply to each** over that list, and
+the table's columns are available as dynamic content inside the loop.
+
+The earlier **New answer** trigger is deprecated, not removed. Flows already
+built on it keep running exactly as they do today, and there is no deadline to
+move off it. What changes is that it is no longer offered when you build a new
+flow, so new work starts on v2.
+
+To move an existing flow, build the new one alongside it, confirm it does what
+you expect, and only then delete the old one.
+
+<aside class="warning">
+While both flows are active the same form answer is delivered twice, in two different formats, once to each flow. Whatever the flow does happens twice: two work orders, two approvals, two emails. Keep that overlap short, and check the result before you leave both of them running.
+</aside>
+
+Two things to plan around:
+
+- **`pdf_url` is opportunistic.** The field is there, but it carries a value
+  only when the PDF already exists at the moment the answer is delivered. The
+  trigger does not wait for the document to be generated, so a flow that binds
+  `pdf_url` can work every time in testing and then arrive with it empty in
+  production. If the flow needs the document, build it on the **New PDF**
+  trigger instead.
+- **The field list is a snapshot.** The per-question dynamic content a flow
+  sees is captured when the trigger is configured. If questions are added to or
+  removed from the form afterwards, the flow does not see them until you reopen
+  the trigger and save the flow again. The header fields and the list of answer
+  items are not affected, only the per-question shortcuts.
+
 ## Important considerations
 
 - **One active connection per form.** Triggers associated with a form support
@@ -124,14 +160,16 @@ The connector also provides the following actions, so a flow can act back on Dat
   enabled on your account.
 - **The connector works in the environment where you created it.** If you
   work with several environments, repeat the import in each one.
-- **The "New answer" trigger doesn't clean up on its own.** If you turn off or
-  delete a flow that uses the "New answer" trigger (`hooks_flow`), the
-  subscription is not automatically removed on DataScope's side. To fully
-  stop it, you also need to go to
+- **The deprecated "New answer" trigger doesn't clean up on its own.** If you
+  turn off or delete a flow that uses it (`hooks_flow`), the subscription is
+  not automatically removed on DataScope's side. To fully stop it, you also
+  need to go to
   <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
-  and delete the connection there. Every other trigger (forms, PDFs, tasks,
-  tickets, signatures) does clean up automatically when the flow is turned
-  off in Power Automate.
+  and delete the connection there. The other triggers, **New answer v2**
+  included, are unsubscribed on DataScope's side when the flow is deleted or
+  its trigger is edited, which is what Power Automate guarantees. If you stop a
+  flow in any other way and want to be sure nothing is left subscribed, delete
+  its connection on that same page.
 
 ## If something doesn't work
 

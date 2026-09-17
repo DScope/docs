@@ -89,7 +89,8 @@ O conector oferece os seguintes disparadores:
 
 | Disparador | É acionado quando |
 |---|---|
-| Nova resposta | Uma resposta de formulário é enviada |
+| Nova resposta v2 | Uma resposta de formulário é enviada, com cada pergunta disponível como seu próprio conteúdo dinâmico |
+| Nova resposta (obsoleto) | Uma resposta de formulário é enviada. Mantido para que os fluxos já criados sobre ele continuem funcionando |
 | Novo PDF | Um documento PDF é gerado |
 | Mudança de status | Uma resposta de formulário muda de status |
 | Nova tarefa atribuída | Uma tarefa é atribuída |
@@ -113,6 +114,42 @@ O conector também oferece as seguintes actions, para que um fluxo possa agir so
 | Send Data | Gera uma nova resposta de formulário e seu PDF a partir de um modelo existente |
 | Create Ticket | Cria um novo ticket |
 
+## O disparador New answer v2
+
+O **New answer v2** é o disparador a usar quando você cria um fluxo novo sobre
+uma resposta de formulário. Ele é acionado quando a resposta é enviada, e seus
+campos chegam como conteúdo dinâmico que você escolhe direto nas próximas
+etapas, sem precisar adicionar uma etapa **Parse JSON** nem colar um schema. As
+tabelas repetíveis chegam como uma lista de itens da resposta: coloque um
+**Apply to each** sobre essa lista e as colunas da tabela ficam disponíveis
+como conteúdo dinâmico dentro do loop.
+
+O disparador anterior, **New answer**, ficou obsoleto, mas não foi removido. Os
+fluxos já criados sobre ele continuam rodando exatamente como hoje, e não há
+prazo para sair dele. O que muda é que ele deixa de ser oferecido quando você
+cria um fluxo novo, então o que for novo começa na v2.
+
+Para migrar um fluxo existente, crie o novo em paralelo, confirme que ele faz o
+que você espera e só então exclua o antigo.
+
+<aside class="warning">
+Enquanto os dois fluxos estiverem ativos, a mesma resposta de formulário é entregue duas vezes, em dois formatos diferentes, uma vez para cada fluxo. Tudo o que o fluxo faz acontece duas vezes: duas ordens de serviço, duas aprovações, dois emails. Deixe curto o período em que os dois estão ativos, e confira o resultado antes de deixar ambos rodando.
+</aside>
+
+Dois pontos para levar em conta:
+
+- **O `pdf_url` é oportunista.** O campo existe, mas só traz um valor quando o
+  PDF já existe no momento em que a resposta é entregue. O disparador não
+  espera a geração do documento, então um fluxo que usa o `pdf_url` pode
+  funcionar sempre nos testes e chegar vazio em produção. Se o fluxo precisa do
+  documento, crie-o sobre o disparador **New PDF**.
+- **A lista de campos é um retrato do momento.** O conteúdo dinâmico por
+  pergunta que um fluxo enxerga é capturado quando o disparador é configurado.
+  Se depois disso perguntas forem adicionadas ou removidas do formulário, o
+  fluxo não as enxerga até você reabrir o disparador e salvar o fluxo de novo.
+  Os campos de cabeçalho e a lista de itens da resposta não são afetados,
+  apenas os atalhos por pergunta.
+
 ## Considerações importantes
 
 - **Uma conexão ativa por formulário.** Os disparadores associados a um
@@ -126,14 +163,16 @@ O conector também oferece as seguintes actions, para que um fluxo possa agir so
   somente se essas funcionalidades estiverem habilitadas na sua conta.
 - **O conector funciona no ambiente em que foi criado.** Se você trabalha com
   vários ambientes, repita a importação em cada um.
-- **O disparador "Nova resposta" não se limpa sozinho.** Se você desativar ou
-  excluir um flow que usa o disparador "Nova resposta" (`hooks_flow`), a
-  assinatura não é removida automaticamente do lado do DataScope. Para
-  interrompê-lo por completo, também é necessário acessar
+- **O disparador obsoleto "Nova resposta" não se limpa sozinho.** Se você
+  desativar ou excluir um flow que o usa (`hooks_flow`), a assinatura não é
+  removida automaticamente do lado do DataScope. Para interrompê-lo por
+  completo, também é necessário acessar
   <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
-  e excluir a conexão correspondente ali. Os demais disparadores
-  (formulários, PDFs, tarefas, tickets, assinaturas) se limpam
-  automaticamente ao desativar o flow no Power Automate.
+  e excluir a conexão correspondente ali. Nos demais disparadores, incluindo o
+  **New answer v2**, a assinatura é removida do lado do DataScope quando o flow
+  é excluído ou seu disparador é editado, que é o que o Power Automate garante.
+  Se você parar um flow de outra forma e quiser ter certeza de que nada ficou
+  assinado, exclua a conexão nessa mesma página.
 
 ## Se algo não funcionar
 
