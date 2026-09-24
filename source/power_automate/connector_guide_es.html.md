@@ -117,12 +117,14 @@ El conector también entrega las siguientes actions, para que un flujo pueda act
 ## El disparador New answer v2
 
 **New answer v2 (Forms)** es el disparador que conviene usar al armar un flujo
-nuevo sobre una respuesta de formulario. Se activa cuando la respuesta se
-envía, y sus campos llegan como contenido dinámico que puedes elegir
-directamente en los pasos siguientes, sin agregar un paso **Parse JSON** ni
-pegar un esquema. Las tablas repetibles llegan como una lista de ítems de la
-respuesta: pon un **Apply to each** sobre esa lista y las columnas de la tabla
-quedan disponibles como contenido dinámico dentro del ciclo.
+nuevo sobre una respuesta de formulario. Se activa cuando la respuesta llega
+completa a DataScope, con sus fotos y archivos ya subidos, y sus campos llegan
+como contenido dinámico que puedes elegir directamente en los pasos siguientes,
+sin agregar un paso **Parse JSON** ni pegar un esquema. Las tablas repetibles
+llegan como una lista de ítems de la respuesta, uno por pregunta y por
+repetición: pon un **Apply to each** sobre esa lista y cada ítem trae como
+contenido dinámico su pregunta, su valor y su número de fila (`subform_index`,
+que cuenta desde 0).
 
 El disparador anterior, **New answer (Forms)**, queda obsoleto, pero no se
 elimina. Los flujos que ya están armados sobre él siguen funcionando igual que
@@ -163,6 +165,8 @@ Tres cosas para tener en cuenta:
 - **Una conexión activa por formulario.** Los disparadores asociados a un
   formulario admiten una sola conexión activa a la vez. Si necesitas varios
   flujos sobre el mismo formulario, encadénalos desde un único disparador.
+  **New answer v2 (Forms)** es la excepción: varios flujos pueden usarlo sobre
+  el mismo formulario, y cada uno recibe su propia entrega.
 - **Los disparadores de tickets operan a nivel de cuenta.** Admiten una sola
   conexión activa por cuenta.
 - **Los campos disponibles varían según tu configuración.** Algunos datos, como
@@ -186,8 +190,11 @@ Tres cosas para tener en cuenta:
 
 - **La conexión falla al crearse:** verifica que la API Key esté completa y sin
   espacios al inicio o al final.
-- **El flujo no se dispara:** confirma que no exista otra conexión activa sobre
-  el mismo formulario, y revisa el historial del flujo en Power Automate.
+- **El flujo no se dispara:** revisa el historial del flujo en Power Automate.
+  En los disparadores que admiten una sola conexión por formulario, confirma
+  además que no exista otra conexión activa sobre ese formulario. Con
+  **New answer v2 (Forms)**, el flujo se ejecuta cuando la respuesta llega
+  completa, y editar una respuesta no lo vuelve a ejecutar.
 - **No aparecen los campos esperados:** algunos campos dependen de la
   configuración de tu cuenta. Escríbenos y lo revisamos contigo.
 

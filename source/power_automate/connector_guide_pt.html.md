@@ -118,12 +118,14 @@ O conector também oferece as seguintes actions, para que um fluxo possa agir so
 ## O disparador New answer v2
 
 O **New answer v2 (Forms)** é o disparador a usar quando você cria um fluxo
-novo sobre uma resposta de formulário. Ele é acionado quando a resposta é
-enviada, e seus campos chegam como conteúdo dinâmico que você escolhe direto
-nas próximas etapas, sem precisar adicionar uma etapa **Parse JSON** nem colar
-um schema. As tabelas repetíveis chegam como uma lista de itens da resposta:
-coloque um **Apply to each** sobre essa lista e as colunas da tabela ficam
-disponíveis como conteúdo dinâmico dentro do loop.
+novo sobre uma resposta de formulário. Ele é acionado quando a resposta chega
+completa ao DataScope, com suas fotos e arquivos já enviados, e seus campos
+chegam como conteúdo dinâmico que você escolhe direto nas próximas etapas, sem
+precisar adicionar uma etapa **Parse JSON** nem colar um schema. As tabelas
+repetíveis chegam como uma lista de itens da resposta, um por pergunta e por
+repetição: coloque um **Apply to each** sobre essa lista e cada item traz como
+conteúdo dinâmico sua pergunta, seu valor e seu número de linha
+(`subform_index`, que conta a partir de 0).
 
 O disparador anterior, **New answer (Forms)**, ficou obsoleto, mas não foi
 removido. Os fluxos já criados sobre ele continuam rodando exatamente como
@@ -162,8 +164,9 @@ Três pontos para levar em conta:
 
 - **Uma conexão ativa por formulário.** Os disparadores associados a um
   formulário admitem apenas uma conexão ativa por vez. Se precisar de vários
-  fluxos sobre o mesmo formulário, encadeie-os a partir de um único
-  disparador.
+  fluxos sobre o mesmo formulário, encadeie-os a partir de um único disparador.
+  O **New answer v2 (Forms)** é a exceção: vários fluxos podem usá-lo sobre o
+  mesmo formulário, e cada um recebe sua própria entrega.
 - **Os disparadores de tickets operam no nível da conta.** Admitem
   apenas uma conexão ativa por conta.
 - **Os campos disponíveis variam conforme sua configuração.** Alguns dados,
@@ -186,9 +189,11 @@ Três pontos para levar em conta:
 
 - **A conexão falha ao ser criada:** verifique se a API Key está completa e
   sem espaços no início ou no final.
-- **O fluxo não é disparado:** confirme que não existe outra conexão ativa
-  sobre o mesmo formulário e revise o histórico de execuções do fluxo no
-  Power Automate.
+- **O fluxo não é disparado:** revise o histórico de execuções do fluxo no
+  Power Automate. Nos disparadores que admitem apenas uma conexão por
+  formulário, confirme também que não existe outra conexão ativa sobre esse
+  formulário. Com o **New answer v2 (Forms)**, o fluxo é executado quando a
+  resposta chega completa, e editar uma resposta não o executa de novo.
 - **Os campos esperados não aparecem:** alguns campos dependem da
   configuração da sua conta. Escreva para o suporte e nós verificamos com
   você.

@@ -117,11 +117,13 @@ The connector also provides the following actions, so a flow can act back on Dat
 ## The New answer v2 trigger
 
 **New answer v2 (Forms)** is the trigger to use when you build a new flow on a
-submitted form answer. It fires when the answer is submitted, and its fields
-arrive as dynamic content you can pick directly in the following steps, with no
-**Parse JSON** step to add and no schema to paste. Repeatable tables come
-through as a list of answer items: put an **Apply to each** over that list, and
-the table's columns are available as dynamic content inside the loop.
+submitted form answer. It fires once the answer reaches DataScope complete,
+with its photos and files uploaded, and its fields arrive as dynamic content
+you can pick directly in the following steps, with no **Parse JSON** step to
+add and no schema to paste. Repeatable tables come through as a list of answer
+items, one per question and repetition: put an **Apply to each** over that
+list, and each item carries its question, its value and its row number
+(`subform_index`, counting from 0) as dynamic content.
 
 The earlier **New answer (Forms)** trigger is deprecated, not removed. Flows
 already built on it keep running exactly as they do today, and there is no
@@ -159,8 +161,10 @@ Three things to plan around:
 ## Important considerations
 
 - **One active connection per form.** Triggers associated with a form support
-  only one active connection at a time. If you need several flows on the
-  same form, chain them from a single trigger.
+  only one active connection at a time. If you need several flows on the same
+  form, chain them from a single trigger. **New answer v2 (Forms)** is the
+  exception: several flows can use it on the same form, and each one receives
+  its own delivery.
 - **Ticket triggers operate at the account level.** They support only one
   active connection per account.
 - **Available fields vary by configuration.** Some data, such as planning
@@ -183,8 +187,11 @@ Three things to plan around:
 
 - **The connection fails to create:** check that the API Key is complete,
   with no leading or trailing spaces.
-- **The flow doesn't trigger:** confirm there is no other active connection
-  on the same form, and review the flow's run history in Power Automate.
+- **The flow doesn't trigger:** review the flow's run history in Power
+  Automate. On triggers that allow a single connection per form, also confirm
+  there is no other active connection on that form. With
+  **New answer v2 (Forms)**, the flow runs once the answer is complete, and
+  editing an answer does not run it again.
 - **Expected fields don't appear:** some fields depend on your account's
   configuration. Reach out to support and we'll look into it with you.
 
