@@ -142,12 +142,13 @@ Enquanto os dois fluxos estiverem ativos, a mesma resposta de formulário é ent
 Três pontos para levar em conta:
 
 - **Uma pergunta com várias respostas chega como uma única linha de texto.** O
-  atalho por pergunta sempre traz um valor único, então um checklist aparece
-  como os nomes do que foi marcado, e uma pergunta sobre uma lista como pares
-  `opção: valor`, separados nos dois casos por `;`. Nada disso vem escapado,
-  então trate como texto para mostrar ou guardar, não para separar. Quando
-  precisar desses valores um a um, use a lista de itens da resposta, que traz
-  cada um como campo próprio e com a sua opção ao lado.
+  atalho por pergunta sempre traz um valor único, então um **Checkbox** aparece
+  como os nomes dos elementos marcados, e um **Checklist**, **Dados numéricos**
+  ou **Dados de texto** como pares `elemento: valor`, separados nos dois casos
+  por `;`. Nada disso vem escapado, então trate como texto para mostrar ou
+  guardar, não para separar. Quando precisar desses valores um a um, use a
+  lista de itens da resposta, que traz cada um como campo próprio e com o seu
+  elemento da lista ao lado.
 - **O `pdf_url` é oportunista.** O campo existe, mas só traz um valor quando o
   PDF já existe no momento em que a resposta é entregue. O disparador não
   espera a geração do documento, então um fluxo que usa o `pdf_url` pode

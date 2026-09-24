@@ -140,12 +140,13 @@ While both flows are active the same form answer is delivered twice, in two diff
 Three things to plan around:
 
 - **A question with several answers arrives as one line of text.** The
-  per-question shortcut always carries a single value, so a checklist reads as
-  the names of what was checked, and a question over a list as `option: value`
-  pairs, separated in both cases by `;`. Nothing in it is escaped, so treat it
-  as text to show or store, not to split apart. When you need those values one
-  by one, use the list of answer items, which carries each one as its own field
-  with its option beside it.
+  per-question shortcut always carries a single value, so a **Checkbox** reads
+  as the names of the items that were checked, and a **Checklist**,
+  **Number Data** or **Text Data** question as `item: value` pairs, separated
+  in both cases by `;`. Nothing in it is escaped, so treat it as text to show
+  or store, not to split apart. When you need those values one by one, use the
+  list of answer items, which carries each one as its own field with its list
+  item beside it.
 - **`pdf_url` is opportunistic.** The field is there, but it carries a value
   only when the PDF already exists at the moment the answer is delivered. The
   trigger does not wait for the document to be generated, so a flow that binds

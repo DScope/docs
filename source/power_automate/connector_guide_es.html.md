@@ -141,13 +141,14 @@ Mientras los dos flujos estén activos, la misma respuesta de formulario se entr
 Tres cosas para tener en cuenta:
 
 - **Una pregunta con varias respuestas llega como una sola línea de texto.** El
-  acceso directo por pregunta siempre trae un valor único, así que un checklist
-  se lee como los nombres de lo que quedó marcado, y una pregunta sobre una
-  lista como pares `opción: valor`, separados en ambos casos por `;`. Nada de
-  eso viene escapado, así que conviene tratarlo como texto para mostrar o
-  guardar, no para separar. Cuando necesites esos valores uno por uno, usa la
-  lista de ítems de la respuesta, que trae cada uno como campo propio y con su
-  opción al lado.
+  acceso directo por pregunta siempre trae un valor único, así que un
+  **Checkbox** se lee como los nombres de los elementos marcados, y un
+  **Checklist**, un **Número Lista Datos** o un **Texto Lista Datos** como
+  pares `elemento: valor`, separados en ambos casos por `;`. Nada de eso viene
+  escapado, así que conviene tratarlo como texto para mostrar o guardar, no
+  para separar. Cuando necesites esos valores uno por uno, usa la lista de
+  ítems de la respuesta, que trae cada uno como campo propio y con su elemento
+  de la lista al lado.
 - **`pdf_url` es oportunista.** El campo está, pero trae un valor solo cuando
   el PDF ya existe en el momento en que se entrega la respuesta. El disparador
   no espera a que el documento se genere, así que un flujo que usa `pdf_url`
