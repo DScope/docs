@@ -330,6 +330,11 @@ vê na lista de disparadores do Zapier:</p>
 <td>Obrigatório</td>
 </tr>
 <tr>
+<td>Forms: New Answer v2</td>
+<td>Uma resposta de formulário é enviada por completo, com as respostas em uma estrutura padrão que você pode percorrer</td>
+<td>Obrigatório</td>
+</tr>
+<tr>
 <td>Forms: New PDF</td>
 <td>Um PDF é gerado por backup por email ou por autonotificação</td>
 <td>Opcional, escolha um</td>
@@ -373,8 +378,9 @@ vê na lista de disparadores do Zapier:</p>
 
 <p>Cada disparador entrega os dados do evento como campos individuais, prontos
 para mapear nas etapas seguintes do Zap sem precisar processar o JSON
-manualmente. No caso das respostas de formulário, cada pergunta chega como seu
-próprio campo, com o nome, o tipo e o valor.</p>
+manualmente. No <code>Forms: New Form Entry</code>, cada pergunta chega como seu próprio
+campo, com o nome, o tipo e o valor. O <code>Forms: New Answer v2</code> usa uma estrutura
+padrão, descrita <a href="#forms-new-answer-v2">mais abaixo</a>.</p>
 
 <p>O app também oferece as seguintes actions, para que um Zap possa agir sobre o
 DataScope e não apenas reagir aos seus eventos:</p>
@@ -410,6 +416,51 @@ DataScope e não apenas reagir aos seus eventos:</p>
 <td>Cria um ticket, opcionalmente herdando os valores padrão de um Ticket Type</td>
 </tr>
 </tbody></table>
+<h3 id='forms-new-answer-v2'>Forms: New Answer v2</h3>
+<p><code>Forms: New Answer v2</code> é o disparador a usar quando você cria um Zap novo sobre
+uma resposta de formulário. Ele é acionado quando a resposta é enviada por
+completo, e todos os formulários a entregam com a mesma estrutura padrão:</p>
+
+<ul>
+<li><strong>Os campos de cabeçalho</strong> descrevem a resposta: o ID, o código, o
+formulário, o status, o usuário, as datas, a tarefa atribuída e o <code>pdf_url</code>.</li>
+<li><strong><code>answers</code></strong> é a lista de itens da resposta, um por pergunta e por
+repetição, que o Zapier mostra como line items. Cada item traz o ID, o nome e
+o tipo da pergunta, o valor, a linha em um grupo de perguntas repetíveis
+(<code>subform_index</code>, contando a partir de 0), o elemento da lista, a localização
+e a hora de envio, o comentário e as fotos de um Checklist com comentários, e
+os tempos de uma atividade. Para agir sobre cada item separadamente,
+percorra-os com o Looping by Zapier.</li>
+<li><strong><code>answers_by_id</code></strong> dá acesso direto a cada pergunta que não está em um grupo
+de perguntas repetíveis, com a chave <code>q_</code> seguida do ID da pergunta. Uma
+pergunta com várias respostas chega ali como uma única linha de texto: um
+<strong>Checkbox</strong> como os nomes dos elementos marcados, e um <strong>Checklist</strong>,
+<strong>Dados numéricos</strong> ou <strong>Dados de texto</strong> como pares <code>elemento: valor</code>,
+separados nos dois casos por <code>;</code>. Quando precisar desses valores um a um, use
+<code>answers</code>.</li>
+</ul>
+
+<p>Vários Zaps podem usar <code>Forms: New Answer v2</code> sobre o mesmo formulário, e cada
+um recebe sua própria entrega. Editar uma resposta não o aciona de novo.</p>
+
+<p><code>Forms: New Form Entry</code> continua funcionando. Para passar um Zap para o novo
+disparador, crie o novo ao lado, confirme que ele faz o que você espera e só
+depois desative o antigo.</p>
+
+<aside class="warning">
+Enquanto os dois Zaps estiverem ativos, a mesma resposta de formulário é entregue duas vezes, em dois formatos diferentes, uma vez para cada Zap. Tudo o que eles fazem acontece duas vezes. Deixe curto o período em que os dois estão ativos.
+</aside>
+
+<p>Mais duas coisas a considerar:</p>
+
+<ul>
+<li><strong>O <code>pdf_url</code> é oportunista.</strong> Só traz um valor quando o PDF já existe no
+momento em que a resposta é entregue. Se o Zap precisa do documento, crie-o
+sobre <code>Forms: New PDF</code>.</li>
+<li><strong>Precisa da permissão de exportar.</strong> O usuário da API Key da conexão precisa
+de permissão para exportar dados no DataScope. Sem ela, testar o disparador ou
+ativar o Zap falha com um erro que explica isso.</li>
+</ul>
 <h3 id='assign-task-v1-ou-v2'>Assign Task: V1 ou V2</h3>
 <p>Use a <strong>V2</strong> para tudo que for novo. Ela faz tudo o que a V1 faz, e além disso:</p>
 
@@ -490,7 +541,7 @@ usar de verdade.</li>
 </ul>
 <h2 id='consideracoes-importantes'>Considerações importantes</h2>
 <ul>
-<li><strong>Um Zap ativo por formulário e por disparador, com uma exceção.</strong>
+<li><strong>Um Zap ativo por formulário e por disparador, com duas exceções.</strong>
 <code>Forms: New PDF</code>, <code>Forms: Status Changed</code>, <code>Tasks: New Assigned Task</code> e os três
 disparadores de assinatura admitem uma única assinatura ativa por formulário.
 Ativar um segundo Zap com o mesmo disparador sobre o mesmo formulário é
@@ -499,7 +550,9 @@ anterior. Disparadores diferentes sobre o mesmo formulário não são problema, 
 o mesmo disparador sobre formulários diferentes também não.
 <strong><code>Forms: New Form Entry</code> não passa por essa validação</strong>: um segundo Zap sobre
 o mesmo formulário é aceito, e depois os dois recebem todos os envios.
-Adicione etapas a um único Zap em vez disso.</li>
+Adicione etapas a um único Zap em vez disso. <code>Forms: New Answer v2</code> é a
+outra exceção, de propósito: vários Zaps podem usá-lo sobre o mesmo
+formulário, e cada um recebe sua própria entrega.</li>
 <li><strong>Se você precisa que várias coisas aconteçam com um mesmo evento, adicione
 etapas a um único Zap</strong> em vez de criar um segundo Zap com o mesmo
 disparador e formulário.</li>
@@ -530,6 +583,10 @@ na seção Integrações, sem espaços no início ou no final, e substitua a con
 conta, talvez montado por outra pessoa, já usa esse disparador sobre esse
 formulário. Desative o Zap mais antigo e depois ative este. Se o erro
 persistir, escreva para o suporte e nós limpamos a assinatura que ficou.</li>
+<li><strong>Testar ou ativar um Zap com <code>Forms: New Answer v2</code> falha com um erro de
+permissão:</strong> o usuário da API Key da conexão precisa de permissão para
+exportar dados no DataScope. Peça ao administrador da sua conta que a
+conceda e tente novamente.</li>
 <li><strong>O Test trigger não retorna dados:</strong> o disparador lê eventos recentes, então
 uma conta que ainda não tem nenhum não tem nada para mostrar. Gere um e teste
 novamente.</li>
@@ -578,6 +635,16 @@ ou neste guia. Nunca publique a quantidade de usuários nem de tarefas por
 versão. Inclua uma data somente quando a data de publicação for conhecida.
 -->
 
+<p><strong>2.2.1</strong> (padrão para os Zaps novos)</p>
+
+<ul>
+<li>Adiciona o disparador <code>Forms: New Answer v2</code>. Ele é acionado quando uma
+resposta de formulário é enviada por completo e entrega todos os formulários
+com a mesma estrutura padrão, com as respostas como line items que você pode
+percorrer. Vários Zaps podem usá-lo sobre o mesmo formulário. Veja
+<a href="#forms-new-answer-v2">Forms: New Answer v2</a>.</li>
+</ul>
+
 <p><strong>2.1.3</strong> (liberada para contas selecionadas)</p>
 
 <ul>
@@ -605,7 +672,7 @@ cada um se aplica. Na <code>Modify Form Answer</code> corrige o rótulo <code>Fr
 a V2 é a que deve ser usada.</li>
 </ul>
 
-<p><strong>2.1.2</strong> (padrão para os Zaps novos)</p>
+<p><strong>2.1.2</strong></p>
 
 <ul>
 <li>Adiciona a action <code>Tasks: Assign Task V2</code> e renomeia a anterior como

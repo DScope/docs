@@ -236,6 +236,9 @@
                     <a href="#que-puedes-automatizar" class="toc-h2 toc-link" data-title="que-puedes-automatizar">Qué puedes automatizar</a>
                   </li>
                   <li>
+                    <a href="#el-disparador-new-answer-v2" class="toc-h2 toc-link" data-title="el-disparador-new-answer-v2">El disparador New answer v2</a>
+                  </li>
+                  <li>
                     <a href="#consideraciones-importantes" class="toc-h2 toc-link" data-title="consideraciones-importantes">Consideraciones importantes</a>
                   </li>
                   <li>
@@ -327,7 +330,8 @@ de su cuenta.</p>
 <li><strong>Si el disparador de un flujo deja de comportarse como esperas después de una actualización, elimina y vuelve a crear la conexión de ese disparador</strong> en el flujo afectado. La propia guía de Microsoft para actualizar la definición de un conector personalizado recomienda esto como la forma de asegurar que un flujo tome el cambio correctamente.</li>
 </ul>
 <h2 id='que-puedes-automatizar'>Qué puedes automatizar</h2>
-<p>El conector entrega los siguientes disparadores:</p>
+<p>El conector entrega los siguientes disparadores. Los nombres son los que ves en
+la lista de disparadores de Power Automate:</p>
 
 <table><thead>
 <tr>
@@ -336,39 +340,43 @@ de su cuenta.</p>
 </tr>
 </thead><tbody>
 <tr>
-<td>Nueva respuesta</td>
-<td>Se envía una respuesta de formulario</td>
+<td>New answer v2 (Forms)</td>
+<td>Se termina de enviar una respuesta de formulario, con cada pregunta disponible como su propio contenido dinámico</td>
 </tr>
 <tr>
-<td>Nuevo PDF</td>
+<td>New answer (Forms) (deprecated)</td>
+<td>Se envía una respuesta de formulario. Se mantiene para que los flujos ya armados sobre él sigan funcionando</td>
+</tr>
+<tr>
+<td>New PDF (Forms)</td>
 <td>Se genera un documento PDF</td>
 </tr>
 <tr>
-<td>Cambio de estado</td>
+<td>Status changed (Forms)</td>
 <td>Una respuesta de formulario cambia de estado</td>
 </tr>
 <tr>
-<td>Nueva tarea asignada</td>
+<td>New assigned task (Tasks)</td>
 <td>Se asigna una tarea</td>
 </tr>
 <tr>
-<td>Nuevo ticket</td>
+<td>New ticket (Tickets)</td>
 <td>Se registra un ticket</td>
 </tr>
 <tr>
-<td>Cambio de estado de ticket</td>
+<td>Status changed (Tickets)</td>
 <td>Un ticket cambia de estado</td>
 </tr>
 <tr>
-<td>Firma completada</td>
+<td>Completed signature (Signatures)</td>
 <td>Se completa la firma de un documento</td>
 </tr>
 <tr>
-<td>Firma rechazada</td>
+<td>Rejected signature (Signatures)</td>
 <td>Se rechaza una solicitud de firma</td>
 </tr>
 <tr>
-<td>Firma actualizada</td>
+<td>Updated signature (Signatures)</td>
 <td>Se actualizan las firmas de un documento</td>
 </tr>
 </tbody></table>
@@ -406,11 +414,60 @@ manualmente.</p>
 <td>Crea un nuevo ticket</td>
 </tr>
 </tbody></table>
+<h2 id='el-disparador-new-answer-v2'>El disparador New answer v2</h2>
+<p><strong>New answer v2 (Forms)</strong> es el disparador que conviene usar al armar un flujo
+nuevo sobre una respuesta de formulario. Se activa cuando la respuesta llega
+completa a DataScope, y sus campos llegan
+como contenido dinámico que puedes elegir directamente en los pasos siguientes,
+sin agregar un paso <strong>Parse JSON</strong> ni pegar un esquema. Las tablas repetibles
+llegan como una lista de ítems de la respuesta, uno por pregunta y por
+repetición: pon un <strong>Apply to each</strong> sobre esa lista y cada ítem trae como
+contenido dinámico su pregunta, su valor y su número de fila (<code>subform_index</code>,
+que cuenta desde 0).</p>
+
+<p>El disparador anterior, <strong>New answer (Forms)</strong>, queda obsoleto, pero no se
+elimina. Los flujos que ya están armados sobre él siguen funcionando igual que
+hoy, y no hay plazo para dejarlo. Lo que cambia es que ya no se ofrece al armar
+un flujo nuevo, así que lo nuevo parte en v2.</p>
+
+<p>Para pasar un flujo existente, arma el nuevo en paralelo, confirma que hace lo
+que esperas y solo entonces elimina el antiguo.</p>
+
+<aside class="warning">
+Mientras los dos flujos estén activos, la misma respuesta de formulario se entrega dos veces, en dos formatos distintos, una vez a cada flujo. Todo lo que haga el flujo ocurre dos veces: dos órdenes de trabajo, dos aprobaciones, dos correos. Mantén corto el periodo en que ambos están activos, y revisa el resultado antes de dejarlos corriendo en paralelo.
+</aside>
+
+<p>Tres cosas para tener en cuenta:</p>
+
+<ul>
+<li><strong>Una pregunta con varias respuestas llega como una sola línea de texto.</strong> El
+acceso directo por pregunta siempre trae un valor único, así que un
+<strong>Checkbox</strong> se lee como los nombres de los elementos marcados, y un
+<strong>Checklist</strong>, un <strong>Número Lista Datos</strong> o un <strong>Texto Lista Datos</strong> como
+pares <code>elemento: valor</code>, separados en ambos casos por <code>;</code>. Nada de eso viene
+escapado, así que conviene tratarlo como texto para mostrar o guardar, no
+para separar. Cuando necesites esos valores uno por uno, usa la lista de
+ítems de la respuesta, que trae cada uno como campo propio y con su elemento
+de la lista al lado.</li>
+<li><strong><code>pdf_url</code> es oportunista.</strong> El campo está, pero trae un valor solo cuando
+el PDF ya existe en el momento en que se entrega la respuesta. El disparador
+no espera a que el documento se genere, así que un flujo que usa <code>pdf_url</code>
+puede funcionar siempre en las pruebas y llegar vacío en producción. Si el
+flujo necesita el documento, ármalo sobre el disparador <strong>New PDF (Forms)</strong>.</li>
+<li><strong>La lista de campos es una instantánea.</strong> El contenido dinámico por pregunta
+que ve un flujo se captura cuando se configura el disparador. Si después se
+agregan o se eliminan preguntas del formulario, el flujo no las ve hasta que
+vuelvas a abrir el disparador y guardes el flujo de nuevo. Los campos de
+cabecera y la lista de ítems de la respuesta no se ven afectados, solo los
+accesos directos por pregunta.</li>
+</ul>
 <h2 id='consideraciones-importantes'>Consideraciones importantes</h2>
 <ul>
 <li><strong>Una conexión activa por formulario.</strong> Los disparadores asociados a un
 formulario admiten una sola conexión activa a la vez. Si necesitas varios
-flujos sobre el mismo formulario, encadénalos desde un único disparador.</li>
+flujos sobre el mismo formulario, encadénalos desde un único disparador.
+<strong>New answer v2 (Forms)</strong> es la excepción: varios flujos pueden usarlo sobre
+el mismo formulario, y cada uno recibe su propia entrega.</li>
 <li><strong>Los disparadores de tickets operan a nivel de cuenta.</strong> Admiten una sola
 conexión activa por cuenta.</li>
 <li><strong>Los campos disponibles varían según tu configuración.</strong> Algunos datos, como
@@ -418,21 +475,27 @@ los de planificación o los campos extendidos de tareas, aparecen solo si esas
 funcionalidades están habilitadas en tu cuenta.</li>
 <li><strong>El conector funciona en el entorno donde lo creaste.</strong> Si trabajas con
 varios entornos, repite la importación en cada uno.</li>
-<li><strong>El disparador &quot;Nueva respuesta&quot; no se limpia solo al apagarlo.</strong> Si detienes
-o eliminas un flow que usa el disparador &quot;Nueva respuesta&quot; (<code>hooks_flow</code>), la
-suscripción no se elimina automáticamente del lado de DataScope. Para
-detenerlo por completo, también debes ir a
+<li><strong>El disparador New answer (Forms) (deprecated) no se limpia solo.</strong> Si
+detienes o eliminas un flow que lo usa (<code>hooks_flow</code>), la suscripción no se
+elimina automáticamente del lado de DataScope. Para detenerlo por completo,
+también debes ir a
 <a href="https://app.mydatascope.com/integrations" target="_blank" rel="noopener noreferrer">app.mydatascope.com/integrations</a>
-y eliminar ahí la conexión correspondiente. El resto de los disparadores
-(formularios, PDFs, tareas, tickets, firmas) sí se limpian automáticamente
-al apagar el flow en Power Automate.</li>
+y eliminar ahí la conexión correspondiente. En el resto de los disparadores,
+incluido <strong>New answer v2 (Forms)</strong>, la suscripción se elimina del lado de
+DataScope cuando se borra el flow o se edita su disparador, que es lo que
+garantiza Power Automate. Si detienes un flow de otra manera y quieres
+asegurarte de que no quede nada suscrito, elimina su conexión en esa misma
+página.</li>
 </ul>
 <h2 id='si-algo-no-funciona'>Si algo no funciona</h2>
 <ul>
 <li><strong>La conexión falla al crearse:</strong> verifica que la API Key esté completa y sin
 espacios al inicio o al final.</li>
-<li><strong>El flujo no se dispara:</strong> confirma que no exista otra conexión activa sobre
-el mismo formulario, y revisa el historial del flujo en Power Automate.</li>
+<li><strong>El flujo no se dispara:</strong> revisa el historial del flujo en Power Automate.
+En los disparadores que admiten una sola conexión por formulario, confirma
+además que no exista otra conexión activa sobre ese formulario. Con
+<strong>New answer v2 (Forms)</strong>, el flujo se ejecuta cuando la respuesta llega
+completa, y editar una respuesta no lo vuelve a ejecutar.</li>
 <li><strong>No aparecen los campos esperados:</strong> algunos campos dependen de la
 configuración de tu cuenta. Escríbenos y lo revisamos contigo.</li>
 </ul>
