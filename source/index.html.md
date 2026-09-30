@@ -2700,6 +2700,13 @@ Remember — use your own Authorization header
 
 # Changelog
 
+**30-Sep-2026**
+
+- The [Microsoft Power Automate](#microsoft-power-automate-beta) connector adds the **New answer v2 (Forms)** trigger. It fires once a form answer is completely submitted, and every form uses the same standard structure: the answers arrive as a list you can loop through with Apply to each, and each question is also available as its own dynamic content, with no Parse JSON step. Several flows can use the same form. Re-import the definition file to pick it up
+- **New answer (Forms)** is deprecated in the connector. Flows already built on it keep running, but it is no longer offered when you build a new flow
+- The [Zapier](#zapier) app adds the **Forms: New Answer v2** trigger in version 2.2.1, with the same structure and the same freedom to use several Zaps on one form
+- Both v2 triggers need export permission for the user whose API Key the connection uses
+
 **10-Sep-2026**
 
 - Documented [Get Answer Statuses](#get-answer-statuses) and [Change Answer Status](#change-answer-status), the two endpoints behind the Change Form Status action of the [Zapier](#zapier) and [Power Automate](#microsoft-power-automate-beta) connectors. Both were already available, they were only missing from this reference
