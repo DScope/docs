@@ -90,7 +90,7 @@ in Power Automate's trigger list:
 
 | Trigger | Fires when |
 |---|---|
-| New answer v2 (Forms) | A form answer is submitted, with every question available as its own dynamic content |
+| New answer v2 (Forms) | A form answer is completely submitted, with every question available as its own dynamic content |
 | New answer (Forms) (deprecated) | A form answer is submitted. Kept so flows already built on it keep running |
 | New PDF (Forms) | A PDF document is generated |
 | Status changed (Forms) | A form answer changes status |
@@ -118,7 +118,7 @@ The connector also provides the following actions, so a flow can act back on Dat
 
 **New answer v2 (Forms)** is the trigger to use when you build a new flow on a
 submitted form answer. It fires once the answer reaches DataScope complete,
-with its photos and files uploaded, and its fields arrive as dynamic content
+and its fields arrive as dynamic content
 you can pick directly in the following steps, with no **Parse JSON** step to
 add and no schema to paste. Repeatable tables come through as a list of answer
 items, one per question and repetition: put an **Apply to each** over that

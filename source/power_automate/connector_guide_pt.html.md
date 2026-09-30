@@ -90,7 +90,7 @@ lista de disparadores do Power Automate:
 
 | Disparador | É acionado quando |
 |---|---|
-| New answer v2 (Forms) | Uma resposta de formulário é enviada, com cada pergunta disponível como seu próprio conteúdo dinâmico |
+| New answer v2 (Forms) | Uma resposta de formulário é enviada por completo, com cada pergunta disponível como seu próprio conteúdo dinâmico |
 | New answer (Forms) (deprecated) | Uma resposta de formulário é enviada. Mantido para que os fluxos já criados sobre ele continuem funcionando |
 | New PDF (Forms) | Um documento PDF é gerado |
 | Status changed (Forms) | Uma resposta de formulário muda de status |
@@ -119,7 +119,7 @@ O conector também oferece as seguintes actions, para que um fluxo possa agir so
 
 O **New answer v2 (Forms)** é o disparador a usar quando você cria um fluxo
 novo sobre uma resposta de formulário. Ele é acionado quando a resposta chega
-completa ao DataScope, com suas fotos e arquivos já enviados, e seus campos
+completa ao DataScope, e seus campos
 chegam como conteúdo dinâmico que você escolhe direto nas próximas etapas, sem
 precisar adicionar uma etapa **Parse JSON** nem colar um schema. As tabelas
 repetíveis chegam como uma lista de itens da resposta, um por pergunta e por
