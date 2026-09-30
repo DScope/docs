@@ -99,6 +99,10 @@ We have had ongoing trouble keeping the connector published in the official Powe
 
 Follow the <a href="power_automate/connector_guide_en.html" target="_blank" rel="noopener noreferrer">step-by-step guide</a> to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
 
+<aside class="notice">
+The New answer v2 (Forms) trigger needs export permission in DataScope for the user whose API Key the connection uses, the same permission the Answers endpoints require. Without it, the trigger is refused with an error that says so. Ask your account administrator to confirm it before you build the flow.
+</aside>
+
 ## Airbyte Cloud connectors
 
 DataScope publishes ready to use low-code connector manifests for Airbyte. Each one is plain YAML: import it in the Connector Builder, fill in your token and a start date, and Airbyte handles the paging, the incremental state and the deduplication.
@@ -2695,6 +2699,13 @@ Remember — use your own Authorization header
 </aside>
 
 # Changelog
+
+**30-Sep-2026**
+
+- The [Microsoft Power Automate](#microsoft-power-automate-beta) connector adds the **New answer v2 (Forms)** trigger. It fires once a form answer is completely submitted, and every form uses the same standard structure: the answers arrive as a list you can loop through with Apply to each, and each question is also available as its own dynamic content, with no Parse JSON step. Several flows can use the same form. Re-import the definition file to pick it up
+- **New answer (Forms)** is deprecated in the connector. Flows already built on it keep running, but it is no longer offered when you build a new flow
+- The [Zapier](#zapier) app adds the **Forms: New Answer v2** trigger in version 2.2.1, with the same structure and the same freedom to use several Zaps on one form
+- Both v2 triggers need export permission for the user whose API Key the connection uses
 
 **10-Sep-2026**
 
