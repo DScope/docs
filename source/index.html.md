@@ -99,6 +99,10 @@ We have had ongoing trouble keeping the connector published in the official Powe
 
 Follow the <a href="power_automate/connector_guide_en.html" target="_blank" rel="noopener noreferrer">step-by-step guide</a> to import it and create your first connection. Spanish and Portuguese versions are linked from the top of that guide.
 
+<aside class="notice">
+The New answer v2 (Forms) trigger needs export permission in DataScope for the user whose API Key the connection uses, the same permission the Answers endpoints require. Without it, the trigger is refused with an error that says so. Ask your account administrator to confirm it before you build the flow.
+</aside>
+
 ## Airbyte Cloud connectors
 
 DataScope publishes ready to use low-code connector manifests for Airbyte. Each one is plain YAML: import it in the Connector Builder, fill in your token and a start date, and Airbyte handles the paging, the incremental state and the deduplication.
