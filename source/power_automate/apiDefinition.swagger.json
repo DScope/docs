@@ -2229,6 +2229,19 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "The trigger is not enabled for this DataScope account, or the user of the API Key lacks export permission.",
+            "schema": {
+              "type": "object",
+              "description": "Error returned when the subscription is refused.",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Reason the subscription was refused, ready to show to the user."
+                }
+              }
+            }
           }
         },
         "operationId": "NewFormAnswerV2",
