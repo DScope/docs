@@ -2233,7 +2233,7 @@
         },
         "operationId": "NewFormAnswerV2",
         "summary": "New answer v2 (Forms)",
-        "description": "Triggers when a new form answer reaches DataScope complete. Several flows can use it on the same form, and each one receives its own delivery.",
+        "description": "Triggers when a new form answer is complete. Every form uses the same standard structure: answers arrive as a list you can loop through with Apply to each, each with its question ID, value, repeatable group row, list element and location. Several flows can use the same form.",
         "x-ms-trigger": "single",
         "x-ms-api-annotation": {
           "status": "Preview",
