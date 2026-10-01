@@ -78,6 +78,12 @@ html, body {
     margin-bottom: $logo-margin;
   }
 
+  // Block, so the logo keeps governing its own spacing: an inline anchor would
+  // add a descender gap under the image.
+  .logo-link {
+    display: block;
+  }
+
   &>.search {
     position: relative;
 
