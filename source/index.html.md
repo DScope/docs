@@ -2698,7 +2698,15 @@ creation_date | String or Datetime | Optional. Date or String with a custom crea
 Remember — use your own Authorization header
 </aside>
 
+# Assets
+
+The Assets endpoints are documented in the new API reference at [api-docs.mydatascope.com](https://api-docs.mydatascope.com/). There you can list, get, create and update assets, and list and record their measurements.
+
 # Changelog
+
+**09-Oct-2026**
+
+- Added the [Assets](#assets) section, which points to the new API reference at [api-docs.mydatascope.com](https://api-docs.mydatascope.com/) where the Assets endpoints are documented
 
 **30-Sep-2026**
 
